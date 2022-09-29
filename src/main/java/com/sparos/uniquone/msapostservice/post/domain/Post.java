@@ -29,12 +29,12 @@ public class Post extends BaseTimeEntity {
     private String postType;
 
     @Column(columnDefinition = "VARCHAR(10)")
-    private String condition;
+    private String conditions;
 
     private Long price;
 
     private String color;
 
-    @Column(nullable = false, columnDefinition = "default '0'")
+    @Column(nullable = false, columnDefinition = "tinyint(1) default 0")
     private Boolean isOffer;
 }
