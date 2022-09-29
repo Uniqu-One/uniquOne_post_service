@@ -1,17 +1,29 @@
 package com.sparos.uniquone.msapostservice.review.domain;
+import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Review {
+public class Review extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @Column(name = "post_id", nullable = false)
+    private Long postId;
+
+    @Column(nullable = false, columnDefinition = "DOUBLE")
+    private Double star;
+
+    @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
+    private String dsc;
+
 }
