@@ -39,7 +39,7 @@ public class Noti {
     @Column(nullable = false, columnDefinition = "VARCHAR(100)")
     private String dsc;
 
-    @Column(nullable = false, columnDefinition = "default '0'")
+    @Column(nullable = false, columnDefinition = "tinyint(1) default 0")
     private Boolean isCheck;
 
     @CreatedDate
