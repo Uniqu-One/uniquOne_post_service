@@ -5,6 +5,21 @@ spring:
   application:
     name: uniquone-post-service
 
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        format_sql: true
+
+  datasource:
+    url: jdbc:mysql://${UNIQUONE_DB_URL}:3306/uniquone_db?useSSL=false&allowMultiQueries=true&serverTimezone=UTC
+    username: ${UNIQUONE_DB_ID}
+    password: ${UNIQUONE_DB_PWD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
@@ -12,7 +27,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://eureka-server:8761/eureka
+      defaultZone: http://${EUREKA_SERVER}:8761/eureka
 
 greeting:
   message: Welcome to the Simple E-commerce
