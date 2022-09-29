@@ -15,7 +15,7 @@ spring:
         format_sql: true
 
   datasource:
-    url: jdbc:mysql://${UNIQUONE_DB_URL}:3306/uniquone_db?useSSL=false&allowMultiQueries=true&serverTimezone=UTC
+    url: ${UNIQUONE_DB_URL}
     username: ${UNIQUONE_DB_ID}
     password: ${UNIQUONE_DB_PWD}
     driver-class-name: com.mysql.cj.jdbc.Driver
