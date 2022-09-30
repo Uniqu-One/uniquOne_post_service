@@ -1,4 +1,9 @@
 package com.sparos.uniquone.msapostservice.offer.service;
 
-public class OfferServiceImpl {
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class OfferServiceImpl implements IOfferService{
 }

@@ -1,4 +1,7 @@
 package com.sparos.uniquone.msapostservice.post.repository;
 
-public interface IPostRepository {
+import com.sparos.uniquone.msapostservice.post.domain.Post;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface IPostRepository extends JpaRepository<Post, Long> {
 }

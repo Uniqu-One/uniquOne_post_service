@@ -1,4 +1,9 @@
 package com.sparos.uniquone.msapostservice.unistar.service;
 
-public class UnistarServiceImpl {
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class UnistarServiceImpl implements IUnistarService{
 }

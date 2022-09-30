@@ -1,4 +1,7 @@
 package com.sparos.uniquone.msapostservice.post.repository;
 
-public interface IPostImgRepository {
+import com.sparos.uniquone.msapostservice.post.domain.PostImg;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface IPostImgRepository extends JpaRepository<PostImg, Long> {
 }

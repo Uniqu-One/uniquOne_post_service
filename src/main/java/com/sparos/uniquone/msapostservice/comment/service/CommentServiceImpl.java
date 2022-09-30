@@ -1,9 +1,9 @@
-package com.sparos.uniquone.msapostservice.follow.service;
+package com.sparos.uniquone.msapostservice.comment.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class FollowServiceImpl implements IFollowService{
+public class CommentServiceImpl implements ICommentService {
 }
