@@ -1,4 +1,9 @@
 package com.sparos.uniquone.msapostservice.noti.service;
 
-public class NotiServiceImpl {
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class NotiServiceImpl implements INotiService{
 }

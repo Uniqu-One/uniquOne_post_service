@@ -1,4 +1,9 @@
 package com.sparos.uniquone.msapostservice.trade.service;
 
-public class TradeServiceImpl {
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class TradeServiceImpl implements ITradeService{
 }

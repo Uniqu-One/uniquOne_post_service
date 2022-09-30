@@ -1,4 +1,4 @@
 package com.sparos.uniquone.msapostservice.comment.service;
 
-public class CommentService {
+public interface ICommentService {
 }

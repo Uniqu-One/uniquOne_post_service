@@ -1,4 +1,7 @@
 package com.sparos.uniquone.msapostservice.look.repository;
 
-public interface ILookRepository {
+import com.sparos.uniquone.msapostservice.look.domain.Look;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ILookRepository extends JpaRepository<Look, Long> {
 }
