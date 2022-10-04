@@ -3,6 +3,7 @@ package com.sparos.uniquone.msapostservice.corn.domain;
 import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
 public class Corn extends BaseTimeEntity {
 
     @Id
@@ -24,6 +26,9 @@ public class Corn extends BaseTimeEntity {
 
     @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
     private String dsc;
+
+    @Column(name = "img_url",columnDefinition = "MEDIUMTEXT")
+    private String imageUrl;
 
     private String url;
 
