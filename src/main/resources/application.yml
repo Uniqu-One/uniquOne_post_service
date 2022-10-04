@@ -20,6 +20,9 @@ spring:
     password: ${UNIQUONE_DB_PWD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  environment: ${SPRING_ENVIRONMENT}
+  file-dir: ${SPRING_ENVIRONMENT_FILE_DIR}
+
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
@@ -31,4 +34,23 @@ eureka:
 
 greeting:
   message: Welcome to the Simple E-commerce
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY_ID}       # AWS IAM AccessKey 적기
+      secretKey: ${AWS_SECRET_ACCESS_KEY}   # AWS IAM SecretKey 적기
+    s3:
+      bucket: uniquoneimg    # ex) marryting-gyunny
+      dir: /img # ex) /gyunny
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
 

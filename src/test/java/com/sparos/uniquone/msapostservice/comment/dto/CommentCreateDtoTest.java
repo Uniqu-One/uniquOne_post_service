@@ -4,9 +4,7 @@ import com.sparos.uniquone.msapostservice.comment.domain.Comment;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MatchingStrategy;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 class CommentCreateDtoTest {
 
