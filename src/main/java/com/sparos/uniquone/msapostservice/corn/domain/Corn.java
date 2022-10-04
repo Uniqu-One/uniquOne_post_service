@@ -2,6 +2,7 @@ package com.sparos.uniquone.msapostservice.corn.domain;
 
 import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -12,6 +13,9 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
+
+@Builder
+
 public class Corn extends BaseTimeEntity {
 
     @Id
