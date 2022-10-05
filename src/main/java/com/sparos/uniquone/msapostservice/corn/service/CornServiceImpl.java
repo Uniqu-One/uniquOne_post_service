@@ -3,7 +3,9 @@ package com.sparos.uniquone.msapostservice.corn.service;
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.dto.CornCreateDto;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
+
 import com.sparos.uniquone.msapostservice.util.s3.AwsS3UploaderService;
+n
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
+
 public class CornServiceImpl implements ICornService {
     private final ModelMapper modelMapper;
     private final ICornRepository iCornRepository;
@@ -29,6 +32,7 @@ public class CornServiceImpl implements ICornService {
                 .dsc(cornCreateDto.getDsc())
                 .imageUrl(awsS3UploaderService.upload(multipartFile, "uniquoneimg", "img"))
                 .build();
+
 
         iCornRepository.save(corn);
     }

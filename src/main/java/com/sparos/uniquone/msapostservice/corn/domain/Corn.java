@@ -13,7 +13,9 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
+
 @Builder
+
 public class Corn extends BaseTimeEntity {
 
     @Id
