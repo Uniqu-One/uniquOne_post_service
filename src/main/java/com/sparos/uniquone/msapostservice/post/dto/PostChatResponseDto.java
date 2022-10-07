@@ -12,8 +12,11 @@ import lombok.NoArgsConstructor;
 public class PostChatResponseDto {
 
     private Long postId;
+    private String postDsc;
+    private Long postPrice;
+    private String postType; // enum
+    private Boolean isOffer;
     private String postImg;
     private String cornImg;
-
 
 }

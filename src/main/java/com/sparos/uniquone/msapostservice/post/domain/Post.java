@@ -1,6 +1,5 @@
 package com.sparos.uniquone.msapostservice.post.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
 import lombok.AllArgsConstructor;
