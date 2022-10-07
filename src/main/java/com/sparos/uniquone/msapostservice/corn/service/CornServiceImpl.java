@@ -3,11 +3,10 @@ package com.sparos.uniquone.msapostservice.corn.service;
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.dto.CornCreateDto;
 import com.sparos.uniquone.msapostservice.corn.dto.CornInfoDto;
-import com.sparos.uniquone.msapostservice.corn.dto.CornUserInfoDto;
+import com.sparos.uniquone.msapostservice.corn.dto.CornModifyDto;
 import com.sparos.uniquone.msapostservice.corn.dto.ReviewStarPostEAInfoOutputDto;
 import com.sparos.uniquone.msapostservice.corn.repository.CornRepositoryCustom;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
-import com.sparos.uniquone.msapostservice.follow.dto.IsFollowDto;
 import com.sparos.uniquone.msapostservice.follow.repository.IFollowRepository;
 import com.sparos.uniquone.msapostservice.util.s3.AwsS3UploaderService;
 import lombok.RequiredArgsConstructor;
@@ -29,22 +28,25 @@ public class CornServiceImpl implements ICornService {
     private final IFollowRepository iFollowRepository;
 
     @Override
-    public void AddCorn(CornCreateDto cornCreateDto, MultipartFile multipartFile) throws IOException {
+    public Object AddCorn(CornCreateDto cornCreateDto, MultipartFile multipartFile) throws IOException {
 //        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 //        Corn corn = modelMapper.map(cornCreateDto, Corn.class);
 
-        Corn corn = Corn.builder().userId(cornCreateDto.getUserId())
-                .title(cornCreateDto.getTitle())
-                .dsc(cornCreateDto.getDsc())
-                .imgUrl(awsS3UploaderService.upload(multipartFile, "uniquoneimg", "img"))
-                .build();
-
-
-        iCornRepository.save(corn);
+        if (!iCornRepository.existsByUserId(cornCreateDto.getUserId())) {
+            Corn corn = Corn.builder().userId(cornCreateDto.getUserId())
+                    .title(cornCreateDto.getTitle())
+                    .dsc(cornCreateDto.getDsc())
+                    .imgUrl(awsS3UploaderService.upload(multipartFile, "uniquoneimg", "img"))
+                    .build();
+            iCornRepository.save(corn);
+            return "개설되었습니다";
+        }else {
+            return "이미 생성된 유저";
+        }
     }
 
     @Override
-    public CornInfoDto GetCornMyInfo(Long userId) {
+    public CornInfoDto GetCornInfo(Long userId) {
         Optional<Corn> corn = iCornRepository.findByUserId(userId);
         ReviewStarPostEAInfoOutputDto reviewStarPostEAInfoOutputDto = cornRepositoryCustom.findByCornIdPostReview(corn.get().getId());
         return CornInfoDto.builder()
@@ -59,10 +61,11 @@ public class CornServiceImpl implements ICornService {
                 .dsc(corn.get().getDsc()).build();
     }
 
-    public CornUserInfoDto GetCornUserInfo(Long userId, Long cornId) {
+    @Override
+    public CornInfoDto GetCornInfo(Long userId, Long cornId) {
         Optional<Corn> corn = iCornRepository.findByUserId(userId);
         ReviewStarPostEAInfoOutputDto reviewStarPostEAInfoOutputDto = cornRepositoryCustom.findByCornIdPostReview(corn.get().getId());
-        CornInfoDto cornInfoDto = CornInfoDto.builder()
+        return CornInfoDto.builder()
                 .imgUrl(corn.get().getImgUrl())
                 .title(corn.get().getTitle())
                 .reviewStar(reviewStarPostEAInfoOutputDto.getReviewStar())
@@ -71,9 +74,20 @@ public class CornServiceImpl implements ICornService {
                 .followerEA(iFollowRepository.countByCorn(corn.get()).get())
                 .followingEA(iFollowRepository.countByUserId(userId).get())
                 .url(corn.get().getUrl())
-                .dsc(corn.get().getDsc()).build();
-        IsFollowDto isFollowDto = IsFollowDto.builder().isFollow(iFollowRepository.existsByUserIdAndCornId(userId, cornId)).build();
-        return CornUserInfoDto.builder().cornInfoDto(cornInfoDto).isFollowDto(isFollowDto).build();
+                .dsc(corn.get().getDsc())
+                .isFollow(iFollowRepository.existsByUserIdAndCornId(userId, cornId)).build();
     }
+
+    @Override
+    public CornModifyDto GetCornModifyInfo(Long userId) {
+        Optional<Corn> corn = iCornRepository.findByUserId(userId);
+        return CornModifyDto.builder()
+                .imgUrl(corn.get().getImgUrl())
+                .title(corn.get().getTitle())
+                .url(corn.get().getUrl())
+                .dsc(corn.get().getDsc())
+                .build();
+    }
+
 
 }

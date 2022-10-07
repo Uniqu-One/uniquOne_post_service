@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ICornRepository extends JpaRepository<Corn, Long> {
+    Optional<Corn> findByUserId(Long userId);
 
-    Optional<Corn> findByUserId(Long Userid);
+    Boolean existsByUserId(Long userId);
 
+    Boolean existsByTitle(String title);
 }
