@@ -1,5 +1,6 @@
 package com.sparos.uniquone.msapostservice.report.domain;
 
+import com.sparos.uniquone.msapostservice.post.domain.Post;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,9 +19,9 @@ public class Report {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
-
-    @Column(name = "post_id", nullable = false)
-    private Long postId;
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     private String type;

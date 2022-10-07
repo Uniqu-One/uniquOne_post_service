@@ -1,5 +1,6 @@
 package com.sparos.uniquone.msapostservice.trade.domain;
 
+import com.sparos.uniquone.msapostservice.post.domain.Post;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,9 +20,9 @@ public class Trade {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
-
-    @Column(name = "post_id", nullable = false)
-    private Long postId;
+    @OneToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     private Integer toSellerScore;
 

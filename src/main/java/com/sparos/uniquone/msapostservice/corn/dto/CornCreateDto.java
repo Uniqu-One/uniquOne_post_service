@@ -17,6 +17,6 @@ public class CornCreateDto {
     @NotNull
     private String dsc;
 
-    private String imageUrl;
+    private String imgUrl;
 
 }

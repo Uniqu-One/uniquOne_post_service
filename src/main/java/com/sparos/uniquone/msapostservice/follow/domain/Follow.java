@@ -1,5 +1,6 @@
 package com.sparos.uniquone.msapostservice.follow.domain;
 
+import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,8 +20,9 @@ public class Follow {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "corn_id", nullable = false)
-    private Long cornId;
+    @ManyToOne
+    @JoinColumn(name = "corn_id", nullable = false)
+    private Corn corn;
 
     @CreatedDate
     @Column(name = "reg_date", updatable = false)

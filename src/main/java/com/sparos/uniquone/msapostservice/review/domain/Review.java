@@ -1,4 +1,5 @@
 package com.sparos.uniquone.msapostservice.review.domain;
+import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -17,8 +18,9 @@ public class Review extends BaseTimeEntity {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "post_id", nullable = false)
-    private Long postId;
+    @OneToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     @Column(nullable = false, columnDefinition = "DOUBLE")
     private Double star;
