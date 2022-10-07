@@ -1,4 +1,5 @@
 package com.sparos.uniquone.msapostservice.unistar.domain;
+import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,9 @@ public class Unistart extends BaseTimeEntity {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
-
-    @Column(name = "post_id", nullable = false)
-    private Long postId;
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(5) DEFAULT '원스타'")
     private String level;

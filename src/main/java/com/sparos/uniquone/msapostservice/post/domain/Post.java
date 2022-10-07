@@ -1,5 +1,7 @@
 package com.sparos.uniquone.msapostservice.post.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -16,11 +18,12 @@ public class Post extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "corn_id", nullable = false)
-    private Long cornId;
-
-    @Column(name = "post_category_id")
-    private Long postCategoryId;
+    @ManyToOne
+    @JoinColumn(name = "corn_id", nullable = false)
+    private Corn corn;
+    @ManyToOne
+    @JoinColumn(name = "post_category_id")
+    private PostCategory postCategory;
 
     @Column(nullable = false,columnDefinition = "MEDIUMTEXT")
     private String dsc;

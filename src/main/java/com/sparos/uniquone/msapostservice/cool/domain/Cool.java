@@ -1,5 +1,6 @@
 package com.sparos.uniquone.msapostservice.cool.domain;
 
+import com.sparos.uniquone.msapostservice.post.domain.Post;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,8 +21,9 @@ public class Cool {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "post_id", nullable = false)
-    private Long postId;
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     @CreatedDate
     @Column(name = "reg_date", updatable = false)

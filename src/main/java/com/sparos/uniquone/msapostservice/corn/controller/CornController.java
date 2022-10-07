@@ -1,7 +1,10 @@
 package com.sparos.uniquone.msapostservice.corn.controller;
 
 import com.sparos.uniquone.msapostservice.corn.dto.CornCreateDto;
+import com.sparos.uniquone.msapostservice.corn.repository.CornRepositoryCustom;
 import com.sparos.uniquone.msapostservice.corn.service.ICornService;
+import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
+import com.sparos.uniquone.msapostservice.util.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
@@ -16,12 +19,20 @@ import java.io.IOException;
 @RequestMapping("/corns")
 public class CornController {
     private final ICornService iCornService;
-    @PostMapping("")
 
-    public ResponseEntity<CornCreateDto> cornInput(@RequestPart CornCreateDto cornCreateDto,@RequestPart(value = "imgfile", required = false) MultipartFile multipartFile) throws IOException {
+    private final CornRepositoryCustom cornRepositoryCustom;
+    @PostMapping("")
+    public ResponseEntity<SuccessResponse> cornInput(@RequestPart CornCreateDto cornCreateDto, @RequestPart(value = "imgfile", required = false) MultipartFile multipartFile) throws IOException {
+
         iCornService.AddCorn(cornCreateDto, multipartFile);
 
-        return ResponseEntity.ok(cornCreateDto);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE));
+
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<SuccessResponse> myCornGetInfo(@PathVariable("userId")Long userId){
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iCornService.GetCornMyInfo(userId)));
     }
 
 

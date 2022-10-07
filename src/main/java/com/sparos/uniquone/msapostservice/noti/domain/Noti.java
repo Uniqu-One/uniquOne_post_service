@@ -1,5 +1,8 @@
 package com.sparos.uniquone.msapostservice.noti.domain;
 
+import com.sparos.uniquone.msapostservice.comment.domain.Comment;
+import com.sparos.uniquone.msapostservice.cool.domain.Cool;
+import com.sparos.uniquone.msapostservice.follow.domain.Follow;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -21,20 +24,20 @@ public class Noti {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "cool_id")
-    private Long coolId;
-
-    @Column(name = "comment_id")
-    private Long commentId;
-
-    @Column(name = "follow_id")
-    private Long followId;
-
+    @OneToOne
+    @JoinColumn(name = "cool_id")
+    private Cool cool;
+    @OneToOne
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
+    @OneToOne
+    @JoinColumn(name = "follow_id")
+    private Follow follow;
     @Column(name = "qna_id")
     private Long qnaId;
-
-    @Column(name = "noti_type_id")
-    private Long notiTypeId;
+    @ManyToOne
+    @JoinColumn(name = "noti_type_id")
+    private NotiType notiType;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(100)")
     private String dsc;
