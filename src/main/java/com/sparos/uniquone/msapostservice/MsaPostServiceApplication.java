@@ -8,6 +8,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.persistence.EntityManager;
 
