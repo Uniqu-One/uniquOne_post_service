@@ -9,6 +9,4 @@ public interface ICornRepository extends JpaRepository<Corn, Long> {
 
     Optional<Corn> findByUserId(Long Userid);
 
-    Corn findByUserId(Long userId);
-
 }
