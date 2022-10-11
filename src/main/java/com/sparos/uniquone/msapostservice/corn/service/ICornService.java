@@ -10,7 +10,12 @@ import java.io.IOException;
 public interface ICornService {
 
     Object AddCorn(CornCreateDto cornCreateDto, MultipartFile multipartFile) throws IOException;
+
     CornInfoDto GetCornInfo(Long userId);
+
     CornInfoDto GetCornInfo(Long userId, Long cornId);
+
     CornModifyDto GetCornModifyInfo(Long userId);
+
+    Object PatchCornModifyInfo(CornModifyDto cornModifyDto, MultipartFile multipartFile, Long userId) throws IOException;
 }

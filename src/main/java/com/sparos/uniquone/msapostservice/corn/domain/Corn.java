@@ -31,4 +31,19 @@ public class Corn extends BaseTimeEntity {
 
     private String url;
 
+    public void modTitle(String title){
+        this.title=title;
+    }
+
+    public void modDsc(String dsc){
+        this.dsc=dsc;
+    }
+    public void modImgUrl(String imgUrl){
+        this.imgUrl=imgUrl;
+    }
+
+    public void modUrl(String url){
+        this.url=url;
+    }
+
 }

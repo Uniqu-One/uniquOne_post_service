@@ -40,7 +40,7 @@ public class CornServiceImpl implements ICornService {
                     .build();
             iCornRepository.save(corn);
             return "개설되었습니다";
-        }else {
+        } else {
             return "이미 생성된 유저";
         }
     }
@@ -87,6 +87,17 @@ public class CornServiceImpl implements ICornService {
                 .url(corn.get().getUrl())
                 .dsc(corn.get().getDsc())
                 .build();
+    }
+
+    @Override
+    public Object PatchCornModifyInfo(CornModifyDto cornModifyDto, MultipartFile multipartFile, Long userId) throws IOException {
+        Optional<Corn> corn = iCornRepository.findByUserId(userId);
+        corn.get().modImgUrl(awsS3UploaderService.upload(multipartFile, "uniquoneimg", "img"));
+        corn.get().modTitle(cornModifyDto.getTitle());
+        corn.get().modDsc(cornModifyDto.getDsc());
+        corn.get().modUrl(cornModifyDto.getUrl());
+        Corn saveCorn = iCornRepository.save(corn.get());
+        return "수정이 완료되었습니다.";
     }
 
 
