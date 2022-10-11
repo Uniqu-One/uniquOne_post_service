@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -103,6 +105,25 @@ public class AwsS3UploaderService {
         String uuid = UUID.randomUUID().toString();
         return uuid + "." + ext;
     }
+
+//    // 파일 유효성 검사
+//    private String getFileExtension(String fileName) {
+//        if (fileName.length() == 0) {
+//            throw new PrivateException(Code.WRONG_INPUT_IMAGE);
+//        }
+//        ArrayList<String> fileValidate = new ArrayList<>();
+//        fileValidate.add(".jpg");
+//        fileValidate.add(".jpeg");
+//        fileValidate.add(".png");
+//        fileValidate.add(".JPG");
+//        fileValidate.add(".JPEG");
+//        fileValidate.add(".PNG");
+//        String idxFileName = fileName.substring(fileName.lastIndexOf("."));
+//        if (!fileValidate.contains(idxFileName)) {
+//            throw new PrivateException(Code.WRONG_IMAGE_FORMAT);
+//        }
+//        return fileName.substring(fileName.lastIndexOf("."));
+//    }
 
     /**
      * @description 사용자가 업로드한 파일에서 확장자를 추출한다.
