@@ -1,6 +1,7 @@
 package com.sparos.uniquone.msapostservice.corn.controller;
 
 import com.sparos.uniquone.msapostservice.corn.dto.CornCreateDto;
+import com.sparos.uniquone.msapostservice.corn.dto.CornModifyDto;
 import com.sparos.uniquone.msapostservice.corn.repository.CornRepositoryCustom;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.corn.service.ICornService;
@@ -9,7 +10,6 @@ import com.sparos.uniquone.msapostservice.util.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +31,7 @@ public class CornController {
     @PostMapping("/existstitle")
     public ResponseEntity<SuccessResponse> existsTitle(@RequestBody Map<String, String> title) {
         Map<String, Boolean> exTitle = new HashMap<>();
-        exTitle.put("ExistsTitle",!iCornRepository.existsByTitle(title.get("title")));
+        exTitle.put("ExistsTitle", !iCornRepository.existsByTitle(title.get("title")));
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, exTitle));
     }
 
@@ -47,8 +47,13 @@ public class CornController {
     }
 
     @GetMapping("/cornInfomodify/{userId}")
-    public ResponseEntity<SuccessResponse> getCornInfoModify(@PathVariable("userId") Long userId){
+    public ResponseEntity<SuccessResponse> getCornInfoModify(@PathVariable("userId") Long userId) {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.GetCornModifyInfo(userId)));
+    }
+
+    @PatchMapping("/{userId}")
+    public ResponseEntity<SuccessResponse> PatchCornInfoModify(@RequestPart CornModifyDto cornModifyDto, @RequestPart(value = "imgfile", required = false) MultipartFile multipartFile, @PathVariable("userId") Long userId) throws IOException {
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.PatchCornModifyInfo(cornModifyDto, multipartFile, userId)));
     }
 
 }
