@@ -5,10 +5,10 @@ import lombok.Getter;
 @Getter
 public class PostInputDto {
     private String dsc;
-    private String postTag;
+    private String postTagLine;
     private String postType;
     private String postCategoryName;
     private String conditions;
-    private String look;
+    private String lookLine;
     private String color;
 }
