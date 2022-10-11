@@ -1,5 +1,6 @@
 package com.sparos.uniquone.msapostservice.post.domain;
 
+import com.sparos.uniquone.msapostservice.look.domain.Look;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,21 +12,20 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "post_img")
+@Table(name = "post_Look")
 @Builder
-public class PostImg {
+public class PostAndLook {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Id;
 
     @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "post_id")
     private Post post;
 
-    @Column(nullable = false)
-    private Integer idx;
-
-    @Column(nullable = true, columnDefinition = "VARCHAR(255)")
-    private String url;
+    @ManyToOne
+    @JoinColumn(name = "Look_id")
+    private Look look;
 
 }
