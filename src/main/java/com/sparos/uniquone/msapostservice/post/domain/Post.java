@@ -44,4 +44,24 @@ public class Post extends BaseTimeEntity {
 
     @Column(nullable = false, columnDefinition = "tinyint(1) default 0")
     private Boolean isOffer;
+
+    public void modDsc(String dsc){
+        this.dsc = dsc;
+    }
+
+    public void modPostCategoryName(PostCategory postCategory){
+        this.postCategory = postCategory;
+    }
+
+    public void modPostType(String postType){
+        this.postType = postType;
+    }
+
+    public void modConditions(String conditions){
+        this.conditions = conditions;
+    }
+
+    public void modColor(String color){
+        this.color = color;
+    }
 }
