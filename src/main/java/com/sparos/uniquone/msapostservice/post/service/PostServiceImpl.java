@@ -44,7 +44,7 @@ public class PostServiceImpl implements IPostService {
     @Override
     public PostChatResponseDto chatPostInfo(Long postId, Long otherUserId) {
         Post post = iPostRepository.findById(postId).get();
-        PostImg postImg = iPostImgRepository.findByPostId(post.getId());
+        List<PostImg> postImgList = iPostImgRepository.findByPostId(post.getId());
         Corn corn = iCornRepository.findByUserId(otherUserId).get();
 
         return PostChatResponseDto.builder()
@@ -53,7 +53,7 @@ public class PostServiceImpl implements IPostService {
                 .postPrice(post.getPrice())
                 .postType(post.getPostType())
                 .isOffer(post.getIsOffer())
-                .postImg(postImg.getUrl())
+                .postImg(postImgList.get(1).getUrl())
                 .cornImg(corn.getImgUrl())
                 .build();
     }
@@ -72,11 +72,11 @@ public class PostServiceImpl implements IPostService {
 
         String[] postTagList = postInputDto.getPostTagLine().split("#");
         for (String postDsc : postTagList) {
-            if(!postDsc.isEmpty()&&!postDsc.equals(" ")&&!post.equals(null))
-            iPostTagRepository.save(PostTag.builder()
-                    .post(post)
-                    .dsc(postDsc)
-                    .build());
+            if (!postDsc.isEmpty() && !postDsc.equals(" ") && !post.equals(null))
+                iPostTagRepository.save(PostTag.builder()
+                        .post(post)
+                        .dsc(postDsc)
+                        .build());
         }
 
         String[] lookList = postInputDto.getLookLine().split(",");
@@ -89,16 +89,76 @@ public class PostServiceImpl implements IPostService {
 
         Integer idx = 1;
         for (MultipartFile multipartFile : multipartFileList) {
-            if(!multipartFile.isEmpty())
-            iPostImgRepository.save(PostImg.builder()
-                    .post(post)
-                    .url(awsS3UploaderService.upload(multipartFile, "uniquoneimg", "img"))
-                    .idx(idx)
-                    .build());
+            if (!multipartFile.isEmpty())
+                iPostImgRepository.save(PostImg.builder()
+                        .post(post)
+                        .url(awsS3UploaderService.upload(multipartFile, "uniquoneimg", "img"))
+                        .idx(idx)
+                        .build());
             idx++;
         }
 
         return "등록 완료되었습니다.";
+    }
+
+    @Override
+    public Object modifyPost(PostInputDto postInputDto, Long userId, Long postId) {
+        Optional<Post> post = iPostRepository.findById(postId);
+        Optional<Corn> corn = iCornRepository.findByUserId(userId);
+        if (post.isPresent() && post.get().getCorn().equals(corn.get())) {
+
+            post.get().modDsc(postInputDto.getDsc());
+            post.get().modPostType(postInputDto.getPostType());
+            post.get().modPostCategoryName(iPostCategoryRepository.findByName(postInputDto.getPostCategoryName()).get());
+            post.get().modConditions(postInputDto.getConditions());
+            post.get().modColor(postInputDto.getColor());
+            iPostRepository.save(post.get());
+
+            List<PostTag> postTagEntityList = iPostTagRepository.findByPostId(postId);
+
+            iPostTagRepository.deleteAllInBatch(postTagEntityList);
+
+            String[] postTagList = postInputDto.getPostTagLine().split("#");
+            for (String postDsc : postTagList) {
+                if (!postDsc.isEmpty() && !postDsc.equals(" ") && !post.equals(null))
+                    iPostTagRepository.save(PostTag.builder()
+                            .post(post.get())
+                            .dsc(postDsc)
+                            .build());
+            }
+
+            List<PostAndLook> postAndLookEntityList = iPostAndLookRepository.findByPostId(postId);
+
+            iPostAndLookRepository.deleteAllInBatch(postAndLookEntityList);
+
+            String[] lookList = postInputDto.getLookLine().split(",");
+            for (String lookName : lookList) {
+                iPostAndLookRepository.save(PostAndLook.builder()
+                        .post(post.get())
+                        .look(iLookRepository.findByName(lookName).get())
+                        .build());
+            }
+
+            return "수정이 완료되었습니다.";
+
+        } else {
+
+            return "존재하지 않는 게시물이거나 수정 권한이 없습니다";
+        }
+    }
+
+    @Override
+    public Object delPost(Long postId, Long userId) {
+
+        iPostAndLookRepository.deleteAllInBatch(iPostAndLookRepository.findByPostId(postId));
+
+        iPostImgRepository.deleteAllInBatch(iPostImgRepository.findByPostId(postId));
+
+        iPostTagRepository.deleteAllInBatch(iPostTagRepository.findByPostId(postId));
+
+        iPostRepository.deleteById(postId);
+
+        return "삭제완료 하였습니다.";
     }
 
 

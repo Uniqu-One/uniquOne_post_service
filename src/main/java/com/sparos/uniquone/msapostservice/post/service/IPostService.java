@@ -1,5 +1,6 @@
 package com.sparos.uniquone.msapostservice.post.service;
 
+import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.dto.PostChatResponseDto;
 import com.sparos.uniquone.msapostservice.post.dto.PostInputDto;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,5 +14,9 @@ public interface IPostService {
     PostChatResponseDto chatPostInfo(Long postId, Long otherUserId);
 
     Object addPost(PostInputDto postInputDto, List<MultipartFile> multipartFileList, Long userId) throws IOException;
+
+    Object modifyPost(PostInputDto postInputDto, Long userId, Long postId);
+
+    Object delPost(Long postId,Long userId);
 
 }
