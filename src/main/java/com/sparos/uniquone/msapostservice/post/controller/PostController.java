@@ -34,6 +34,14 @@ public class PostController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iPostService.addPost(postInputDto,multipartFileList,userId)));
     }
 
+    @PatchMapping("/mod/{postId}/{userId}")
+    public ResponseEntity<SuccessResponse> modPost(@PathVariable("postId") Long postId, @PathVariable("userId") Long userId,@RequestBody PostInputDto postInputDto){
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iPostService.modifyPost(postInputDto,userId,postId)));
+    }
 
+    @DeleteMapping("/del/{postId}/{userId}")
+    public ResponseEntity<SuccessResponse> delPost(@PathVariable("postId") Long postId, @PathVariable("userId") Long userId){
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iPostService.delPost(postId,userId)));
+    }
 
 }
