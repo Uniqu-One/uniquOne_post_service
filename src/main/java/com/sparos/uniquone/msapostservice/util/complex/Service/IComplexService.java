@@ -1,8 +1,8 @@
-package com.sparos.uniquone.msapostservice.util.view.Service;
+package com.sparos.uniquone.msapostservice.util.complex.Service;
 
 import com.sparos.uniquone.msapostservice.post.dto.PostChatResponseDto;
 
-public interface IViewService {
+public interface IComplexService {
 
     PostChatResponseDto chatPostInfo(Long postId, Long otherUserId);
 

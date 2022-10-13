@@ -11,12 +11,12 @@ import java.util.List;
 
 public interface IPostService {
 
-
-
     Object addPost(PostInputDto postInputDto, List<MultipartFile> multipartFileList, Long userId) throws IOException;
 
     Object modifyPost(PostInputDto postInputDto, Long userId, Long postId);
 
     Object delPost(Long postId,Long userId);
+
+    Object getOtherPostAllList(Long userId,Long cornId);
 
 }

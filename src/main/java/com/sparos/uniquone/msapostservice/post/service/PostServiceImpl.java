@@ -8,8 +8,10 @@ import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostAndLook;
 import com.sparos.uniquone.msapostservice.post.domain.PostImg;
 import com.sparos.uniquone.msapostservice.post.domain.PostTag;
+import com.sparos.uniquone.msapostservice.post.dto.OtherProfilePostAllList;
 import com.sparos.uniquone.msapostservice.post.dto.PostChatResponseDto;
 import com.sparos.uniquone.msapostservice.post.dto.PostInputDto;
+import com.sparos.uniquone.msapostservice.post.dto.PostListInfoDto;
 import com.sparos.uniquone.msapostservice.post.repository.*;
 import com.sparos.uniquone.msapostservice.util.s3.AwsS3UploaderService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +29,7 @@ import java.util.Optional;
 @Log4j2
 public class PostServiceImpl implements IPostService {
 
-    private  final ICornRepository iCornRepository;
+    private final ICornRepository iCornRepository;
     private final IPostRepository iPostRepository;
     private final IPostImgRepository iPostImgRepository;
 
@@ -142,4 +145,21 @@ public class PostServiceImpl implements IPostService {
 
         return "삭제완료 하였습니다.";
     }
+
+    @Override
+    public Object getOtherPostAllList(Long cornId, Long userId) {
+        List<Post> postList = iPostRepository.findByCornIdOrderByRegDateDesc(cornId);
+        log.info(postList);
+        List<PostListInfoDto> postListInfoDtoList = new ArrayList<>();
+        for (Post post : postList) {
+            PostImg postImg = iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1);
+            postListInfoDtoList.add(PostListInfoDto.builder().postId(post.getId())
+                    .postImg(postImg.getUrl())
+                    .postType(post.getPostType())
+                    .reg_date(post.getRegDate())
+                    .build());
+        }
+        return postListInfoDtoList;
+    }
+
 }
