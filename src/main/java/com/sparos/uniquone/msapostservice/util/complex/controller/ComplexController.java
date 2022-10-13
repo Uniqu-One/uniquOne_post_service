@@ -1,17 +1,16 @@
-package com.sparos.uniquone.msapostservice.util.view.controller;
+package com.sparos.uniquone.msapostservice.util.complex.controller;
 
 import com.sparos.uniquone.msapostservice.post.dto.PostChatResponseDto;
-import com.sparos.uniquone.msapostservice.util.view.Service.IViewService;
+import com.sparos.uniquone.msapostservice.util.complex.Service.IComplexService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping("/posts")
 @RequiredArgsConstructor
 @RestController
-public class ViewController {
+public class ComplexController {
 
-    private final IViewService iViewService;
+    private final IComplexService iViewService;
 
     // 채팅 - 포스트 정보 요청 API
     @GetMapping("/chat/postInfo/{postId}/{otherUserId}")
@@ -24,5 +23,7 @@ public class ViewController {
     public Boolean chatExistPost(@PathVariable("postId") Long postId, @PathVariable("userId") Long userId) {
         return iViewService.chatExistPost(postId, userId);
     }
+
+
 
 }

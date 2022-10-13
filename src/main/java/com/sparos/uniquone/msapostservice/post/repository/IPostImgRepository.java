@@ -9,4 +9,6 @@ public interface IPostImgRepository extends JpaRepository<PostImg, Long> {
 
     List<PostImg> findByPostId(Long postId);
 
+    PostImg findOneByPostIdAndIdx(Long postId, Integer idx);
+
 }

@@ -1,4 +1,4 @@
-package com.sparos.uniquone.msapostservice.util.view.Service;
+package com.sparos.uniquone.msapostservice.util.complex.Service;
 
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
@@ -8,6 +8,7 @@ import com.sparos.uniquone.msapostservice.post.dto.PostChatResponseDto;
 import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +16,8 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class ViewServiceImpl implements IViewService{
+@Log4j2
+public class ComplexServiceImpl implements IComplexService {
 
     private final IPostRepository iPostRepository;
     private final IPostImgRepository iPostImgRepository;
@@ -27,8 +29,9 @@ public class ViewServiceImpl implements IViewService{
     public PostChatResponseDto chatPostInfo(Long postId, Long otherUserId) {
         // todo 존재 여부 확인
         Post post = iPostRepository.findById(postId).get();
-        List<PostImg> postImgList = iPostImgRepository.findByPostId(post.getId());
+        PostImg postImg = iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1);
         Corn corn = iCornRepository.findByUserId(otherUserId).get();
+
 
         return PostChatResponseDto.builder()
                 .postId(post.getId())
@@ -36,7 +39,7 @@ public class ViewServiceImpl implements IViewService{
                 .postPrice(post.getPrice())
                 .postType(post.getPostType())
                 .isOffer(post.getIsOffer())
-                .postImg(postImgList.get(1).getUrl())
+                .postImg(postImg.getUrl())
                 .cornImg(corn.getImgUrl())
                 .build();
     }
