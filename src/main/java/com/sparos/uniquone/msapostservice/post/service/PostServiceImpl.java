@@ -16,24 +16,5 @@ public class PostServiceImpl implements IPostService{
 
     private final IPostRepository iPostRepository;
     private final IPostImgRepository iPostImgRepository;
-    private final ICornRepository iCornRepository;
 
-    // todo 포스트 이미지 리스트 처리
-    // 채팅 - 게시물 정보 요청
-    @Override
-    public PostChatResponseDto chatPostInfo(Long postId, Long otherUserId) {
-        Post post = iPostRepository.findById(postId).get();
-        PostImg postImg = iPostImgRepository.findByPostId(post.getId());
-        Corn corn = iCornRepository.findByUserId(otherUserId).get();
-
-        return PostChatResponseDto.builder()
-                .postId(post.getId())
-                .postDsc(post.getDsc())
-                .postPrice(post.getPrice())
-                .postType(post.getPostType())
-                .isOffer(post.getIsOffer())
-                .postImg(postImg.getUrl())
-                .cornImg(corn.getImgUrl())
-                .build();
-    }
 }

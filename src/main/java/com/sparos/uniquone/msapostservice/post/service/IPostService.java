@@ -5,6 +5,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 public interface IPostService {
 
-    PostChatResponseDto chatPostInfo(Long postId, Long otherUserId);
+
 
 }

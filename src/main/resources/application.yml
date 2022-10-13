@@ -1,5 +1,5 @@
 server:
-  port: 8090
+  port: 0
 
 spring:
   application:
@@ -14,10 +14,16 @@ spring:
         dialect: org.hibernate.dialect.MySQL5Dialect
         format_sql: true
 
+#  datasource:
+#    url: ${UNIQUONE_DB_URL}
+#    username: ${UNIQUONE_DB_ID}
+#    password: ${UNIQUONE_DB_PWD}
+#    driver-class-name: com.mysql.cj.jdbc.Driver
   datasource:
-    url: ${UNIQUONE_DB_URL}
-    username: ${UNIQUONE_DB_ID}
-    password: ${UNIQUONE_DB_PWD}
+    #    url: jdbc:mysql://localhost:3306/cssgNew?useSSL=false&allowMultiQueries=true&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/uniquone_db?useSSL=false&allowMultiQueries=true&serverTimezone=UTC
+    username: root
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   environment: ${SPRING_ENVIRONMENT}
