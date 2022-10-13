@@ -30,10 +30,14 @@ public class ComplexServiceImpl implements IComplexService {
         // todo 존재 여부 확인
         Post post = iPostRepository.findById(postId).get();
         PostImg postImg = iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1);
+        // todo 콘이 없을 때 기본이미지 리턴
         Corn corn = iCornRepository.findByUserId(otherUserId).get();
 
+        System.err.println("post => " + post.getId());
+        System.err.println("postImgList => " + postImg.getId());
+        System.err.println("corn => " + corn.getId());
 
-        return PostChatResponseDto.builder()
+        PostChatResponseDto chatResponseDto = PostChatResponseDto.builder()
                 .postId(post.getId())
                 .postDsc(post.getDsc())
                 .postPrice(post.getPrice())
@@ -42,10 +46,10 @@ public class ComplexServiceImpl implements IComplexService {
                 .postImg(postImg.getUrl())
                 .cornImg(corn.getImgUrl())
                 .build();
+        System.err.println("chatResponseDto => " + chatResponseDto.toString());
+        return chatResponseDto;
     }
 
-
-    // todo 포스트 이미지 리스트 처리
     // 채팅 - 콘에 해당하는 포스트 존재 확인 API
     @Override
     public Boolean chatExistPost(Long postId, Long userId) {

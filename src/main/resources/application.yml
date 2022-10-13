@@ -15,6 +15,7 @@ spring:
         format_sql: true
 
   datasource:
+
     url: ${UNIQUONE_DB_URL}
     username: ${UNIQUONE_DB_ID}
     password: ${UNIQUONE_DB_PWD}
