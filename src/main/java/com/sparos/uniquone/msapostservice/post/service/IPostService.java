@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface IPostService {
 
-    PostChatResponseDto chatPostInfo(Long postId, Long otherUserId);
+
 
     Object addPost(PostInputDto postInputDto, List<MultipartFile> multipartFileList, Long userId) throws IOException;
 

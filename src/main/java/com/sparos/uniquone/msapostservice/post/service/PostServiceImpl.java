@@ -2,6 +2,7 @@ package com.sparos.uniquone.msapostservice.post.service;
 
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
+import com.sparos.uniquone.msapostservice.corn.service.ICornService;
 import com.sparos.uniquone.msapostservice.look.repository.ILookRepository;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostAndLook;
@@ -25,9 +26,9 @@ import java.util.Optional;
 @Log4j2
 public class PostServiceImpl implements IPostService {
 
+    private  final ICornRepository iCornRepository;
     private final IPostRepository iPostRepository;
     private final IPostImgRepository iPostImgRepository;
-    private final ICornRepository iCornRepository;
 
     private final IPostTagRepository iPostTagRepository;
 
@@ -38,25 +39,6 @@ public class PostServiceImpl implements IPostService {
     private final ILookRepository iLookRepository;
 
     private final AwsS3UploaderService awsS3UploaderService;
-
-    // TODO 포스트 이미지 리스트 처리
-    // 채팅 - 게시물 정보 요청
-    @Override
-    public PostChatResponseDto chatPostInfo(Long postId, Long otherUserId) {
-        Post post = iPostRepository.findById(postId).get();
-        List<PostImg> postImgList = iPostImgRepository.findByPostId(post.getId());
-        Corn corn = iCornRepository.findByUserId(otherUserId).get();
-
-        return PostChatResponseDto.builder()
-                .postId(post.getId())
-                .postDsc(post.getDsc())
-                .postPrice(post.getPrice())
-                .postType(post.getPostType())
-                .isOffer(post.getIsOffer())
-                .postImg(postImgList.get(1).getUrl())
-                .cornImg(corn.getImgUrl())
-                .build();
-    }
 
     @Override
     public Object addPost(PostInputDto postInputDto, List<MultipartFile> multipartFileList, Long userId) throws IOException {
@@ -160,6 +142,4 @@ public class PostServiceImpl implements IPostService {
 
         return "삭제완료 하였습니다.";
     }
-
-
 }
