@@ -1,7 +1,6 @@
 package com.sparos.uniquone.msapostservice.corn.domain;
 
 import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
-
 import lombok.*;
 
 import javax.persistence.*;
@@ -31,5 +30,20 @@ public class Corn extends BaseTimeEntity {
     private String imgUrl;
 
     private String url;
+
+    public void modTitle(String title){
+        this.title=title;
+    }
+
+    public void modDsc(String dsc){
+        this.dsc=dsc;
+    }
+    public void modImgUrl(String imgUrl){
+        this.imgUrl=imgUrl;
+    }
+
+    public void modUrl(String url){
+        this.url=url;
+    }
 
 }
