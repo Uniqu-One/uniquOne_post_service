@@ -21,11 +21,11 @@ public class Post extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "corn_id", nullable = false)
     private Corn corn;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_category_id")
     private PostCategory postCategory;
 
@@ -33,7 +33,8 @@ public class Post extends BaseTimeEntity {
     private String dsc;
 
     @Column(name = "post_type", nullable = false, columnDefinition = "VARCHAR(10)")
-    private String postType;
+    @Enumerated(EnumType.STRING)
+    private PostType postType;
 
     @Column(columnDefinition = "VARCHAR(10)")
     private String conditions;
@@ -53,7 +54,7 @@ public class Post extends BaseTimeEntity {
         this.postCategory = postCategory;
     }
 
-    public void modPostType(String postType){
+    public void modPostType(PostType postType){
         this.postType = postType;
     }
 

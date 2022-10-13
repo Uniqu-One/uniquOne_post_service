@@ -19,4 +19,5 @@ public interface IPostService {
 
     Object getOtherPostAllList(Long userId,Long cornId);
 
+    Object getOtherPostProductList(Long userId,Long cornId);
 }

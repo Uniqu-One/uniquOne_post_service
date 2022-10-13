@@ -2,14 +2,9 @@ package com.sparos.uniquone.msapostservice.post.service;
 
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
-import com.sparos.uniquone.msapostservice.corn.service.ICornService;
 import com.sparos.uniquone.msapostservice.look.repository.ILookRepository;
-import com.sparos.uniquone.msapostservice.post.domain.Post;
-import com.sparos.uniquone.msapostservice.post.domain.PostAndLook;
-import com.sparos.uniquone.msapostservice.post.domain.PostImg;
-import com.sparos.uniquone.msapostservice.post.domain.PostTag;
-import com.sparos.uniquone.msapostservice.post.dto.OtherProfilePostAllList;
-import com.sparos.uniquone.msapostservice.post.dto.PostChatResponseDto;
+import com.sparos.uniquone.msapostservice.post.domain.*;
+import com.sparos.uniquone.msapostservice.post.dto.OtherProfilePostProductList;
 import com.sparos.uniquone.msapostservice.post.dto.PostInputDto;
 import com.sparos.uniquone.msapostservice.post.dto.PostListInfoDto;
 import com.sparos.uniquone.msapostservice.post.repository.*;
@@ -23,6 +18,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.sparos.uniquone.msapostservice.post.domain.PostType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -148,8 +145,8 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Object getOtherPostAllList(Long cornId, Long userId) {
+        log.info(SALE.ordinal());
         List<Post> postList = iPostRepository.findByCornIdOrderByRegDateDesc(cornId);
-        log.info(postList);
         List<PostListInfoDto> postListInfoDtoList = new ArrayList<>();
         for (Post post : postList) {
             PostImg postImg = iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1);
@@ -160,6 +157,43 @@ public class PostServiceImpl implements IPostService {
                     .build());
         }
         return postListInfoDtoList;
+    }
+
+    @Override
+    public Object getOtherPostProductList(Long cornId, Long userId) {
+        List<Post> SalePostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, SALE);
+        List<Post> SoldOutpostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, SOLD_OUT);
+        List<Post> DiscontinuedPostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, DISCONTINUED);
+        List<PostListInfoDto> postSaleListInfoDtoList = new ArrayList<>();
+        List<PostListInfoDto> postSoldOutListInfoDtoList = new ArrayList<>();
+        List<PostListInfoDto> postDiscontinuedListInfoDtoList = new ArrayList<>();
+        for (Post post : SalePostList) {
+            PostImg postImg = iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1);
+            postSaleListInfoDtoList.add(PostListInfoDto.builder().postId(post.getId())
+                    .postImg(postImg.getUrl())
+                    .postType(post.getPostType())
+                    .reg_date(post.getRegDate())
+                    .build());
+        }
+        for (Post post : SoldOutpostList) {
+            PostImg postImg = iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1);
+            postSoldOutListInfoDtoList.add(PostListInfoDto.builder().postId(post.getId())
+                    .postImg(postImg.getUrl())
+                    .postType(post.getPostType())
+                    .reg_date(post.getRegDate())
+                    .build());
+        }
+        for (Post post : DiscontinuedPostList) {
+            PostImg postImg = iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1);
+            postDiscontinuedListInfoDtoList.add(PostListInfoDto.builder().postId(post.getId())
+                    .postImg(postImg.getUrl())
+                    .postType(post.getPostType())
+                    .reg_date(post.getRegDate())
+                    .build());
+        }
+        return OtherProfilePostProductList.builder().postDiscontinuedListInfoDtoList(postDiscontinuedListInfoDtoList)
+                .postSaleListInfoDtoList(postSaleListInfoDtoList)
+                .postSoldOutListInfoDtoList(postSoldOutListInfoDtoList).build();
     }
 
 }
