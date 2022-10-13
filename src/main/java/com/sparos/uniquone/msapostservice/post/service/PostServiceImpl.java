@@ -2,6 +2,7 @@ package com.sparos.uniquone.msapostservice.post.service;
 
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
+import com.sparos.uniquone.msapostservice.corn.service.ICornService;
 import com.sparos.uniquone.msapostservice.look.repository.ILookRepository;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostAndLook;
@@ -25,6 +26,7 @@ import java.util.Optional;
 @Log4j2
 public class PostServiceImpl implements IPostService {
 
+    private  final ICornRepository iCornRepository;
     private final IPostRepository iPostRepository;
     private final IPostImgRepository iPostImgRepository;
 

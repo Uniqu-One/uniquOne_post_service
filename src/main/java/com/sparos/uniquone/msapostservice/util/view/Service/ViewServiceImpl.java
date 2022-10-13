@@ -10,6 +10,7 @@ import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class ViewServiceImpl implements IViewService{
     public PostChatResponseDto chatPostInfo(Long postId, Long otherUserId) {
         // todo 존재 여부 확인
         Post post = iPostRepository.findById(postId).get();
-        PostImg postImg = iPostImgRepository.findByPostId(post.getId());
+        List<PostImg> postImgList = iPostImgRepository.findByPostId(post.getId());
         Corn corn = iCornRepository.findByUserId(otherUserId).get();
 
         return PostChatResponseDto.builder()
@@ -35,7 +36,7 @@ public class ViewServiceImpl implements IViewService{
                 .postPrice(post.getPrice())
                 .postType(post.getPostType())
                 .isOffer(post.getIsOffer())
-                .postImg(postImg.getUrl())
+                .postImg(postImgList.get(1).getUrl())
                 .cornImg(corn.getImgUrl())
                 .build();
     }
