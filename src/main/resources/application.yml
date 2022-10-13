@@ -20,7 +20,6 @@ spring:
 #    password: ${UNIQUONE_DB_PWD}
 #    driver-class-name: com.mysql.cj.jdbc.Driver
   datasource:
-    #    url: jdbc:mysql://localhost:3306/cssgNew?useSSL=false&allowMultiQueries=true&serverTimezone=UTC
     url: jdbc:mysql://localhost:3306/uniquone_db?useSSL=false&allowMultiQueries=true&serverTimezone=UTC
     username: root
     password: 1234
