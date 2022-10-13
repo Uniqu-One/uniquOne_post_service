@@ -17,4 +17,6 @@ public interface IPostService {
 
     Object delPost(Long postId,Long userId);
 
+    Object getOtherPostAllList(Long userId,Long cornId);
+
 }

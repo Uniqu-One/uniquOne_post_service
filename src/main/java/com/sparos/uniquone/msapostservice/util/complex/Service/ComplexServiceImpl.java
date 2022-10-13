@@ -1,4 +1,4 @@
-package com.sparos.uniquone.msapostservice.util.view.Service;
+package com.sparos.uniquone.msapostservice.util.complex.Service;
 
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
@@ -8,6 +8,7 @@ import com.sparos.uniquone.msapostservice.post.dto.PostChatResponseDto;
 import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +16,8 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class ViewServiceImpl implements IViewService{
+@Log4j2
+public class ComplexServiceImpl implements IComplexService {
 
     private final IPostRepository iPostRepository;
     private final IPostImgRepository iPostImgRepository;
