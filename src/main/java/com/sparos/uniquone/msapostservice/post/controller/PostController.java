@@ -1,6 +1,8 @@
 package com.sparos.uniquone.msapostservice.post.controller;
 
 import com.sparos.uniquone.msapostservice.post.dto.PostChatResponseDto;
+
+import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.post.dto.PostInputDto;
 import com.sparos.uniquone.msapostservice.post.service.IPostService;
 import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
@@ -21,13 +23,6 @@ import java.util.List;
 public class PostController {
 
     private final IPostService iPostService;
-
-    // 채팅 - 포스트 정보 요청 API
-    @GetMapping("/chat/postInfo/{postId}/{otherUserId}")
-    @ResponseBody
-    public PostChatResponseDto chatPostInfo(@PathVariable("postId") Long postId, @PathVariable("otherUserId") Long otherUserId) {
-        return iPostService.chatPostInfo(postId, otherUserId);
-    }
 
     @PostMapping("/reg/{userId}")
     public ResponseEntity<SuccessResponse> addPost(@PathVariable("userId") Long userId, @RequestPart PostInputDto postInputDto, @RequestPart(value = "imgfilelist", required = false) List<MultipartFile> multipartFileList) throws IOException {
