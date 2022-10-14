@@ -65,6 +65,10 @@ dependencies {
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//feign client
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
 }
 
 dependencyManagement {
