@@ -1,14 +1,14 @@
 package com.sparos.uniquone.msapostservice.review.domain;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 public class Review extends BaseTimeEntity {
 
     @Id
@@ -18,7 +18,8 @@ public class Review extends BaseTimeEntity {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @OneToOne
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
@@ -28,4 +29,11 @@ public class Review extends BaseTimeEntity {
     @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
     private String dsc;
 
+    @Builder
+    public Review(Long userId, Post post, Double star, String dsc) {
+        this.userId = userId;
+        this.post = post;
+        this.star = star;
+        this.dsc = dsc;
+    }
 }
