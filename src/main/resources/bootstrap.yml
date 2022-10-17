@@ -2,6 +2,6 @@ spring:
   cloud:
     config:
       uri: ${UNI_CONFIG_URI}
-      name: ${UNI_CONFIG_USER}
+      name: ${UNI_CONFIG_POST}
   profiles:
     active: ${UNI_CONFIG_ACTIVE}
