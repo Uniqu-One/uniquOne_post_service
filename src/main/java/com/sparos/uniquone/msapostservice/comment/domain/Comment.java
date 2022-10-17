@@ -2,15 +2,18 @@ package com.sparos.uniquone.msapostservice.comment.domain;
 
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 @DynamicInsert
 public class Comment extends BaseTimeEntity {
 
@@ -21,23 +24,35 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
-    private String comment;
+    @Column(nullable = false)
+    @Setter
+    private String content;
 
-    private Integer ref;
+    @Setter
+    private Integer depth = 0;
 
-    private Integer level;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Comment parent;
 
-    @Column(name = "ref_order")
-    private Integer refOrder;
+    @Builder.Default
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    private List<Comment> children = new ArrayList<>();
 
-    @Column(name = "answer_num")
-    private Integer answerNum;
+//    public void update(CommentRequestDto commentRequestDto){
+//        this.content = commentRequestDto;
+//    }
 
-    private Long parentId;
+    public void updateParent(Comment parent){
+        this.parent = parent;
+    }
+
+//    public boolean validateUser(Long userId){
+//        return !this.userId == userId;
+//    }
 
 }
