@@ -5,7 +5,8 @@ import lombok.Getter;
 @Getter
 public enum ExceptionCode {
 
-    FAIL_CODE("F001","OK");
+    FAIL_CODE("F001","OK"),
+    NO_SUCH("F002","NoSuchException");
 
 
     private String code;

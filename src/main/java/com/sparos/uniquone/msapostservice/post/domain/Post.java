@@ -32,7 +32,7 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
     private String dsc;
 
-    @Column(name = "post_type", nullable = false, columnDefinition = "VARCHAR(10)")
+    @Column(name = "post_type", nullable = false, columnDefinition = "VARCHAR(20)")
     @Enumerated(EnumType.STRING)
     private PostType postType;
 
