@@ -13,8 +13,6 @@ public class ReviewCreateDto {
 
     private Long tradeId;
 
-    private Long userId;
-
     private Long postId;
 
     private Double star;

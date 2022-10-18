@@ -13,6 +13,7 @@ public interface IPostImgRepository extends JpaRepository<PostImg, Long> {
 
     PostImg findOneByPostIdAndIdx(Long postId, Integer idx);
 
-    @Query("select p.url from PostImg p where p.post.id =:postId")
-    String findUrlById(@Param("postId") Long postId);
+    @Query("select p.url from PostImg p where p.post.id =:postId And idx=1")
+    String findUrlByPostId(@Param("postId") Long postId);
+
 }
