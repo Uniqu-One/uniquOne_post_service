@@ -71,6 +71,11 @@ public class JwtProvider {
         return extractClaims(token).get("id", Long.class);
     }
 
+    public static Long getUserPkId(HttpServletRequest request){
+        String token = getTokenFromRequestHeader(request);
+        return getUserPkId(token);
+    }
+
     public static String getUserNickName(String token) {
         return extractClaims(token).get("nickName", String.class);
     }
@@ -122,4 +127,8 @@ public class JwtProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    public static String getTokenFromRequestHeader(HttpServletRequest request){
+        String bearerToken = request.getHeader(tokenNameOfRequestHeader);
+        return bearerToken.replace("Bearer ","");
+    }
 }
