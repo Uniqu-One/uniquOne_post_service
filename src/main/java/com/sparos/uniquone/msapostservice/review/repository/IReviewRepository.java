@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface IReviewRepository extends JpaRepository<Review, Long> {
 
-    Optional<List<Review>> findByPostIdIn(List<Long> postId);
+    List<Review> findByPostIdIn(List<Long> postId);
 
-    Optional<List<Review>> findByUserId(Long userId);
+    List<Review> findByUserId(Long userId);
 }

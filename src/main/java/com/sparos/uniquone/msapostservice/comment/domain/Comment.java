@@ -24,6 +24,12 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    @Column(nullable = false)
+    private String userEmail;
+
+    @Column(nullable = false)
+    private String userNickName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
@@ -33,7 +39,8 @@ public class Comment extends BaseTimeEntity {
     private String content;
 
     @Setter
-    private Integer depth = 0;
+    @Column(columnDefinition = "integer default 0")
+    private Integer depth;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
