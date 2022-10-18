@@ -60,12 +60,6 @@ public class JwtProvider {
             return false;
         }
     }
-
-    public static String getTokenFromRequestHeader(HttpServletRequest request){
-        String bearerToken = request.getHeader(tokenNameOfRequestHeader);
-        return bearerToken.replace("Bearer ","");
-    }
-
     //데이터 타입 확인해보기.
     public static Long getUserPkId(String token) {
         return extractClaims(token).get("id", Long.class);

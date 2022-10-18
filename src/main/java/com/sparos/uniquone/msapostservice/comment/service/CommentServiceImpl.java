@@ -38,17 +38,17 @@ public class CommentServiceImpl implements CommentService {
         //post 가 존재하는지 확인.
 //        Optional<Post> optionalPost = postRepository.findById(requestDto.getPostId());
         Post post = postRepository.findById(requestDto.getPostId()).orElseThrow(() ->
-                new UniquOneServiceException(ExceptionCode.NO_SUCH, "POST가 존재하지 않습니다."));
+                new UniquOneServiceException(ExceptionCode.NO_SUCH));
 
         Comment parent = null;
 
         //자식 댓글인 경우.
         if (requestDto.getParentId() != null) {
             parent = commentRepository.findById(requestDto.getParentId()).orElseThrow(() ->
-                    new UniquOneServiceException(ExceptionCode.NO_SUCH, "부모 댓글이 존재 하지 않습니다."));
+                    new UniquOneServiceException(ExceptionCode.NO_SUCH));
 
             if (parent.getPost().getId() != requestDto.getPostId()) {
-                throw new UniquOneServiceException(ExceptionCode.NO_SUCH, "댓글포스트 번호가 불 일치");
+                throw new UniquOneServiceException(ExceptionCode.NO_SUCH);
             }
         }
         //user-service 와 통신을 하느냐 아니면 토큰 정보를 받아와서 사용하느냐.
@@ -102,7 +102,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     public ResponseEntity<?> getAllCommentsByPost(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH, "POST가 존재하지 않습니다."));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH));
 
         List<Comment> commentList = commentRepositorySupport.findAllByPost(post);
 
@@ -129,7 +129,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public ResponseEntity<?> updateCommentById(Long commentId, String content, HttpServletRequest request) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
-                new UniquOneServiceException(ExceptionCode.NO_SUCH, "Comment가 존재하지 않음."));
+                new UniquOneServiceException(ExceptionCode.NO_SUCH));
 
         comment.setContent(content);
         //데이터 넘어오는지 확인 해봐야함.
@@ -146,7 +146,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public ResponseEntity<?> deleteCommentById(Long commentId, HttpServletRequest request) {
         commentRepository.findById(commentId).orElseThrow(() ->
-                new UniquOneServiceException(ExceptionCode.NO_SUCH, "Comment가 존재하지 않음."));
+                new UniquOneServiceException(ExceptionCode.NO_SUCH));
 
         commentRepository.deleteById(commentId);
 
