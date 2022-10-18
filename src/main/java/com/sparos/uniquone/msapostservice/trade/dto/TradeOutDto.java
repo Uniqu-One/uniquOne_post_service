@@ -3,12 +3,14 @@ package com.sparos.uniquone.msapostservice.trade.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Getter
 @Builder
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class TradeOutDto {
 
     private Long tradeId;

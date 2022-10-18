@@ -44,7 +44,6 @@ public class TradeServiceImpl implements ITradeService{
         if (post.getPostType().equals(PostType.DISCONTINUED) || post.getPostType().equals(PostType.SOLD_OUT))
             throw new UniquOneServiceException(ExceptionCode.POST_TYPE_NOT_TRADE);
 
-
         Trade trade = iTradeRepository.save(
                 Trade.builder()
                         .sellerId(JwtProvider.getUserPkId(request))

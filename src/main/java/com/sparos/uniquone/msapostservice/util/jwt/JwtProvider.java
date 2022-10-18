@@ -67,7 +67,7 @@ public class JwtProvider {
     }
 
     public static Long getUserPkId(HttpServletRequest request){
-        String token = request.getHeader(tokenNameOfRequestHeader);
+        String token = getTokenFromRequestHeader(request);
         return getUserPkId(token);
     }
 
@@ -122,4 +122,8 @@ public class JwtProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    public static String getTokenFromRequestHeader(HttpServletRequest request){
+        String bearerToken = request.getHeader(tokenNameOfRequestHeader);
+        return bearerToken.replace("Bearer ","");
+    }
 }
