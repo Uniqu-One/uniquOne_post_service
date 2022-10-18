@@ -4,6 +4,7 @@ import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.List;
 import java.util.Optional;
 

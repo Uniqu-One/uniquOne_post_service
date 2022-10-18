@@ -16,7 +16,7 @@ spring:
 
   datasource:
 
-    url: ${UNIQUONE_DB_URL}
+    url: jdbc:mysql://db-uniquone-user.cpiypdz8dvru.ap-northeast-2.rds.amazonaws.com:3306/uniquone_db?useSSL=false&allowMultiQueries=true&serverTimezone=UTC
     username: ${UNIQUONE_DB_ID}
     password: ${UNIQUONE_DB_PWD}
     driver-class-name: com.mysql.cj.jdbc.Driver
