@@ -19,7 +19,9 @@ public class CommentResponseDto {
 
     private Long id;
     private Long parentId;
-    private String nickName;
+
+    private String writerNick;
+//    private String nickName;
     private String content;
     private Integer depth;
     private LocalDateTime regDate;
@@ -29,6 +31,7 @@ public class CommentResponseDto {
 
     public CommentResponseDto(Comment comment){
         this.id = comment.getId();
+        this.writerNick = comment.getUserNickName();
         this.content = comment.getContent();
         this.depth = comment.getDepth();
         this.regDate = comment.getRegDate();
