@@ -2,7 +2,7 @@ package com.sparos.uniquone.msapostservice.post.domain;
 
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,11 +11,9 @@ import org.hibernate.annotations.DynamicInsert;
 import javax.persistence.*;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
 @Getter
-@Builder
 public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,6 +43,18 @@ public class Post extends BaseTimeEntity {
 
     @Column(nullable = false, columnDefinition = "tinyint(1) default 0")
     private Boolean isOffer;
+
+    @Builder
+    public Post(Corn corn, PostCategory postCategory, String dsc, PostType postType, String conditions, Long price, String color, Boolean isOffer) {
+        this.corn = corn;
+        this.postCategory = postCategory;
+        this.dsc = dsc;
+        this.postType = postType;
+        this.conditions = conditions;
+        this.price = price;
+        this.color = color;
+        this.isOffer = isOffer;
+    }
 
     public void modDsc(String dsc){
         this.dsc = dsc;

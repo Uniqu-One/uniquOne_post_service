@@ -12,6 +12,7 @@ public enum PostType {
     PostType(String postType){
         this.postType =postType;
     }
+
     public String value(){
         return postType;
     }

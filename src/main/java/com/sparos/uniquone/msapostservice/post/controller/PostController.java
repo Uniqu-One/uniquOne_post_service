@@ -44,4 +44,10 @@ public class PostController {
     public ResponseEntity<SuccessResponse> getOtherUserPostProductListInfo(@PathVariable("cornId") Long cornId, @PathVariable("userId") Long userId){
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iPostService.getOtherPostProductList(cornId, userId)));
     }
+
+    @GetMapping("/liststyle/{cornId}/{userId}")
+    public ResponseEntity<SuccessResponse> getOtherUserPostStyleListInfo(@PathVariable("cornId") Long cornId, @PathVariable("userId") Long userId){
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iPostService.getOtherPostStyleList(cornId, userId)));
+    }
+
 }

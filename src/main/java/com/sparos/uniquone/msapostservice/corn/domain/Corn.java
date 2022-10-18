@@ -5,12 +5,9 @@ import lombok.*;
 
 import javax.persistence.*;
 
-
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Builder
 public class Corn extends BaseTimeEntity {
 
     @Id
@@ -44,6 +41,15 @@ public class Corn extends BaseTimeEntity {
 
     public void modUrl(String url){
         this.url=url;
+    }
+
+    @Builder
+    public Corn (Long userId, String title, String dsc, String imgUrl, String url) {
+        this.userId = userId;
+        this.title = title;
+        this.dsc = dsc;
+        this.imgUrl = imgUrl;
+        this.url = url;
     }
 
 }
