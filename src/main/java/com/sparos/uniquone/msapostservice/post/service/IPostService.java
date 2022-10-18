@@ -15,8 +15,11 @@ public interface IPostService {
 
     Object modifyPost(PostInputDto postInputDto, Long userId, Long postId);
 
-    Object delPost(Long postId,Long userId);
+    Object delPost(Long postId, Long userId);
 
-    Object getOtherPostAllList(Long userId,Long cornId);
+    Object getOtherPostAllList(Long userId, Long cornId);
 
+    Object getOtherPostProductList(Long userId, Long cornId);
+
+    Object getOtherPostStyleList(Long userId, Long cornId);
 }

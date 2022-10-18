@@ -2,7 +2,7 @@ package com.sparos.uniquone.msapostservice.post.domain;
 
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,29 +11,28 @@ import org.hibernate.annotations.DynamicInsert;
 import javax.persistence.*;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
 @Getter
-@Builder
 public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "corn_id", nullable = false)
     private Corn corn;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_category_id")
     private PostCategory postCategory;
 
     @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
     private String dsc;
 
-    @Column(name = "post_type", nullable = false, columnDefinition = "VARCHAR(10)")
-    private String postType;
+    @Column(name = "post_type", nullable = false, columnDefinition = "VARCHAR(20)")
+    @Enumerated(EnumType.STRING)
+    private PostType postType;
 
     @Column(columnDefinition = "VARCHAR(10)")
     private String conditions;
@@ -45,6 +44,18 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = false, columnDefinition = "tinyint(1) default 0")
     private Boolean isOffer;
 
+    @Builder
+    public Post(Corn corn, PostCategory postCategory, String dsc, PostType postType, String conditions, Long price, String color, Boolean isOffer) {
+        this.corn = corn;
+        this.postCategory = postCategory;
+        this.dsc = dsc;
+        this.postType = postType;
+        this.conditions = conditions;
+        this.price = price;
+        this.color = color;
+        this.isOffer = isOffer;
+    }
+
     public void modDsc(String dsc){
         this.dsc = dsc;
     }
@@ -53,7 +64,7 @@ public class Post extends BaseTimeEntity {
         this.postCategory = postCategory;
     }
 
-    public void modPostType(String postType){
+    public void modPostType(PostType postType){
         this.postType = postType;
     }
 

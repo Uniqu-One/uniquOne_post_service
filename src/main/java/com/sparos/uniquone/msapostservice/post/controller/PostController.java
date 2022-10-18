@@ -35,9 +35,19 @@ public class PostController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iPostService.delPost(postId,userId)));
     }
 
-    @GetMapping("/{cornId}/{userId}")
+    @GetMapping("/listall/{cornId}/{userId}")
     public ResponseEntity<SuccessResponse> getOtherUserPostAllListInfo(@PathVariable("cornId") Long cornId, @PathVariable("userId") Long userId){
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iPostService.getOtherPostAllList(cornId, userId)));
+    }
+
+    @GetMapping("/listproduct/{cornId}/{userId}")
+    public ResponseEntity<SuccessResponse> getOtherUserPostProductListInfo(@PathVariable("cornId") Long cornId, @PathVariable("userId") Long userId){
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iPostService.getOtherPostProductList(cornId, userId)));
+    }
+
+    @GetMapping("/liststyle/{cornId}/{userId}")
+    public ResponseEntity<SuccessResponse> getOtherUserPostStyleListInfo(@PathVariable("cornId") Long cornId, @PathVariable("userId") Long userId){
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iPostService.getOtherPostStyleList(cornId, userId)));
     }
 
 }

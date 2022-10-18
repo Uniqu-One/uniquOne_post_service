@@ -1,10 +1,4 @@
-server:
-  port: 0
-
 spring:
-  application:
-    name: uniquone-post-service
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,7 +8,6 @@ spring:
         dialect: org.hibernate.dialect.MySQL5Dialect
         format_sql: true
 
-  datasource:
 
     url: ${UNIQUONE_DB_URL}
     username: ${UNIQUONE_DB_ID}
@@ -24,14 +17,7 @@ spring:
   environment: ${SPRING_ENVIRONMENT}
   file-dir: ${SPRING_ENVIRONMENT_FILE_DIR}
 
-eureka:
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: ${EUREKA-SERVER}
+
 
 greeting:
   message: Welcome to the Simple E-commerce
