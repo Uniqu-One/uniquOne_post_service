@@ -23,19 +23,20 @@ public class ComplexServiceImpl implements IComplexService {
     private final IPostImgRepository iPostImgRepository;
     private final ICornRepository iCornRepository;
 
-    // todo 포스트 이미지 리스트 처리
     // 채팅 - 게시물 정보 요청
     @Override
     public PostChatResponseDto chatPostInfo(Long postId, Long otherUserId) {
         // todo 존재 여부 확인
-        Post post = iPostRepository.findById(postId).get();
+        Post post = iPostRepository.findById(postId).orElseThrow();
         PostImg postImg = iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1);
-        // todo 콘이 없을 때 기본이미지 리턴
-        Corn corn = iCornRepository.findByUserId(otherUserId).get();
+        Optional<Corn> corn = iCornRepository.findByUserId(otherUserId);
+        String imageUrl = null;
 
-        System.err.println("post => " + post.getId());
-        System.err.println("postImgList => " + postImg.getId());
-        System.err.println("corn => " + corn.getId());
+        if (!corn.isPresent()){
+            imageUrl = "https://uniquoneimg.s3.ap-northeast-2.amazonaws.com/img/KakaoTalk_20221014_140108315.png";
+        } else {
+            imageUrl = corn.get().getImgUrl();
+        }
 
         PostChatResponseDto chatResponseDto = PostChatResponseDto.builder()
                 .postId(post.getId())
@@ -44,9 +45,8 @@ public class ComplexServiceImpl implements IComplexService {
                 .postType(post.getPostType())
                 .isOffer(post.getIsOffer())
                 .postImg(postImg.getUrl())
-                .cornImg(corn.getImgUrl())
+                .cornImg(imageUrl)
                 .build();
-        System.err.println("chatResponseDto => " + chatResponseDto.toString());
         return chatResponseDto;
     }
 

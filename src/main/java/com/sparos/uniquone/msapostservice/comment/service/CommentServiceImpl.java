@@ -5,5 +5,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CommentServiceImpl implements ICommentService {
+public class CommentServiceImpl implements CommentService {
 }
