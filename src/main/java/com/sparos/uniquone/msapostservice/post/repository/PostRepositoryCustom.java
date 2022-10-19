@@ -10,6 +10,9 @@ import com.sparos.uniquone.msapostservice.post.domain.PostType;
 import com.sparos.uniquone.msapostservice.post.dto.PostListInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,8 +26,8 @@ import static com.sparos.uniquone.msapostservice.post.domain.QPostImg.postImg;
 public class PostRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<PostListInfoDto> PostProductListInfo(List<PostType> postTypeList,Long cornId){
-        return (List<PostListInfoDto>) jpaQueryFactory
+    public Slice<PostListInfoDto> PostProductListInfo(List<PostType> postTypeList, Long cornId, Pageable pageable){
+        List<PostListInfoDto> postListInfoDtoList =(List<PostListInfoDto>) jpaQueryFactory
                 .select(Projections.constructor(PostListInfoDto.class,
                         post.id,
                         postImg.url,
@@ -34,7 +37,18 @@ public class PostRepositoryCustom {
                 .join(postImg.post,post)
                 .where(post.corn.id.eq(cornId),post.postType.in(postTypeList),postImg.idx.eq(1))
                 .orderBy(orderByFieldList(Lists.transform(postTypeList, Functions.toStringFunction())),post.regDate.desc())
+                .offset(pageable.getOffset())
+                .limit(2)
                 .fetch();
+        log.error(postListInfoDtoList.size());
+
+        boolean hasNext = false;
+
+        if (postListInfoDtoList.size() > pageable.getPageSize()){
+            postListInfoDtoList.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+        return new SliceImpl<>(postListInfoDtoList,pageable,hasNext);
     }
 
     private OrderSpecifier<?> orderByFieldList(List<String> postTypeList){
