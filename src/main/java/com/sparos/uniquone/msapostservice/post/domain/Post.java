@@ -27,6 +27,9 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "post_category_id")
     private PostCategory postCategory;
 
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    private String title;
+
     @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
     private String dsc;
 
@@ -45,9 +48,11 @@ public class Post extends BaseTimeEntity {
     private Boolean isOffer;
 
     @Builder
-    public Post(Corn corn, PostCategory postCategory, String dsc, PostType postType, String conditions, Long price, String color, Boolean isOffer) {
+    public Post(Long id, Corn corn, PostCategory postCategory, String title, String dsc, PostType postType, String conditions, Long price, String color, Boolean isOffer) {
+        this.id = id;
         this.corn = corn;
         this.postCategory = postCategory;
+        this.title = title;
         this.dsc = dsc;
         this.postType = postType;
         this.conditions = conditions;
@@ -55,7 +60,6 @@ public class Post extends BaseTimeEntity {
         this.color = color;
         this.isOffer = isOffer;
     }
-
     public void modDsc(String dsc){
         this.dsc = dsc;
     }
