@@ -7,7 +7,7 @@ import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.review.domain.Review;
 import com.sparos.uniquone.msapostservice.review.dto.ReviewCreateDto;
 import com.sparos.uniquone.msapostservice.review.repository.IReviewRepository;
-import com.sparos.uniquone.msapostservice.review.utils.ReviewUtils;
+import com.sparos.uniquone.msapostservice.review.domain.ReviewUtils;
 import com.sparos.uniquone.msapostservice.trade.domain.Trade;
 import com.sparos.uniquone.msapostservice.trade.repository.ITradeRepository;
 import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service

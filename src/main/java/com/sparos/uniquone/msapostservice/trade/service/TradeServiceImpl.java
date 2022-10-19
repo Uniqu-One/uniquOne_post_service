@@ -1,16 +1,14 @@
 package com.sparos.uniquone.msapostservice.trade.service;
 
-import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostType;
 import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
-import com.sparos.uniquone.msapostservice.review.utils.ReviewUtils;
 import com.sparos.uniquone.msapostservice.trade.domain.Trade;
 import com.sparos.uniquone.msapostservice.trade.dto.TradeInputDto;
 import com.sparos.uniquone.msapostservice.trade.repository.ITradeRepository;
-import com.sparos.uniquone.msapostservice.trade.utils.TradeUtils;
+import com.sparos.uniquone.msapostservice.trade.domain.TradeUtils;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
@@ -19,9 +17,7 @@ import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
@@ -30,7 +26,6 @@ public class TradeServiceImpl implements ITradeService{
     private final ITradeRepository iTradeRepository;
     private final IPostRepository iPostRepository;
     private final IPostImgRepository iPostImgRepository;
-    private final ICornRepository iCornRepository;
 
     // 거래 등록
     @Override
