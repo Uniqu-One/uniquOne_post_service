@@ -22,4 +22,7 @@ public interface IPostService {
     Object getOtherPostProductList(Long userId, Long cornId);
 
     Object getOtherPostStyleList(Long userId, Long cornId);
+
+    Object getModPostInfo(Long userId, Long postId);
+
 }
