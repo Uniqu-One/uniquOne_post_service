@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 public class CommentResponseDto {
 
-    private Long id;
+    private Long commentId;
     private Long parentId;
 
     private String writerNick;
@@ -30,7 +29,7 @@ public class CommentResponseDto {
     private List<CommentResponseDto> children = new ArrayList<>();
 
     public CommentResponseDto(Comment comment){
-        this.id = comment.getId();
+        this.commentId = comment.getId();
         this.writerNick = comment.getUserNickName();
         this.content = comment.getContent();
         this.depth = comment.getDepth();

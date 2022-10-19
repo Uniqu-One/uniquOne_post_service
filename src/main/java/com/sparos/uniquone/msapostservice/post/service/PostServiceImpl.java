@@ -6,6 +6,7 @@ import com.sparos.uniquone.msapostservice.look.repository.ILookRepository;
 import com.sparos.uniquone.msapostservice.post.domain.*;
 import com.sparos.uniquone.msapostservice.post.dto.PostInputDto;
 import com.sparos.uniquone.msapostservice.post.dto.PostListInfoDto;
+import com.sparos.uniquone.msapostservice.post.dto.PostModInfoDto;
 import com.sparos.uniquone.msapostservice.post.repository.*;
 import com.sparos.uniquone.msapostservice.util.s3.AwsS3UploaderService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.sparos.uniquone.msapostservice.post.domain.PostType.*;
 
@@ -28,18 +30,12 @@ public class PostServiceImpl implements IPostService {
     private final ICornRepository iCornRepository;
     private final IPostRepository iPostRepository;
     private final IPostImgRepository iPostImgRepository;
-
     private final IPostTagRepository iPostTagRepository;
-
     private final IPostCategoryRepository iPostCategoryRepository;
-
     private final IPostAndLookRepository iPostAndLookRepository;
-
     private final ILookRepository iLookRepository;
-
     private final AwsS3UploaderService awsS3UploaderService;
-
-    private final PostRepositoryCustom  postRepositoryCustom;
+    private final PostRepositoryCustom postRepositoryCustom;
 
     @Override
     public Object addPost(PostInputDto postInputDto, List<MultipartFile> multipartFileList, Long userId) throws IOException {
@@ -166,7 +162,7 @@ public class PostServiceImpl implements IPostService {
         postTypeList.add(SALE);
         postTypeList.add(DISCONTINUED);
         postTypeList.add(SOLD_OUT);
-        return postRepositoryCustom.PostProductListInfo(postTypeList,cornId);
+        return postRepositoryCustom.PostProductListInfo(postTypeList, cornId);
 //        List<Post> SalePostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, SALE);
 //        List<Post> SoldOutpostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, SOLD_OUT);
 //        List<Post> DiscontinuedPostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, DISCONTINUED);
@@ -204,7 +200,7 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Object getOtherPostStyleList(Long userId, Long cornId) {
-        List<Post> PostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId,STYLE);
+        List<Post> PostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, STYLE);
         List<PostListInfoDto> postListInfoDtoList = new ArrayList<>();
         for (Post post : PostList) {
             PostImg postImg = iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1);
@@ -215,6 +211,26 @@ public class PostServiceImpl implements IPostService {
                     .build());
         }
         return postListInfoDtoList;
+    }
+
+    @Override
+    public Object getModPostInfo(Long userId, Long postId) {
+        Post post = iPostRepository.findById(postId).orElseThrow();
+        List<String> colorList = List.of(post.getColor().split(","));
+        List<PostTag> postTagList = iPostTagRepository.findByPostId(postId);
+        List<String> postTagNameList = postTagList.stream().map(postTag -> "#"+postTag.getDsc()).collect(Collectors.toList());
+        List<PostAndLook> postAndLookList = iPostAndLookRepository.findByPostId(postId);
+        List<String> postAndLookNameList = postAndLookList.stream().map(postAndLook -> postAndLook.getLook().getName()).collect(Collectors.toList());
+        PostModInfoDto postModInfoDto = PostModInfoDto.builder()
+                .dsc(post.getDsc())
+                .postTagNameList(postTagNameList)
+                .postType(post.getPostType())
+                .postCategoryName(post.getPostCategory().getName())
+                .conditions(post.getConditions())
+                .lookList(postAndLookNameList)
+                .color(colorList)
+                .build();
+        return postModInfoDto;
     }
 
 }

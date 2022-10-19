@@ -6,6 +6,5 @@ import lombok.Data;
 public class CommentCreateRequestDto {
     private Long postId;
     private Long parentId;
-    private Long memberId;
     private String content;
 }

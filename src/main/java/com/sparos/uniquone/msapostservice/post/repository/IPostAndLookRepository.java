@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface IPostAndLookRepository extends JpaRepository<PostAndLook, Long> {
     List<PostAndLook> findByPostId(Long postId);
+    List<PostAndLook> findByLookId(Long lookId);
 }
