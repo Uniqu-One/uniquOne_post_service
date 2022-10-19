@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -76,7 +75,7 @@ public class CommentServiceImpl implements CommentService {
 
         if (parent != null) {
             commentResponseDto = CommentResponseDto.builder()
-                    .id(comment.getId())
+                    .commentId(comment.getId())
                     .writerNick(comment.getUserNickName())
                     .content(comment.getContent())
                     .depth(comment.getDepth())
@@ -86,7 +85,7 @@ public class CommentServiceImpl implements CommentService {
                     .build();
         } else {
             commentResponseDto = CommentResponseDto.builder()
-                    .id(comment.getId())
+                    .commentId(comment.getId())
                     .writerNick(comment.getUserNickName())
                     .content(comment.getContent())
                     .depth(0)
@@ -114,7 +113,7 @@ public class CommentServiceImpl implements CommentService {
             if (c.getParent() != null) {
                 cdto.setParentId(c.getParent().getId());
             }
-            map.put(cdto.getId(), cdto);
+            map.put(cdto.getCommentId(), cdto);
             if (c.getParent() != null) {
                 map.get(c.getParent().getId()).getChildren().add(cdto);
             } else {
@@ -131,9 +130,13 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
                 new UniquOneServiceException(ExceptionCode.NO_SUCH, "Comment가 존재하지 않음."));
 
+        //현재 content의 pkID requestPkId랑 비교.
+        if(comment.getUserId() != JwtProvider.getUserPkId(request)){
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH, "UserId 다름.");
+        }
+
         comment.setContent(content);
-        //데이터 넘어오는지 확인 해봐야함.
-        Comment saveComment = commentRepository.save(comment);
+        commentRepository.save(comment);
 
         CommentUpdateResponseDto commentUpdateResponseDto = new CommentUpdateResponseDto();
         commentUpdateResponseDto.setContent(content);
@@ -145,8 +148,13 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public ResponseEntity<?> deleteCommentById(Long commentId, HttpServletRequest request) {
-        commentRepository.findById(commentId).orElseThrow(() ->
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
                 new UniquOneServiceException(ExceptionCode.NO_SUCH, "Comment가 존재하지 않음."));
+
+        //현재 content의 pkID requestPkId랑 비교.
+        if(comment.getUserId() != JwtProvider.getUserPkId(request)){
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH, "UserId 다름.");
+        }
 
         commentRepository.deleteById(commentId);
 
