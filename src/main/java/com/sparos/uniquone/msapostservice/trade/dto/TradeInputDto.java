@@ -1,4 +1,4 @@
-package com.sparos.uniquone.msapostservice.review.dto;
+package com.sparos.uniquone.msapostservice.trade.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,13 +9,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewCreateDto {
+public class TradeInputDto {
 
-    private Long tradeId;
-
+    private Long buyerId;
     private Long postId;
 
-    private Double star;
-
-    private String dsc;
 }

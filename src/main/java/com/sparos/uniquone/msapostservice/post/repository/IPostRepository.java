@@ -14,7 +14,9 @@ import java.util.Optional;
 public interface IPostRepository extends JpaRepository<Post, Long> , SearchPostRepository {
 
     @Query("select p.id from Post p where p.corn.id =:cornId")
-    Optional<List<Long>> findIdByCornId(@Param("cornId") Long cornId);
+    List<Long> findIdByCornId(@Param("cornId") Long cornId);
+
+    List<Post> findByCornIdAndPostType(Long cornId, PostType postType);
 
     List<Post> findByCornId(Long cornId);
 
@@ -23,4 +25,6 @@ public interface IPostRepository extends JpaRepository<Post, Long> , SearchPostR
     List<Post> findByCornIdAndPostTypeOrderByRegDateDesc(Long cornId, PostType postType);
 
     Optional<Post> findByIdAndCornId(Long postId, Long cornId);
+
+    Optional<Post> findByIdAndPostTypeOrIdAndPostType(Long postId, PostType postType, Long postId2, PostType postType2);
 }

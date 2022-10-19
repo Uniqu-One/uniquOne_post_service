@@ -11,12 +11,14 @@ import com.sparos.uniquone.msapostservice.review.utils.ReviewUtils;
 import com.sparos.uniquone.msapostservice.trade.domain.Trade;
 import com.sparos.uniquone.msapostservice.trade.repository.ITradeRepository;
 import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
+import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,13 +35,14 @@ public class ReviewServiceImpl implements IReviewService {
 
     // 후기 작성
     @Override
-    public JSONObject createReview(ReviewCreateDto reviewCreateDto) {
+    public JSONObject createReview(ReviewCreateDto reviewCreateDto, HttpServletRequest request) {
+
         JSONObject jsonObject = new JSONObject();
         Trade trade = iTradeRepository.findByIdAndIsReview(reviewCreateDto.getTradeId(), false)
-                .orElseThrow(() -> UniquOneServiceException.of(ExceptionCode.NO_SUCH, "후기 작성 가능 한 거래가 아닙니다."));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
 
         Review review = iReviewRepository.save(Review.builder()
-                        .userId(reviewCreateDto.getUserId())
+                        .userId(JwtProvider.getUserPkId(request))
                         .post(iPostRepository.findById(reviewCreateDto.getPostId()).get())
                         .star(reviewCreateDto.getStar())
                         .dsc(reviewCreateDto.getDsc())
@@ -48,7 +51,6 @@ public class ReviewServiceImpl implements IReviewService {
         trade.setReview(true);
         iTradeRepository.save(trade);
 
-        jsonObject.put("result", "후기를 작성했습니다.");
         jsonObject.put("data", review); // todo 필요없으면 변경
 
         return jsonObject;
@@ -56,79 +58,79 @@ public class ReviewServiceImpl implements IReviewService {
 
     // 나의 콘 후기 조회
     @Override
-    public JSONObject findMyCornReview(Long userId) {
+    public JSONObject findMyCornReview(HttpServletRequest request) {
+
         JSONObject jsonObject = new JSONObject();
-        Optional<Corn> corn = iCornRepository.findByUserId(userId);
+        Corn corn = iCornRepository.findByUserId(JwtProvider.getUserPkId(request))
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
 
-        if (corn.isPresent()){
+        List<Long> postIds= iPostRepository.findIdByCornId(corn.getId());
 
-            List<Long> postIds= iPostRepository.findIdByCornId(corn.get().getId())
-                    .orElseThrow();
-            List<Review> review = iReviewRepository.findByPostIdIn(postIds)
-                    .orElseThrow();
-
-            jsonObject.put("result", "나의 콘 후기를 조회했습니다.");
-            jsonObject.put("data", review.stream().map(re ->
-                            ReviewUtils.entityToReviewOutDto(
-                                    re,
-                                    iUserConnect.getUserInfo(re.getUserId()),
-                                    iCornRepository.findImgUrlByUserId(re.getUserId()),
-                                    iPostImgRepository.findUrlById(re.getPost().getId())))
-            );
-
-        }else {
-            jsonObject.put("result", "콘이 존재하지 않습니다. 콘을 생성해주세요.");
-            jsonObject.put("data", 0);
+        if (postIds.isEmpty()){
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
         }
+
+        List<Review> reviews = iReviewRepository.findByPostIdIn(postIds);
+
+        if (reviews.isEmpty()){
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
+        }
+
+        jsonObject.put("data", reviews.stream().map(re ->
+                        ReviewUtils.entityToReviewOutDto(
+                                re,
+                                iUserConnect.getUserInfo(re.getUserId()),
+                                iCornRepository.findImgUrlByUserId(re.getUserId()),
+                                iPostImgRepository.findUrlByPostId(re.getPost().getId())))
+        );
 
         return jsonObject;
     }
 
     // 다른 유저 콘 후기 조회
     @Override
-    public JSONObject findOtherCornReview(Long cornId) {
+    public JSONObject findOtherCornReview(Long cornId, HttpServletRequest request) {
+
         JSONObject jsonObject = new JSONObject();
-        Optional<Corn> corn = iCornRepository.findById(cornId);
+        Corn corn = iCornRepository.findById(cornId)
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
 
-        if (corn.isPresent()){
+        List<Long> postIds= iPostRepository.findIdByCornId(corn.getId());
+        if (postIds.isEmpty())
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
 
-            List<Long> postIds= iPostRepository.findIdByCornId(corn.get().getId())
-                    .orElseThrow();
-            List<Review> reviews = iReviewRepository.findByPostIdIn(postIds)
-                    .orElseThrow();
+        List<Review> reviews = iReviewRepository.findByPostIdIn(postIds);
+        if (reviews.isEmpty())
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
 
-            jsonObject.put("result", "다른 유저의 콘 후기를 조회했습니다.");
-            jsonObject.put("data", reviews.stream().map(re ->
-                    ReviewUtils.entityToReviewOutDto(
-                            re,
-                            iUserConnect.getUserInfo(re.getUserId()),
-                            iCornRepository.findImgUrlByUserId(re.getUserId()),
-                            iPostImgRepository.findUrlById(re.getPost().getId())))
-            );
-
-        }else {
-            jsonObject.put("result", "콘이 존재하지 않습니다.");
-            jsonObject.put("data", 0);
-        }
+        jsonObject.put("data", reviews.stream().map(re ->
+                ReviewUtils.entityToReviewOutDto(
+                        re,
+                        iUserConnect.getUserInfo(re.getUserId()),
+                        iCornRepository.findImgUrlByUserId(re.getUserId()),
+                        iPostImgRepository.findUrlByPostId(re.getPost().getId())))
+        );
 
         return jsonObject;
     }
 
     // 작성 한 후기 조회
     @Override
-    public JSONObject findMyReview(Long userId) {
+    public JSONObject findMyReview(HttpServletRequest request) {
+
         JSONObject jsonObject = new JSONObject();
+        List<Review> reviews = iReviewRepository.findByUserId(JwtProvider.getUserPkId(request));
 
-        List<Review> reviews = iReviewRepository.findByUserId(userId)
-                .orElseThrow();
+        if (reviews.isEmpty()){
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
+        }
 
-        jsonObject.put("result", "작성 한 후기를 조회했습니다.");
         jsonObject.put("data", reviews.stream().map(re ->
                 ReviewUtils.entityToReviewOutDto(
                         re,
                         iUserConnect.getUserInfo(re.getUserId()),
                         iCornRepository.findImgUrlByUserId(re.getUserId()),
-                        iPostImgRepository.findUrlById(re.getPost().getId())))
+                        iPostImgRepository.findUrlByPostId(re.getPost().getId())))
         );
 
         return jsonObject;
