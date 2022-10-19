@@ -1,4 +1,4 @@
-package com.sparos.uniquone.msapostservice.trade.utils;
+package com.sparos.uniquone.msapostservice.trade.domain;
 
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.trade.domain.Trade;
