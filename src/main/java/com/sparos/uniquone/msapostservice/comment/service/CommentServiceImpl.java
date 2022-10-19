@@ -132,7 +132,7 @@ public class CommentServiceImpl implements CommentService {
 
         //현재 content의 pkID requestPkId랑 비교.
         if(comment.getUserId() != JwtProvider.getUserPkId(request)){
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH, "UserId 다름.");
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH);
         }
 
         comment.setContent(content);
@@ -148,13 +148,12 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public ResponseEntity<?> deleteCommentById(Long commentId, HttpServletRequest request) {
-        commentRepository.findById(commentId).orElseThrow(() ->
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
                 new UniquOneServiceException(ExceptionCode.NO_SUCH));
-
 
         //현재 content의 pkID requestPkId랑 비교.
         if(comment.getUserId() != JwtProvider.getUserPkId(request)){
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH, "UserId 다름.");
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH);
         }
 
         commentRepository.deleteById(commentId);
