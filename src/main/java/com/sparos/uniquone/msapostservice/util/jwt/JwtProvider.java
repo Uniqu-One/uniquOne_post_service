@@ -64,7 +64,6 @@ public class JwtProvider {
     public static Long getUserPkId(String token) {
         return extractClaims(token).get("id", Long.class);
     }
-
     public static Long getUserPkId(HttpServletRequest request){
         String token = getTokenFromRequestHeader(request);
         return getUserPkId(token);
