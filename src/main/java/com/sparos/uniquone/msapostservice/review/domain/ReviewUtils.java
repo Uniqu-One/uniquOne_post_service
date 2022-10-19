@@ -1,4 +1,4 @@
-package com.sparos.uniquone.msapostservice.review.utils;
+package com.sparos.uniquone.msapostservice.review.domain;
 
 import com.sparos.uniquone.msapostservice.review.domain.Review;
 import com.sparos.uniquone.msapostservice.review.dto.ReviewOutDto;

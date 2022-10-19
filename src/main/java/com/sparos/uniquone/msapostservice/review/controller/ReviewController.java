@@ -17,8 +17,6 @@ import java.util.Map;
 @RestController
 public class ReviewController {
 
-    // todo userId 토큰 대체
-
     private final IReviewService iReviewService;
 
     // 후기 작성

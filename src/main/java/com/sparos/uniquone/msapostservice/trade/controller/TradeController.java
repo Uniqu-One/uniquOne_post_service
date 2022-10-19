@@ -1,6 +1,5 @@
 package com.sparos.uniquone.msapostservice.trade.controller;
 
-import com.sparos.uniquone.msapostservice.review.dto.ReviewCreateDto;
 import com.sparos.uniquone.msapostservice.trade.dto.TradeInputDto;
 import com.sparos.uniquone.msapostservice.trade.service.ITradeService;
 import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
@@ -16,8 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 @RestController
 public class TradeController {
-
-    // todo userId 토큰 대체
 
     private final ITradeService iTradeService;
 
