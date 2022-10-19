@@ -11,7 +11,7 @@ import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.List;
 import java.util.Optional;
 
-public interface IPostRepository extends JpaRepository<Post, Long> , SearchPostRepository {
+public interface IPostRepository extends JpaRepository<Post, Long>{
 
     @Query("select p.id from Post p where p.corn.id =:cornId")
     List<Long> findIdByCornId(@Param("cornId") Long cornId);
