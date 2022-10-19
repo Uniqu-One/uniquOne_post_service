@@ -6,6 +6,7 @@ import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
 import com.sparos.uniquone.msapostservice.util.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,9 +42,16 @@ public class PostController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iPostService.getOtherPostAllList(cornId, userId)));
     }
 
+    //마이포스트리스트
+    @GetMapping("/listall/{cornId}")
+    public ResponseEntity<SuccessResponse> getOtherUserPostAllListInfo(@PathVariable("cornId") Long cornId,HttpServletRequest httpServletRequest){
+        Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iPostService.getOtherPostAllList(cornId, userPkId)));
+    }
+
     @GetMapping("/listproduct/{cornId}/{userId}")
-    public ResponseEntity<SuccessResponse> getOtherUserPostProductListInfo(@PathVariable("cornId") Long cornId, @PathVariable("userId") Long userId){
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iPostService.getOtherPostProductList(cornId, userId)));
+    public ResponseEntity<SuccessResponse> getOtherUserPostProductListInfo(@PathVariable("cornId") Long cornId, @PathVariable("userId") Long userId, Pageable pageable){
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iPostService.getOtherPostProductList(cornId, userId, pageable)));
     }
 
     @GetMapping("/liststyle/{cornId}/{userId}")

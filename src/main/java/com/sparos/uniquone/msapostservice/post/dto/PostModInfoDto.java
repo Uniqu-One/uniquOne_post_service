@@ -9,6 +9,7 @@ import java.util.List;
 @Builder
 @Getter
 public class PostModInfoDto {
+    private List<String> postImgList;
     private String dsc;
     private List<String> postTagNameList;
     private PostType postType;
