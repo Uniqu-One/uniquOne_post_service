@@ -1,9 +1,11 @@
 package com.sparos.uniquone.msapostservice.qna.service;
 
+import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostType;
 import com.sparos.uniquone.msapostservice.qna.domain.QnA;
 import com.sparos.uniquone.msapostservice.qna.domain.QnAUtils;
+import com.sparos.uniquone.msapostservice.qna.dto.AnswerInputDto;
 import com.sparos.uniquone.msapostservice.qna.dto.QuestionInputDto;
 import com.sparos.uniquone.msapostservice.qna.repository.IQnARepository;
 import com.sparos.uniquone.msapostservice.trade.domain.Trade;
@@ -23,6 +25,7 @@ import java.util.List;
 public class QnAServiceImpl implements IQnAService {
 
     private final IQnARepository iQnARepository;
+    private final ICornRepository iCornRepository;
 
     // 문의 등록
     @Override
@@ -53,9 +56,51 @@ public class QnAServiceImpl implements IQnAService {
         return jsonObject;
     }
 
+    // 나의 문의 개별 조회
+    @Override
+    public JSONObject findMyDetailQnA(Long qnaId, HttpServletRequest request) {
 
+        JSONObject jsonObject = new JSONObject();
+        QnA qna = iQnARepository.findByIdAndUserId(qnaId, JwtProvider.getUserPkId(request))
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
 
+        String cornImg = iCornRepository.findImgUrlByUserId(JwtProvider.getUserPkId(request));
 
+        jsonObject.put("data", QnAUtils.entityToQnADetailOutDto(qna, cornImg == null? "기본 이미지 url" : cornImg));
 
+        return jsonObject;
+    }
 
+    // 모든 문의 내역 조회
+    @Override
+    public JSONObject findAllQnA() {
+
+        JSONObject jsonObject = new JSONObject();
+        List<QnA> qnas = iQnARepository.findAll();
+
+        if (qnas.isEmpty())
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
+
+        jsonObject.put("data", qnas.stream().map(qna ->
+                QnAUtils.entityToQnAOutDto(qna))
+        );
+
+        return jsonObject;
+    }
+
+    // 답변 등록
+    @Override
+    public JSONObject createAnswer(AnswerInputDto answerInputDto) {
+
+        JSONObject jsonObject = new JSONObject();
+        QnA qna = iQnARepository.findById(answerInputDto.getQnaId())
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
+
+        qna.setAnswer(answerInputDto.getAnswer());
+        iQnARepository.save(qna);
+
+        jsonObject.put("data", qna);
+
+        return jsonObject;
+    }
 }

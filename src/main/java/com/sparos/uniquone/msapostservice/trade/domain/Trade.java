@@ -5,11 +5,13 @@ import com.sparos.uniquone.msapostservice.post.domain.Post;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@EntityListeners(value ={AuditingEntityListener.class})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
 @Getter

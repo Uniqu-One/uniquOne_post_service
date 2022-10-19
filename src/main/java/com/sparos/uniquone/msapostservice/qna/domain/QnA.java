@@ -51,4 +51,8 @@ public class QnA {
         this.questionType = questionType;
         this.answer = answer;
     }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
 }
