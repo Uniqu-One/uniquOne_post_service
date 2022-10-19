@@ -39,6 +39,7 @@ public class QnAUtils {
                 .isAnswer(isAnswer)
                 .answer(isAnswer==true? qna.getAnswer() : null)
                 .aRegDate(isAnswer == true? qna.getARegDate() : null)
+                .adminImg("관리자 이미지")
                 .build();
     }
 

@@ -66,7 +66,8 @@ public class QnAServiceImpl implements IQnAService {
 
         String cornImg = iCornRepository.findImgUrlByUserId(JwtProvider.getUserPkId(request));
 
-        jsonObject.put("data", QnAUtils.entityToQnADetailOutDto(qna, cornImg == null? "기본 이미지 url" : cornImg));
+        jsonObject.put("data", QnAUtils.entityToQnADetailOutDto(qna,
+                cornImg == null? "https://uniquoneimg.s3.ap-northeast-2.amazonaws.com/img/KakaoTalk_20221014_140108315.png" : cornImg));
 
         return jsonObject;
     }
