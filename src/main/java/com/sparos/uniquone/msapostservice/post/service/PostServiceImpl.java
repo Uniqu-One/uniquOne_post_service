@@ -11,6 +11,7 @@ import com.sparos.uniquone.msapostservice.post.repository.*;
 import com.sparos.uniquone.msapostservice.util.s3.AwsS3UploaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -158,12 +159,12 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Object getOtherPostProductList(Long cornId, Long userId) {
+    public Object getOtherPostProductList(Long cornId, Long userId, Pageable pageable) {
         List<PostType> postTypeList = new ArrayList<>();
         postTypeList.add(SALE);
         postTypeList.add(DISCONTINUED);
         postTypeList.add(SOLD_OUT);
-        return postRepositoryCustom.PostProductListInfo(postTypeList, cornId);
+        return postRepositoryCustom.PostProductListInfo(postTypeList, cornId, pageable);
 //        List<Post> SalePostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, SALE);
 //        List<Post> SoldOutpostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, SOLD_OUT);
 //        List<Post> DiscontinuedPostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, DISCONTINUED);
@@ -222,7 +223,10 @@ public class PostServiceImpl implements IPostService {
         List<String> postTagNameList = postTagList.stream().map(postTag -> "#"+postTag.getDsc()).collect(Collectors.toList());
         List<PostAndLook> postAndLookList = iPostAndLookRepository.findByPostId(postId);
         List<String> postAndLookNameList = postAndLookList.stream().map(postAndLook -> postAndLook.getLook().getName()).collect(Collectors.toList());
+        List<PostImg> postImgList = iPostImgRepository.findByPostId(postId);
+        List<String> postImgUrlList = postImgList.stream().map(postImg -> postImg.getUrl()).collect(Collectors.toList());
         PostModInfoDto postModInfoDto = PostModInfoDto.builder()
+                .postImgList(postImgUrlList)
                 .dsc(post.getDsc())
                 .postTagNameList(postTagNameList)
                 .postType(post.getPostType())
