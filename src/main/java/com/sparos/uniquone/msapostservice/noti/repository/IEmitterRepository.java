@@ -1,7 +1,14 @@
+/*
 package com.sparos.uniquone.msapostservice.noti.repository;
 
-import com.sparos.uniquone.msapostservice.noti.domain.Noti;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.yaml.snakeyaml.emitter.Emitter;
 
-public interface INotiRepository extends JpaRepository<Noti, Long> {
+@EnableJpaRepositories
+public interface IEmitterRepository extends JpaRepository<Emitter, String> {
+
+    SseEmitter save(String id, SseEmitter sseEmitter);
 }
+*/

@@ -15,6 +15,7 @@ import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +48,7 @@ public class QnAServiceImpl implements IQnAService {
         List<QnA> qnas = iQnARepository.findByUserId(JwtProvider.getUserPkId(request));
 
         if (qnas.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
 
         jsonObject.put("data", qnas.stream().map(qna ->
                 QnAUtils.entityToQnAOutDto(qna))
@@ -62,7 +63,7 @@ public class QnAServiceImpl implements IQnAService {
 
         JSONObject jsonObject = new JSONObject();
         QnA qna = iQnARepository.findByIdAndUserId(qnaId, JwtProvider.getUserPkId(request))
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT));
 
         String cornImg = iCornRepository.findImgUrlByUserId(JwtProvider.getUserPkId(request));
 
@@ -80,7 +81,7 @@ public class QnAServiceImpl implements IQnAService {
         List<QnA> qnas = iQnARepository.findAll();
 
         if (qnas.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
 
         jsonObject.put("data", qnas.stream().map(qna ->
                 QnAUtils.entityToQnAOutDto(qna))
@@ -95,7 +96,7 @@ public class QnAServiceImpl implements IQnAService {
 
         JSONObject jsonObject = new JSONObject();
         QnA qna = iQnARepository.findById(answerInputDto.getQnaId())
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT));
 
         qna.setAnswer(answerInputDto.getAnswer());
         iQnARepository.save(qna);

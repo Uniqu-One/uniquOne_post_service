@@ -17,7 +17,7 @@ public class QnAOutDto {
     private Long qnaId;
     private String question;
     private QuestionType questionType;
-    private LocalDateTime qRegDate;
+    private String qRegDate;
 
     private Boolean isAnswer;
 
