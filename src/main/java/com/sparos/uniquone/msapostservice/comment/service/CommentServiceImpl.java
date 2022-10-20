@@ -37,17 +37,17 @@ public class CommentServiceImpl implements CommentService {
         //post 가 존재하는지 확인.
 //        Optional<Post> optionalPost = postRepository.findById(requestDto.getPostId());
         Post post = postRepository.findById(requestDto.getPostId()).orElseThrow(() ->
-                new UniquOneServiceException(ExceptionCode.NO_SUCH));
+                new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
 
         Comment parent = null;
 
         //자식 댓글인 경우.
         if (requestDto.getParentId() != null) {
             parent = commentRepository.findById(requestDto.getParentId()).orElseThrow(() ->
-                    new UniquOneServiceException(ExceptionCode.NO_SUCH));
+                    new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
 
             if (parent.getPost().getId() != requestDto.getPostId()) {
-                throw new UniquOneServiceException(ExceptionCode.NO_SUCH);
+                throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
             }
         }
         //user-service 와 통신을 하느냐 아니면 토큰 정보를 받아와서 사용하느냐.
@@ -101,7 +101,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     public ResponseEntity<?> getAllCommentsByPost(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
 
         List<Comment> commentList = commentRepositorySupport.findAllByPost(post);
 
@@ -128,7 +128,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public ResponseEntity<?> updateCommentById(Long commentId, String content, HttpServletRequest request) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
-                new UniquOneServiceException(ExceptionCode.NO_SUCH));
+                new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
 
         //현재 content의 pkID requestPkId랑 비교.
         if(comment.getUserId() != JwtProvider.getUserPkId(request)){
@@ -148,6 +148,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public ResponseEntity<?> deleteCommentById(Long commentId, HttpServletRequest request) {
+
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
                 new UniquOneServiceException(ExceptionCode.NO_SUCH));
 
