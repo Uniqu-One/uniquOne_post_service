@@ -7,18 +7,18 @@ import com.sparos.uniquone.msapostservice.post.domain.*;
 import com.sparos.uniquone.msapostservice.post.dto.PostInputDto;
 import com.sparos.uniquone.msapostservice.post.dto.PostListInfoDto;
 import com.sparos.uniquone.msapostservice.post.dto.PostModInfoDto;
+import com.sparos.uniquone.msapostservice.post.dto.PostSlicePageDto;
 import com.sparos.uniquone.msapostservice.post.repository.*;
 import com.sparos.uniquone.msapostservice.util.s3.AwsS3UploaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.sparos.uniquone.msapostservice.post.domain.PostType.*;
@@ -42,6 +42,7 @@ public class PostServiceImpl implements IPostService {
     public Object addPost(PostInputDto postInputDto, List<MultipartFile> multipartFileList, Long userId) throws IOException {
         Optional<Corn> corn = iCornRepository.findByUserId(userId);
         Post post = iPostRepository.save(Post.builder()
+                .title(postInputDto.getTitle())
                 .corn(corn.get())
                 .dsc(postInputDto.getDsc())
                 .postType(postInputDto.getPostType())
@@ -142,19 +143,34 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Object getOtherPostAllList(Long cornId, Long userId) {
-        log.info(SALE.ordinal());
-        List<Post> postList = iPostRepository.findByCornIdOrderByRegDateDesc(cornId);
-        List<PostListInfoDto> postListInfoDtoList = new ArrayList<>();
-        for (Post post : postList) {
-            PostImg postImg = iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1);
-            postListInfoDtoList.add(PostListInfoDto.builder().postId(post.getId())
-                    .postImg(postImg.getUrl())
-                    .postType(post.getPostType())
-                    .reg_date(post.getRegDate())
-                    .build());
-        }
-        return postListInfoDtoList;
+    public Object getOtherPostAllList(Long cornId, Long userId, Pageable pageable) {
+        Slice<Post> postList = iPostRepository.findByCornIdOrderByRegDateDesc(cornId, pageable);
+        List<PostListInfoDto> postListInfoDtoList = postList.stream().map(post ->
+                PostListInfoDto.builder()
+                        .postId(post.getId())
+                        .postImg(iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1).getUrl())
+                        .postType(post.getPostType())
+                        .reg_date(post.getRegDate())
+                        .build()
+        ).collect(Collectors.toList());
+
+        PostSlicePageDto postSlicePageDto = PostSlicePageDto.builder()
+                //todo Collections.singleton 공부
+                .content(Collections.singletonList(postListInfoDtoList))
+                .pageNumber(postList.getPageable().getPageNumber())
+                .pageFirst(postList.isFirst())
+                .pageLast(postList.isLast()).build();
+
+//        List<PostListInfoDto> postListInfoDtoList = new ArrayList<>();
+//        for (Post post : postList) {
+//            PostImg postImg = iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1);
+//            postListInfoDtoList.add(PostListInfoDto.builder().postId(post.getId())
+//                    .postImg(postImg.getUrl())
+//                    .postType(post.getPostType())
+//                    .reg_date(post.getRegDate())
+//                    .build());
+//        }
+        return postSlicePageDto;
     }
 
     @Override
@@ -163,7 +179,15 @@ public class PostServiceImpl implements IPostService {
         postTypeList.add(SALE);
         postTypeList.add(DISCONTINUED);
         postTypeList.add(SOLD_OUT);
-        return postRepositoryCustom.PostProductListInfo(postTypeList, cornId, pageable);
+        List<PostListInfoDto> postListInfoDtoList = postRepositoryCustom.PostProductListInfo(postTypeList, cornId, pageable);
+        Boolean isFirst = pageable.getPageNumber() == 0;
+        Boolean isLast = postListInfoDtoList.size() < pageable.getPageSize() - 1;
+        return PostSlicePageDto.builder()
+                .content(Collections.singletonList(postListInfoDtoList))
+                .pageNumber(pageable.getPageNumber())
+                .pageFirst(isFirst)
+                .pageLast(isLast)
+                .build();
 //        List<Post> SalePostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, SALE);
 //        List<Post> SoldOutpostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, SOLD_OUT);
 //        List<Post> DiscontinuedPostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, DISCONTINUED);
@@ -200,18 +224,30 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Object getOtherPostStyleList(Long userId, Long cornId) {
-        List<Post> PostList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, STYLE);
-        List<PostListInfoDto> postListInfoDtoList = new ArrayList<>();
-        for (Post post : PostList) {
-            PostImg postImg = iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1);
-            postListInfoDtoList.add(PostListInfoDto.builder().postId(post.getId())
-                    .postImg(postImg.getUrl())
-                    .postType(post.getPostType())
-                    .reg_date(post.getRegDate())
-                    .build());
-        }
-        return postListInfoDtoList;
+    public Object getOtherPostStyleList(Long userId, Long cornId, Pageable pageable) {
+        Slice<Post> postList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, STYLE);
+        List<PostListInfoDto> postListInfoDtoList = postList.stream().map(post -> PostListInfoDto.builder()
+                .postId(post.getId())
+                .postImg(iPostImgRepository.findUrlByPostId(post.getId()))
+                .postType(post.getPostType())
+                .reg_date(post.getRegDate())
+                .build()).collect(Collectors.toList());
+//        List<PostListInfoDto> postListInfoDtoList = new ArrayList<>();
+//        for (Post post : postList) {
+//            PostImg postImg = iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1);
+//            postListInfoDtoList.add(PostListInfoDto.builder().postId(post.getId())
+//                    .postImg(postImg.getUrl())
+//                    .postType(post.getPostType())
+//                    .reg_date(post.getRegDate())
+//                    .build());
+//        }
+        PostSlicePageDto postSlicePageDto = PostSlicePageDto.builder()
+                .content(Collections.singletonList(postListInfoDtoList))
+                .pageNumber(postList.getNumber())
+                .pageFirst(postList.isFirst())
+                .pageLast(postList.isLast())
+                .build();
+        return postSlicePageDto;
     }
 
     @Override
@@ -219,7 +255,7 @@ public class PostServiceImpl implements IPostService {
         Post post = iPostRepository.findById(postId).orElseThrow();
         List<String> colorList = List.of(post.getColor().split(","));
         List<PostTag> postTagList = iPostTagRepository.findByPostId(postId);
-        List<String> postTagNameList = postTagList.stream().map(postTag -> "#"+postTag.getDsc()).collect(Collectors.toList());
+        List<String> postTagNameList = postTagList.stream().map(postTag -> "#" + postTag.getDsc()).collect(Collectors.toList());
         List<PostAndLook> postAndLookList = iPostAndLookRepository.findByPostId(postId);
         List<String> postAndLookNameList = postAndLookList.stream().map(postAndLook -> postAndLook.getLook().getName()).collect(Collectors.toList());
         List<PostImg> postImgList = iPostImgRepository.findByPostId(postId);
