@@ -20,7 +20,7 @@ public class SuccessResponse <T>{
         this.data = null;
     }
 
-    public static<T> SuccessResponse of(SuccessCode code,T data){
+    public static<T> SuccessResponse of(SuccessCode code, T data){
         return new SuccessResponse(code, data);
     }
 
