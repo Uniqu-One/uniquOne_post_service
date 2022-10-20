@@ -13,36 +13,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-@RequestMapping("/qna")
+@RequestMapping("/admin/qna")
 @RequiredArgsConstructor
 @RestController
-public class QnAController {
+public class AdminQnAController {
 
     private final IQnAService iQnAService;
 
-    // 문의 등록
-    @PostMapping("")
-    public ResponseEntity<SuccessResponse> createQuestion(@RequestBody QuestionInputDto questionInputDto, HttpServletRequest request) {
-        JSONObject jsonObject = iQnAService.createQuestion(questionInputDto, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
-    }
-
-    // 나의 문의 내역 조회
-    @GetMapping("")
-    public ResponseEntity<SuccessResponse> findMyQnA(HttpServletRequest request) {
-        JSONObject jsonObject = iQnAService.findMyQnA(request);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
-    }
-
-    // 나의 문의 개별 조회
-    @GetMapping("/{qnaId}")
-    public ResponseEntity<SuccessResponse> findMyDetailQnA(@PathVariable Long qnaId, HttpServletRequest request) {
-        JSONObject jsonObject = iQnAService.findMyDetailQnA(qnaId, request);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
-    }
-
     // 모든 문의 리스트 조회
-    @GetMapping("/all")
+    @GetMapping("")
     public ResponseEntity<SuccessResponse> findAllQnA() {
         JSONObject jsonObject = iQnAService.findAllQnA();
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));

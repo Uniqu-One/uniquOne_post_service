@@ -24,5 +24,5 @@ public class ReviewOutDto {
 
     private Double star;
     private String dsc;
-    private LocalDateTime reviewRegDate;
+    private String reviewRegDate;
 }

@@ -1,7 +1,8 @@
 package com.sparos.uniquone.msapostservice.review.domain;
 
-import com.sparos.uniquone.msapostservice.review.domain.Review;
 import com.sparos.uniquone.msapostservice.review.dto.ReviewOutDto;
+
+import java.time.format.DateTimeFormatter;
 
 public class ReviewUtils {
 
@@ -16,8 +17,10 @@ public class ReviewUtils {
                 .postImg(postImg)
                 .star(review.getStar())
                 .dsc(review.getDsc())
-                .reviewRegDate(review.getRegDate())
+                .reviewRegDate(review.getRegDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")))
                 .build();
     }
+
+
 
 }

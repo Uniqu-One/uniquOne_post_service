@@ -79,4 +79,5 @@ public class Post extends BaseTimeEntity {
     public void modColor(String color){
         this.color = color;
     }
+
 }
