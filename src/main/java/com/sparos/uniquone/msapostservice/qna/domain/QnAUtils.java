@@ -6,6 +6,7 @@ import com.sparos.uniquone.msapostservice.qna.dto.QuestionInputDto;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.format.DateTimeFormatter;
 
 public class QnAUtils {
 
@@ -22,7 +23,7 @@ public class QnAUtils {
                 .qnaId(qna.getId())
                 .question(qna.getQuestion())
                 .questionType(qna.getQuestionType())
-                .qRegDate(qna.getQRegDate())
+                .qRegDate(qna.getQRegDate().format(DateTimeFormatter.ofPattern("yyyy년M월dd일 hh:mm")))
                 .isAnswer(qna.getAnswer() == null? false : true)
                 .build();
     }
@@ -34,12 +35,12 @@ public class QnAUtils {
                 .qnaId(qna.getId())
                 .question(qna.getQuestion())
                 .questionType(qna.getQuestionType())
-                .qRegDate(qna.getQRegDate())
+                .qRegDate(qna.getQRegDate().format(DateTimeFormatter.ofPattern("yyyy년M월dd일 hh:mm")))
                 .cornImg(cornImg)
                 .isAnswer(isAnswer)
                 .answer(isAnswer==true? qna.getAnswer() : null)
-                .aRegDate(isAnswer == true? qna.getARegDate() : null)
-                .adminImg("관리자 이미지")
+                .aRegDate(isAnswer == true? qna.getARegDate().format(DateTimeFormatter.ofPattern("yyyy년M월dd일 hh:mm")) : null)
+                .adminImg("https://uniquoneimg.s3.ap-northeast-2.amazonaws.com/img/KakaoTalk_20221017_114329237.png")
                 .build();
     }
 

@@ -42,6 +42,7 @@ public class PostServiceImpl implements IPostService {
     public Object addPost(PostInputDto postInputDto, List<MultipartFile> multipartFileList, Long userId) throws IOException {
         Optional<Corn> corn = iCornRepository.findByUserId(userId);
         Post post = iPostRepository.save(Post.builder()
+                        .title("dkdkdk")
                 .corn(corn.get())
                 .dsc(postInputDto.getDsc())
                 .postType(postInputDto.getPostType())

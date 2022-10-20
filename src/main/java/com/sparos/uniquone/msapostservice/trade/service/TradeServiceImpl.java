@@ -11,9 +11,11 @@ import com.sparos.uniquone.msapostservice.trade.repository.ITradeRepository;
 import com.sparos.uniquone.msapostservice.trade.domain.TradeUtils;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
+import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +23,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class TradeServiceImpl implements ITradeService{
+public class TradeServiceImpl implements ITradeService {
 
     private final ITradeRepository iTradeRepository;
     private final IPostRepository iPostRepository;
@@ -33,20 +35,24 @@ public class TradeServiceImpl implements ITradeService{
 
         JSONObject jsonObject = new JSONObject();
         Post post = iPostRepository.findById(tradeInputDto.getPostId())
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT));
 
         // 판매 중단 or 판매 완료
         if (post.getPostType().equals(PostType.DISCONTINUED) || post.getPostType().equals(PostType.SOLD_OUT))
-            throw new UniquOneServiceException(ExceptionCode.POST_TYPE_NOT_TRADE);
+            throw new UniquOneServiceException(ExceptionCode.POST_TYPE_NOT_TRADE, HttpStatus.NO_CONTENT);
 
         Trade trade = iTradeRepository.save(
                 Trade.builder()
                         .sellerId(JwtProvider.getUserPkId(request))
                         .buyerId(tradeInputDto.getBuyerId())
                         .post(post)
+                        .isReview(false)
                         .build());
 
-        jsonObject.put("data", trade); // todo 필요없으면 변경
+        post.modPostType(PostType.SOLD_OUT);
+        iPostRepository.save(post);
+
+        jsonObject.put("data", trade);
 
         return jsonObject;
     }
@@ -59,13 +65,13 @@ public class TradeServiceImpl implements ITradeService{
         List<Trade> trades = iTradeRepository.findBySellerId(JwtProvider.getUserPkId(request));
 
         if (trades.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
 
         jsonObject.put("data", trades.stream().map(trade ->
                 TradeUtils.entityToTradeOutDto(
                         trade,
                         iPostRepository.findById(trade.getPost().getId())
-                                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION)),
+                                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT)),
                         iPostImgRepository.findUrlByPostId(trade.getPost().getId())))
         );
 
@@ -81,13 +87,13 @@ public class TradeServiceImpl implements ITradeService{
         List<Trade> trades = iTradeRepository.findByBuyerId(JwtProvider.getUserPkId(request));
 
         if (trades.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         jsonObject.put("data", trades.stream().map(trade ->
                 TradeUtils.entityToTradeOutDto(
                         trade,
                         iPostRepository.findById(trade.getPost().getId())
-                                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION)),
+                                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT)),
                         iPostImgRepository.findUrlByPostId(trade.getPost().getId())))
         );
 
