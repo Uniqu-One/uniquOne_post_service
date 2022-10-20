@@ -168,7 +168,7 @@ public class CommentServiceImpl implements CommentService {
         //헤더 가 없으면 익셉션 발생하는지 확인해야됨
         String token = JwtProvider.getTokenFromRequestHeader(request);
         if (!JwtProvider.isJwtValid(token)){
-//            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION,HttpStatus.OK);
         }
         CommentUserInfoResponseDto responseDto = new CommentUserInfoResponseDto();
         responseDto.setUserId(JwtProvider.getUserPkId(token));
