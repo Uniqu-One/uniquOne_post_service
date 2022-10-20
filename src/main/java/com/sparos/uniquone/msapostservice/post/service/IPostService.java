@@ -18,11 +18,11 @@ public interface IPostService {
 
     Object delPost(Long postId, Long userId);
 
-    Object getOtherPostAllList(Long userId, Long cornId);
+    Object getOtherPostAllList(Long userId, Long cornId,Pageable pageable);
 
     Object getOtherPostProductList(Long userId, Long cornId, Pageable pageable);
 
-    Object getOtherPostStyleList(Long userId, Long cornId);
+    Object getOtherPostStyleList(Long userId, Long cornId,Pageable pageable);
 
     Object getModPostInfo(Long userId, Long postId);
 

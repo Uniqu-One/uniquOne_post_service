@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class PostInputDto {
+    private String title;
     private String dsc;
     private String postTagLine;
     private PostType postType;
