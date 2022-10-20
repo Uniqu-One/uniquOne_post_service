@@ -51,6 +51,26 @@ public class JwtProvider {
                 .getBody();
     }
 
+    //서브젝트 비어있는지 유무로 판단함. 조금 더 보안할필요는 있을듯함.
+    public static boolean isJwtValid(String token){
+        boolean returnValue = true;
+
+        String subject = null;
+
+        try{
+            subject = extractClaims(token).getSubject();
+
+        }catch (Exception ex){
+            returnValue =false;
+        }
+
+        if(subject == null || subject.isEmpty()){
+            returnValue = false;
+        }
+
+        return returnValue;
+    }
+
     //토큰 유효 시간 검증.
     public static boolean verifyToken(String token) {
         try {

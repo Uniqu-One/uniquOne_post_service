@@ -18,7 +18,7 @@ public class CommentResponseDto {
 
     private Long commentId;
     private Long parentId;
-
+    private Long userId;
     private String writerNick;
 //    private String nickName;
     private String content;
@@ -30,6 +30,7 @@ public class CommentResponseDto {
 
     public CommentResponseDto(Comment comment){
         this.commentId = comment.getId();
+        this.userId = comment.getUserId();
         this.writerNick = comment.getUserNickName();
         this.content = comment.getContent();
         this.depth = comment.getDepth();
