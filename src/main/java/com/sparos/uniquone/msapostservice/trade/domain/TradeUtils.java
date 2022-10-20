@@ -13,7 +13,7 @@ public class TradeUtils {
                 .regDate(trade.getRegDate())
                 .isReview(trade.getIsReview())
                 .postId(post.getId())
-                .postTitle(post.getDsc()) // todo title로 바꾸기
+                .postTitle(post.getTitle())
                 .price(post.getPrice())
                 .postImg(postImg)
                 .build();

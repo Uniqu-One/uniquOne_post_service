@@ -17,13 +17,13 @@ public class QnADetailOutDto {
     private Long qnaId;
     private String question;
     private QuestionType questionType;
-    private LocalDateTime qRegDate;
+    private String qRegDate;
 
     private String cornImg;
 
     private Boolean isAnswer;
     private String answer;
     private String adminImg;
-    private LocalDateTime aRegDate;
+    private String aRegDate;
 
 }

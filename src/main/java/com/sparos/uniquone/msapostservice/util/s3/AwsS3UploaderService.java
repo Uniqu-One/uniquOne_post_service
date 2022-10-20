@@ -91,6 +91,7 @@ public class AwsS3UploaderService {
         //파일 업로드
         File file = new File(fileDir+storeFileName);
         multipartFile.transferTo(file);
+        log.error(file);
 
         return Optional.of(file);
     }
