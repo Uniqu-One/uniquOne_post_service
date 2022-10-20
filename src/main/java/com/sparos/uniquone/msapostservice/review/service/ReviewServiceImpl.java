@@ -16,6 +16,7 @@ import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,16 +39,18 @@ public class ReviewServiceImpl implements IReviewService {
 
         JSONObject jsonObject = new JSONObject();
         Trade trade = iTradeRepository.findByIdAndIsReview(reviewCreateDto.getTradeId(), false)
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT));
 
-        Review review = iReviewRepository.save(Review.builder()
+        Review review = iReviewRepository.save(
+                Review.builder()
                         .userId(JwtProvider.getUserPkId(request))
                         .post(iPostRepository.findById(reviewCreateDto.getPostId()).get())
                         .star(reviewCreateDto.getStar())
                         .dsc(reviewCreateDto.getDsc())
-                        .build());
+                        .build()
+        );
 
-        trade.setReview(true);
+        trade.modIsReview(true);
         iTradeRepository.save(trade);
 
         jsonObject.put("data", review); // todo 필요없으면 변경
@@ -61,19 +64,17 @@ public class ReviewServiceImpl implements IReviewService {
 
         JSONObject jsonObject = new JSONObject();
         Corn corn = iCornRepository.findByUserId(JwtProvider.getUserPkId(request))
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT));
 
         List<Long> postIds= iPostRepository.findIdByCornId(corn.getId());
 
-        if (postIds.isEmpty()){
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
-        }
+        if (postIds.isEmpty())
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
 
         List<Review> reviews = iReviewRepository.findByPostIdIn(postIds);
 
-        if (reviews.isEmpty()){
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
-        }
+        if (reviews.isEmpty())
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
 
         jsonObject.put("data", reviews.stream().map(re ->
                         ReviewUtils.entityToReviewOutDto(
@@ -92,15 +93,15 @@ public class ReviewServiceImpl implements IReviewService {
 
         JSONObject jsonObject = new JSONObject();
         Corn corn = iCornRepository.findById(cornId)
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT));
 
         List<Long> postIds= iPostRepository.findIdByCornId(corn.getId());
         if (postIds.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
 
         List<Review> reviews = iReviewRepository.findByPostIdIn(postIds);
         if (reviews.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
 
         jsonObject.put("data", reviews.stream().map(re ->
                 ReviewUtils.entityToReviewOutDto(
@@ -120,9 +121,8 @@ public class ReviewServiceImpl implements IReviewService {
         JSONObject jsonObject = new JSONObject();
         List<Review> reviews = iReviewRepository.findByUserId(JwtProvider.getUserPkId(request));
 
-        if (reviews.isEmpty()){
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
-        }
+        if (reviews.isEmpty())
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
 
         jsonObject.put("data", reviews.stream().map(re ->
                 ReviewUtils.entityToReviewOutDto(

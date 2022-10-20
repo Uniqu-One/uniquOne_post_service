@@ -50,7 +50,7 @@ public class Trade {
         this.regDate = regDate;
     }
 
-    public void setReview(Boolean review) {
-        isReview = review;
+    public void modIsReview(Boolean isReview) {
+        this.isReview = isReview;
     }
 }

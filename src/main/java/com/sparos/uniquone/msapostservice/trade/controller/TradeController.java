@@ -6,6 +6,7 @@ import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
 import com.sparos.uniquone.msapostservice.util.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ public class TradeController {
     @PostMapping("")
     public ResponseEntity<SuccessResponse> createTrade(@RequestBody TradeInputDto tradeInputDto, HttpServletRequest request) {
         JSONObject jsonObject = iTradeService.createTrade(tradeInputDto, request);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
+        return ResponseEntity.status(HttpStatus.CREATED).body(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
 
     // 판매 내역 조회
