@@ -132,7 +132,9 @@ public class CommentServiceImpl implements CommentService {
                 new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.OK));
 
         //현재 content의 pkID requestPkId랑 비교.
+
         if(comment.getUserId() != JwtProvider.getUserPkId(request)){
+
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.OK);
         }
 
