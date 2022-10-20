@@ -4,6 +4,7 @@ import com.sparos.uniquone.msapostservice.comment.domain.Comment;
 import com.sparos.uniquone.msapostservice.comment.dto.request.CommentCreateRequestDto;
 import com.sparos.uniquone.msapostservice.comment.dto.response.CommentResponseDto;
 import com.sparos.uniquone.msapostservice.comment.dto.response.CommentUpdateResponseDto;
+import com.sparos.uniquone.msapostservice.comment.dto.response.CommentUserInfoResponseDto;
 import com.sparos.uniquone.msapostservice.comment.repository.CommentRepositorySupport;
 import com.sparos.uniquone.msapostservice.comment.repository.ICommentRepository;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
@@ -132,7 +133,7 @@ public class CommentServiceImpl implements CommentService {
 
         //현재 content의 pkID requestPkId랑 비교.
         if(comment.getUserId() != JwtProvider.getUserPkId(request)){
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
         }
 
         comment.setContent(content);
@@ -150,15 +151,27 @@ public class CommentServiceImpl implements CommentService {
     public ResponseEntity<?> deleteCommentById(Long commentId, HttpServletRequest request) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
-                new UniquOneServiceException(ExceptionCode.NO_SUCH));
+                new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION));
 
         //현재 content의 pkID requestPkId랑 비교.
         if(comment.getUserId() != JwtProvider.getUserPkId(request)){
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
         }
 
         commentRepository.deleteById(commentId);
 
         return ResponseEntity.status(HttpStatus.OK).body("삭제완료.");
+    }
+
+    @Override
+    public ResponseEntity<?> getUserIdInfo(HttpServletRequest request) {
+        //헤더 가 없으면 익셉션 발생하는지 확인해야됨
+        String token = JwtProvider.getTokenFromRequestHeader(request);
+        if (!JwtProvider.isJwtValid(token)){
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION);
+        }
+        CommentUserInfoResponseDto responseDto = new CommentUserInfoResponseDto();
+        responseDto.setUserId(JwtProvider.getUserPkId(token));
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }

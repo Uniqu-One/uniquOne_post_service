@@ -37,4 +37,9 @@ public class CommentController {
         return commentService.deleteCommentById(commentId, request);
     }
 
+    @GetMapping
+    public ResponseEntity<?> getUserIdInfo(HttpServletRequest request){
+        return commentService.getUserIdInfo(request);
+    }
+
 }

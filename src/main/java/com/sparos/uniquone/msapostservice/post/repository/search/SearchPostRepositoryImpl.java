@@ -52,7 +52,7 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
         JPQLQuery<Post> jpqlQuery = from(post);
         jpqlQuery.leftJoin(postImg).on(postImg.post.eq(post));
 
-        JPQLQuery<Tuple> tuple = jpqlQuery.select(post,postImg);
+        JPQLQuery<Tuple> tuple = jpqlQuery.select(post, postImg);
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 //        BooleanExpression expression = post.id.gt(0L);
@@ -61,11 +61,12 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
 
         BooleanBuilder conditionBuilder = new BooleanBuilder();
         conditionBuilder.or(post.title.contains(keyword));
+        conditionBuilder.and(postImg.idx.eq(1));
 
         booleanBuilder.and(conditionBuilder);
 
         tuple.where(booleanBuilder);
-        tuple.groupBy(post);
+//        tuple.groupBy(post);
 //        this.getQuerydsl().applyPagination(PageRequest.of(0, 1, Sort.by("id").ascending(), tuple));
 
 //        List<Tuple> result = tuple.fetch();
