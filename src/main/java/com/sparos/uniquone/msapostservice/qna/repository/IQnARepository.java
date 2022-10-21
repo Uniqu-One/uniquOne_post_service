@@ -1,5 +1,6 @@
 package com.sparos.uniquone.msapostservice.qna.repository;
 
+
 import com.sparos.uniquone.msapostservice.qna.domain.QnA;
 import org.springframework.data.jpa.repository.JpaRepository;
 
