@@ -41,18 +41,4 @@ public class QnAController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
 
-    // 모든 문의 리스트 조회
-    @GetMapping("/all")
-    public ResponseEntity<SuccessResponse> findAllQnA() {
-        JSONObject jsonObject = iQnAService.findAllQnA();
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
-    }
-
-    // 문의 답변 등록
-    @PatchMapping("")
-    public ResponseEntity<SuccessResponse> createAnswer(@RequestBody AnswerInputDto answerInputDto) {
-        JSONObject jsonObject = iQnAService.createAnswer(answerInputDto);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
-    }
-
 }
