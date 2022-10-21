@@ -15,4 +15,6 @@ public interface CommentService {
 
     ResponseEntity<?> deleteCommentById(Long commentId, HttpServletRequest request);
 
+    ResponseEntity getUserIdInfo (HttpServletRequest request);
+
 }
