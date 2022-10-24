@@ -1,16 +1,21 @@
 package com.sparos.uniquone.msapostservice.report.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import com.sparos.uniquone.msapostservice.qna.domain.QuestionType;
+import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@EntityListeners(value ={AuditingEntityListener.class})
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
+@Getter
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 public class Report {
 
     @Id
@@ -19,18 +24,24 @@ public class Report {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
-    @ManyToOne
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
-    private String type;
-
-    @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
-    private String  dsc;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "report_type", nullable = false, columnDefinition = "VARCHAR(20)")
+    private ReportType reportType;
 
     @CreatedDate
     @Column(name = "reg_date", updatable = false)
     private LocalDateTime regDate;
 
+    @Builder
+    public Report(Long userId, Post post, ReportType reportType) {
+        this.userId = userId;
+        this.post = post;
+        this.reportType = reportType;
+    }
 }
