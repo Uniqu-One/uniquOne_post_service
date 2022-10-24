@@ -1,7 +1,5 @@
-/*
 package com.sparos.uniquone.msapostservice.noti.controller;
 
-import com.sparos.uniquone.msapostservice.noti.repository.INotiRepository;
 import com.sparos.uniquone.msapostservice.noti.service.INotiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -20,4 +18,4 @@ public class NotiController {
         return iNotiService.subscribe(id, lastEventId);
     }
 }
-*/
+

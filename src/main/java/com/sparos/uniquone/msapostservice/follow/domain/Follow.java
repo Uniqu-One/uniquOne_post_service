@@ -2,6 +2,7 @@ package com.sparos.uniquone.msapostservice.follow.domain;
 
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -9,6 +10,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Follow {
