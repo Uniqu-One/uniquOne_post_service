@@ -14,24 +14,23 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentResponseDto {
-
+public class CommentListResponseDto {
     private Long commentId;
-
     private Long parentId;
     private String parentNickname;
     private Long userId;
-    private String cornImgUrl;
     private String writerNick;
-
+    //    private String nickName;
     private String content;
     private Integer depth;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
 
+    private String cornImgUrl;
+
     private List<CommentResponseDto> children = new ArrayList<>();
 
-    public CommentResponseDto(Comment comment) {
+    public CommentListResponseDto(Comment comment){
         this.commentId = comment.getId();
         this.userId = comment.getUserId();
         this.writerNick = comment.getUserNickName();

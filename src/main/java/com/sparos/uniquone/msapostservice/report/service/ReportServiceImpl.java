@@ -32,8 +32,7 @@ public class ReportServiceImpl implements IReportService{
         Report report = iReportRepository.save(ReportUtils.reportInputDtoToEntity(
                 reportInputDto,
                 iPostRepository.findById(reportInputDto.getPostId())
-                        .orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT)),
-                request));
+                        .orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED)), request));
         jsonObject.put("data", report);
 
         return jsonObject;
@@ -46,8 +45,7 @@ public class ReportServiceImpl implements IReportService{
         List<Report> reports = iReportRepository.findAll();
 
         if (reports.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
-
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
         jsonObject.put("data", reports.stream().map(report ->
                 ReportUtils.entityToReportOutDto(report))
         );

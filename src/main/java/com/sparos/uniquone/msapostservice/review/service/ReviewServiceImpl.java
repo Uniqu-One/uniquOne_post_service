@@ -39,7 +39,7 @@ public class ReviewServiceImpl implements IReviewService {
 
         JSONObject jsonObject = new JSONObject();
         Trade trade = iTradeRepository.findByIdAndIsReview(reviewCreateDto.getTradeId(), false)
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
         Review review = iReviewRepository.save(
                 Review.builder()
@@ -64,17 +64,17 @@ public class ReviewServiceImpl implements IReviewService {
 
         JSONObject jsonObject = new JSONObject();
         Corn corn = iCornRepository.findByUserId(JwtProvider.getUserPkId(request))
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
         List<Long> postIds= iPostRepository.findIdByCornId(corn.getId());
 
         if (postIds.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         List<Review> reviews = iReviewRepository.findByPostIdIn(postIds);
 
         if (reviews.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         jsonObject.put("data", reviews.stream().map(re ->
                         ReviewUtils.entityToReviewOutDto(
@@ -93,15 +93,15 @@ public class ReviewServiceImpl implements IReviewService {
 
         JSONObject jsonObject = new JSONObject();
         Corn corn = iCornRepository.findById(cornId)
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
         List<Long> postIds= iPostRepository.findIdByCornId(corn.getId());
         if (postIds.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         List<Review> reviews = iReviewRepository.findByPostIdIn(postIds);
         if (reviews.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         jsonObject.put("data", reviews.stream().map(re ->
                 ReviewUtils.entityToReviewOutDto(
@@ -122,7 +122,7 @@ public class ReviewServiceImpl implements IReviewService {
         List<Review> reviews = iReviewRepository.findByUserId(JwtProvider.getUserPkId(request));
 
         if (reviews.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         jsonObject.put("data", reviews.stream().map(re ->
                 ReviewUtils.entityToReviewOutDto(

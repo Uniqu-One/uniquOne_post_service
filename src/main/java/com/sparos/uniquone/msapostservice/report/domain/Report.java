@@ -1,6 +1,8 @@
 package com.sparos.uniquone.msapostservice.report.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
+import com.sparos.uniquone.msapostservice.qna.domain.QuestionType;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,11 +25,13 @@ public class Report {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
-
-    @Column(nullable = false, columnDefinition = "VARCHAR(50)")
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "report_type", nullable = false, columnDefinition = "VARCHAR(20)")
     private ReportType reportType;
 
     @CreatedDate
