@@ -79,7 +79,7 @@ public class ReviewServiceImpl implements IReviewService {
         jsonObject.put("data", reviews.stream().map(re ->
                         ReviewUtils.entityToReviewOutDto(
                                 re,
-                                iUserConnect.getUserInfo(re.getUserId()),
+                                iUserConnect.getUserNickName(re.getUserId()),
                                 iCornRepository.findImgUrlByUserId(re.getUserId()),
                                 iPostImgRepository.findUrlByPostId(re.getPost().getId())))
         );
@@ -106,7 +106,7 @@ public class ReviewServiceImpl implements IReviewService {
         jsonObject.put("data", reviews.stream().map(re ->
                 ReviewUtils.entityToReviewOutDto(
                         re,
-                        iUserConnect.getUserInfo(re.getUserId()),
+                        iUserConnect.getUserNickName(re.getUserId()),
                         iCornRepository.findImgUrlByUserId(re.getUserId()),
                         iPostImgRepository.findUrlByPostId(re.getPost().getId())))
         );
@@ -127,7 +127,7 @@ public class ReviewServiceImpl implements IReviewService {
         jsonObject.put("data", reviews.stream().map(re ->
                 ReviewUtils.entityToReviewOutDto(
                         re,
-                        iUserConnect.getUserInfo(re.getUserId()),
+                        iUserConnect.getUserNickName(re.getUserId()),
                         iCornRepository.findImgUrlByUserId(re.getUserId()),
                         iPostImgRepository.findUrlByPostId(re.getPost().getId())))
         );

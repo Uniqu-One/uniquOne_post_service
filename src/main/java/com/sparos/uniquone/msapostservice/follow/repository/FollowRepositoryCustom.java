@@ -13,13 +13,14 @@ import static com.sparos.uniquone.msapostservice.corn.domain.QCorn.corn;
 public class FollowRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public FollowingInfoDto findByUserIdFollowingInfo(Long userId){
+    public FollowingInfoDto findByUserIdFollowingInfo(Long cornId){
         return (FollowingInfoDto) jpaQueryFactory
-                .select(Projections.constructor(FollowingInfoDto.class,
-                        corn.id,
-                        corn.title,
-                        corn.imgUrl))
+                .select(Projections.fields(FollowingInfoDto.class,
+                        corn.imgUrl.as("cornImgUrl"),
+                        corn.title.as("cornTitle"),
+                        corn.id.as("cornId")
+                        ))
                 .from(corn)
-                .where(corn.userId.eq(userId)).fetchOne();
+                .where(corn.id.eq(cornId)).fetchOne();
     }
 }
