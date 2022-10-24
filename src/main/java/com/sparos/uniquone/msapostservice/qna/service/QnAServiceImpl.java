@@ -1,17 +1,17 @@
 package com.sparos.uniquone.msapostservice.qna.service;
 
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
+
 import com.sparos.uniquone.msapostservice.noti.domain.NotiType;
 import com.sparos.uniquone.msapostservice.noti.service.INotiService;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostType;
+
 import com.sparos.uniquone.msapostservice.qna.domain.QnA;
 import com.sparos.uniquone.msapostservice.qna.domain.QnAUtils;
 import com.sparos.uniquone.msapostservice.qna.dto.AnswerInputDto;
 import com.sparos.uniquone.msapostservice.qna.dto.QuestionInputDto;
 import com.sparos.uniquone.msapostservice.qna.repository.IQnARepository;
-import com.sparos.uniquone.msapostservice.trade.domain.Trade;
-import com.sparos.uniquone.msapostservice.trade.domain.TradeUtils;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;

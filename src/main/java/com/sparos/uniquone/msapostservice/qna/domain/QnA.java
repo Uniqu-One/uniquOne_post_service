@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@EntityListeners(value ={AuditingEntityListener.class})
+@EntityListeners(value = {AuditingEntityListener.class})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
 @Getter
@@ -26,11 +26,12 @@ public class QnA {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+
     @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
     private String question;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    @Column(nullable = false, columnDefinition = "varchar(10)")
     private QuestionType questionType;
 
     @Column(columnDefinition = "MEDIUMTEXT")

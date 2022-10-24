@@ -4,6 +4,7 @@ public interface IFollowService {
     Object postFollowing (Long cornId, Long userId);
     Object deleteUnFollowing(Long cornId, Long userId);
 
-    Object getFollow(Long userId);
+    Object getFollowing(Long userId);
+    Object getOtherFollowing(Long cornId);
     Object getFollower(Long cornId);
 }

@@ -29,7 +29,7 @@ public class Report {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
-
+    
     @Enumerated(EnumType.STRING)
     @Column(name = "report_type", nullable = false, columnDefinition = "VARCHAR(20)")
     private ReportType reportType;

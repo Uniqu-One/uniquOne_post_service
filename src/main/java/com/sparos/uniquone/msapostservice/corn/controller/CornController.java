@@ -2,9 +2,11 @@ package com.sparos.uniquone.msapostservice.corn.controller;
 
 import com.sparos.uniquone.msapostservice.corn.dto.CornCreateDto;
 import com.sparos.uniquone.msapostservice.corn.dto.CornModifyDto;
+import com.sparos.uniquone.msapostservice.corn.dto.CornRandomNickNameDto;
 import com.sparos.uniquone.msapostservice.corn.repository.CornRepositoryCustom;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.corn.service.ICornService;
+import com.sparos.uniquone.msapostservice.util.generate.GenerateRandomConNick;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
 import com.sparos.uniquone.msapostservice.util.response.SuccessResponse;
@@ -28,6 +30,7 @@ public class CornController {
     private final ICornRepository iCornRepository;
 
     private final CornRepositoryCustom cornRepositoryCustom;
+
 
     @PostMapping("/existstitle")
     public ResponseEntity<SuccessResponse> existsTitle(@RequestBody Map<String, String> title) {
@@ -58,6 +61,11 @@ public class CornController {
     public ResponseEntity<SuccessResponse> PatchCornInfoModify(HttpServletRequest httpServletRequest,@RequestPart CornModifyDto cornModifyDto, @RequestPart(value = "imgfile", required = false) MultipartFile multipartFile) throws IOException {
         Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.PatchCornModifyInfo(cornModifyDto, multipartFile, userPkId)));
+    }
+
+    @GetMapping("/randNick")
+    public ResponseEntity<SuccessResponse> generateCornNickName(){
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.generatedNickName()));
     }
 
 }

@@ -1,13 +1,11 @@
 package com.sparos.uniquone.msapostservice.corn.service;
 
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
-import com.sparos.uniquone.msapostservice.corn.dto.CornCreateDto;
-import com.sparos.uniquone.msapostservice.corn.dto.CornInfoDto;
-import com.sparos.uniquone.msapostservice.corn.dto.CornModifyDto;
-import com.sparos.uniquone.msapostservice.corn.dto.ReviewStarPostEAInfoOutputDto;
+import com.sparos.uniquone.msapostservice.corn.dto.*;
 import com.sparos.uniquone.msapostservice.corn.repository.CornRepositoryCustom;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.follow.repository.IFollowRepository;
+import com.sparos.uniquone.msapostservice.util.generate.GenerateRandomConNick;
 import com.sparos.uniquone.msapostservice.util.s3.AwsS3UploaderService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -26,6 +24,7 @@ public class CornServiceImpl implements ICornService {
     private final CornRepositoryCustom cornRepositoryCustom;
     private final AwsS3UploaderService awsS3UploaderService;
     private final IFollowRepository iFollowRepository;
+    private final GenerateRandomConNick generateRandomConNick;
 
     @Override
     public Object AddCorn(CornCreateDto cornCreateDto, MultipartFile multipartFile) throws IOException {
@@ -98,6 +97,11 @@ public class CornServiceImpl implements ICornService {
         corn.get().modUrl(cornModifyDto.getUrl());
         Corn saveCorn = iCornRepository.save(corn.get());
         return "수정이 완료되었습니다.";
+    }
+
+    @Override
+    public CornRandomNickNameDto generatedNickName() {
+        return new CornRandomNickNameDto(generateRandomConNick.generate());
     }
 
 
