@@ -10,6 +10,7 @@ public interface CommentService {
     ResponseEntity<?> createComment(CommentCreateRequestDto requestDto, HttpServletRequest request);
 
     ResponseEntity<?> getAllCommentsByPost(Long postId);
+    public ResponseEntity<?> getAllCommentsByPost2(Long postId);
 
     ResponseEntity<?> updateCommentById(Long commentId, String content, HttpServletRequest request);
 
