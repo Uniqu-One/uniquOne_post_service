@@ -1,20 +1,20 @@
 package com.sparos.uniquone.msapostservice.noti.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+public enum NotiType {
 
-import javax.persistence.*;
+    APPLY("알리미"),
+    COOL("좋아요"),
+    COMMENT("댓글"),
+    FOLLOW("팔로우"),
+    QNA("문의");
 
-@Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Table(name = "noti_type")
-public class NotiType {
+    String notiType;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    NotiType(String notiType) {
+        this.notiType = notiType;
+    }
 
-    @Column(nullable = false)
-    private String name;
+    public String value() {
+        return notiType;
+    }
 }

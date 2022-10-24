@@ -3,6 +3,7 @@ package com.sparos.uniquone.msapostservice.follow.service;
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.follow.domain.Follow;
+import com.sparos.uniquone.msapostservice.follow.dto.FollowerInfoDto;
 import com.sparos.uniquone.msapostservice.follow.dto.FollowingInfoDto;
 import com.sparos.uniquone.msapostservice.follow.repository.FollowRepositoryCustom;
 import com.sparos.uniquone.msapostservice.follow.repository.IFollowRepository;
@@ -12,10 +13,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class FollowServiceImpl implements IFollowService{
+public class FollowServiceImpl implements IFollowService {
     private final IFollowRepository iFollowRepository;
     private final FollowRepositoryCustom followRepositoryCustom;
     private final ICornRepository iCornRepository;
@@ -31,26 +33,43 @@ public class FollowServiceImpl implements IFollowService{
 
     @Override
     public Object deleteUnFollowing(Long cornId, Long userId) {
-        iFollowRepository.deleteByUserIdAndCornId(userId,cornId);
+        iFollowRepository.deleteByUserIdAndCornId(userId, cornId);
         return "팔로우 취소되었습니다.";
     }
 
-    @Override
-    public Object getFollow(Long userId) {
-        List<Follow> followingList = iFollowRepository.findByUserId(userId);
 
-        followingList.stream().map(follow ->
-                {
-                    FollowingInfoDto followingInfoDto = followRepositoryCustom.findByUserIdFollowingInfo(follow.getUserId());
-                    followingInfoDto.addUserName(iUserConnect.getUserInfo(follow.getUserId()));
-                    return followingInfoDto;
-                });
-        return followingList;
+    @Override
+    public Object getFollowing(Long userId) {
+        List<Follow> followingList = iFollowRepository.findByUserId(userId);
+        List<FollowingInfoDto> followingInfoDtoList = followingList.stream().map(follow ->
+        {
+            FollowingInfoDto followingInfoDto = followRepositoryCustom.findByUserIdFollowingInfo(follow.getCorn().getId());
+            followingInfoDto.addUserName(iUserConnect.getUserNickName(follow.getUserId()));
+            return followingInfoDto;
+        }).collect(Collectors.toList());
+        return followingInfoDtoList;
+    }
+
+    @Override
+    public Object getOtherFollowing(Long cornId) {
+        List<Follow> followingList = iFollowRepository.findByCorn(iCornRepository.findById(cornId).orElseThrow());
+        List<FollowingInfoDto> followingInfoDtoList = followingList.stream().map(follow ->
+        {
+            FollowingInfoDto followingInfoDto = followRepositoryCustom.findByUserIdFollowingInfo(follow.getUserId());
+            followingInfoDto.addUserName(iUserConnect.getUserNickName(follow.getUserId()));
+            return followingInfoDto;
+        }).collect(Collectors.toList());
+        return followingInfoDtoList;
     }
 
     @Override
     public Object getFollower(Long cornId) {
         List<Follow> followerList = iFollowRepository.findByCorn(cornId);
-        return followerList;
+        List<FollowerInfoDto> followerInfoDtoList = followerList.stream().map(follow ->
+                FollowerInfoDto.builder().cornImgUrl(iCornRepository.findByUserId(follow.getUserId()).orElseThrow(null).getImgUrl())
+                        .userName(iUserConnect.getUserNickName(follow.getUserId()))
+                        .userId(follow.getUserId()).build()
+        ).collect(Collectors.toList());
+        return followerInfoDtoList;
     }
 }

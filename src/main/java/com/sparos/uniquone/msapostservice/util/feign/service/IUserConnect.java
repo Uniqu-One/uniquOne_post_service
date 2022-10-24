@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface IUserConnect {
 
     @GetMapping("/get/nickName/{userId}")
-    String getUserInfo(@PathVariable("userId") Long userId);
+    String getUserNickName(@PathVariable("userId") Long userId);
 
 }
