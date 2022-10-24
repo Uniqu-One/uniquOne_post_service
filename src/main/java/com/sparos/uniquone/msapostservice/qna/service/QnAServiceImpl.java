@@ -48,7 +48,7 @@ public class QnAServiceImpl implements IQnAService {
         List<QnA> qnas = iQnARepository.findByUserId(JwtProvider.getUserPkId(request));
 
         if (qnas.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         jsonObject.put("data", qnas.stream().map(qna ->
                 QnAUtils.entityToQnAOutDto(qna))
@@ -63,7 +63,7 @@ public class QnAServiceImpl implements IQnAService {
 
         JSONObject jsonObject = new JSONObject();
         QnA qna = iQnARepository.findByIdAndUserId(qnaId, JwtProvider.getUserPkId(request))
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
         String cornImg = iCornRepository.findImgUrlByUserId(JwtProvider.getUserPkId(request));
 
@@ -81,7 +81,7 @@ public class QnAServiceImpl implements IQnAService {
         List<QnA> qnas = iQnARepository.findAll();
 
         if (qnas.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         jsonObject.put("data", qnas.stream().map(qna ->
                 QnAUtils.entityToQnAOutDto(qna))
@@ -96,7 +96,7 @@ public class QnAServiceImpl implements IQnAService {
 
         JSONObject jsonObject = new JSONObject();
         QnA qna = iQnARepository.findById(answerInputDto.getQnaId())
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
         qna.setAnswer(answerInputDto.getAnswer());
         iQnARepository.save(qna);

@@ -1,17 +1,15 @@
 package com.sparos.uniquone.msapostservice.trade.service;
 
-import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostType;
 import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.trade.domain.Trade;
+import com.sparos.uniquone.msapostservice.trade.domain.TradeUtils;
 import com.sparos.uniquone.msapostservice.trade.dto.TradeInputDto;
 import com.sparos.uniquone.msapostservice.trade.repository.ITradeRepository;
-import com.sparos.uniquone.msapostservice.trade.domain.TradeUtils;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
-import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
@@ -35,11 +33,11 @@ public class TradeServiceImpl implements ITradeService {
 
         JSONObject jsonObject = new JSONObject();
         Post post = iPostRepository.findById(tradeInputDto.getPostId())
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT));
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
         // 판매 중단 or 판매 완료
         if (post.getPostType().equals(PostType.DISCONTINUED) || post.getPostType().equals(PostType.SOLD_OUT))
-            throw new UniquOneServiceException(ExceptionCode.POST_TYPE_NOT_TRADE, HttpStatus.NO_CONTENT);
+            throw new UniquOneServiceException(ExceptionCode.POST_TYPE_NOT_TRADE, HttpStatus.ACCEPTED);
 
         Trade trade = iTradeRepository.save(
                 Trade.builder()
@@ -65,13 +63,13 @@ public class TradeServiceImpl implements ITradeService {
         List<Trade> trades = iTradeRepository.findBySellerId(JwtProvider.getUserPkId(request));
 
         if (trades.isEmpty())
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT);
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         jsonObject.put("data", trades.stream().map(trade ->
                 TradeUtils.entityToTradeOutDto(
                         trade,
                         iPostRepository.findById(trade.getPost().getId())
-                                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT)),
+                                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED)),
                         iPostImgRepository.findUrlByPostId(trade.getPost().getId())))
         );
 
@@ -93,7 +91,7 @@ public class TradeServiceImpl implements ITradeService {
                 TradeUtils.entityToTradeOutDto(
                         trade,
                         iPostRepository.findById(trade.getPost().getId())
-                                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.NO_CONTENT)),
+                                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED)),
                         iPostImgRepository.findUrlByPostId(trade.getPost().getId())))
         );
 
