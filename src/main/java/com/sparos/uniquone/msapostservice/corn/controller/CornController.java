@@ -5,6 +5,7 @@ import com.sparos.uniquone.msapostservice.corn.dto.CornModifyDto;
 import com.sparos.uniquone.msapostservice.corn.repository.CornRepositoryCustom;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.corn.service.ICornService;
+import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
 import com.sparos.uniquone.msapostservice.util.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,19 +42,22 @@ public class CornController {
 
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<SuccessResponse> myCornGetInfo(@PathVariable("userId") Long userId) {
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.GetCornInfo(userId)));
+    @GetMapping("")
+    public ResponseEntity<SuccessResponse> myCornGetInfo( HttpServletRequest httpServletRequest) {
+        Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.GetCornInfo(userPkId)));
     }
 
-    @GetMapping("/cornInfomodify/{userId}")
-    public ResponseEntity<SuccessResponse> getCornInfoModify(@PathVariable("userId") Long userId) {
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.GetCornModifyInfo(userId)));
+    @GetMapping("/cornInfomodify")
+    public ResponseEntity<SuccessResponse> getCornInfoModify(HttpServletRequest httpServletRequest) {
+        Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.GetCornModifyInfo(userPkId)));
     }
 
-    @PatchMapping("/{userId}")
-    public ResponseEntity<SuccessResponse> PatchCornInfoModify(@RequestPart CornModifyDto cornModifyDto, @RequestPart(value = "imgfile", required = false) MultipartFile multipartFile, @PathVariable("userId") Long userId) throws IOException {
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.PatchCornModifyInfo(cornModifyDto, multipartFile, userId)));
+    @PatchMapping("")
+    public ResponseEntity<SuccessResponse> PatchCornInfoModify(HttpServletRequest httpServletRequest,@RequestPart CornModifyDto cornModifyDto, @RequestPart(value = "imgfile", required = false) MultipartFile multipartFile) throws IOException {
+        Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.PatchCornModifyInfo(cornModifyDto, multipartFile, userPkId)));
     }
 
 }
