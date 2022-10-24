@@ -2,11 +2,14 @@ package com.sparos.uniquone.msapostservice.comment.service;
 
 import com.sparos.uniquone.msapostservice.comment.domain.Comment;
 import com.sparos.uniquone.msapostservice.comment.dto.request.CommentCreateRequestDto;
+import com.sparos.uniquone.msapostservice.comment.dto.response.CommentListResponseDto;
 import com.sparos.uniquone.msapostservice.comment.dto.response.CommentResponseDto;
 import com.sparos.uniquone.msapostservice.comment.dto.response.CommentUpdateResponseDto;
 import com.sparos.uniquone.msapostservice.comment.dto.response.CommentUserInfoResponseDto;
 import com.sparos.uniquone.msapostservice.comment.repository.CommentRepositorySupport;
 import com.sparos.uniquone.msapostservice.comment.repository.ICommentRepository;
+import com.sparos.uniquone.msapostservice.corn.domain.Corn;
+import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
@@ -22,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -31,6 +35,8 @@ public class CommentServiceImpl implements CommentService {
     private final IPostRepository postRepository;
     private final ICommentRepository commentRepository;
     private final CommentRepositorySupport commentRepositorySupport;
+
+    private final ICornRepository cornRepository;
 
     @Override
     @Transactional
@@ -111,8 +117,17 @@ public class CommentServiceImpl implements CommentService {
 
         commentList.stream().forEach(c -> {
             CommentResponseDto cdto = new CommentResponseDto(c);
+
+            //성능상 문제가 있을거같은데..  쿼리를 한번에 날려서 받아올것! 현재는 하다가 변경하려니 구조 자체가 망가짐.
+            cornRepository.findByUserId(c.getUserId()).ifPresent(corn -> {
+                        cdto.setCornImgUrl(corn.getImgUrl());
+                    }
+            );
+
+
             if (c.getParent() != null) {
                 cdto.setParentId(c.getParent().getId());
+                cdto.setParentNickname(c.getParent().getUserNickName());
             }
             map.put(cdto.getCommentId(), cdto);
             if (c.getParent() != null) {
@@ -126,6 +141,39 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getAllCommentsByPost2(Long postId) {
+        return null;
+//        Post post = postRepository.findById(postId)
+//                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.OK));
+//
+////        List<Comment> commentList = commentRepositorySupport.findAllByPost(post);
+//        List<CommentListResponseDto> commentList = commentRepositorySupport.findAllByPost2(post);
+//        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+//        Map<Long, CommentResponseDto> map = new ConcurrentHashMap<>();
+//
+//        commentList.stream().forEach(c -> {
+//            CommentResponseDto cdto = new CommentResponseDto(c);
+//
+//            //성능상 문제가 있을거같은데..
+//
+//
+//            if (c.getParent() != null) {
+//                cdto.setParentId(c.getParent().getId());
+//                cdto.setParentNickname(c.getParent().getUserNickName());
+//            }
+//            map.put(cdto.getCommentId(), cdto);
+//            if (c.getParent() != null) {
+//                map.get(c.getParent().getId()).getChildren().add(cdto);
+//            } else {
+//                commentResponseDtoList.add(cdto);
+//            }
+//        });
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(commentResponseDtoList);
+    }
+
+    @Override
     @Transactional
     public ResponseEntity<?> updateCommentById(Long commentId, String content, HttpServletRequest request) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
@@ -133,7 +181,7 @@ public class CommentServiceImpl implements CommentService {
 
         //현재 content의 pkID requestPkId랑 비교.
 
-        if(comment.getUserId() != JwtProvider.getUserPkId(request)){
+        if (comment.getUserId() != JwtProvider.getUserPkId(request)) {
 
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.OK);
         }
@@ -156,7 +204,7 @@ public class CommentServiceImpl implements CommentService {
                 new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.OK));
 
         //현재 content의 pkID requestPkId랑 비교.
-        if(comment.getUserId() != JwtProvider.getUserPkId(request)){
+        if (comment.getUserId() != JwtProvider.getUserPkId(request)) {
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.OK);
         }
 
@@ -169,8 +217,8 @@ public class CommentServiceImpl implements CommentService {
     public ResponseEntity<?> getUserIdInfo(HttpServletRequest request) {
         //헤더 가 없으면 익셉션 발생하는지 확인해야됨
         String token = JwtProvider.getTokenFromRequestHeader(request);
-        if (!JwtProvider.isJwtValid(token)){
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION,HttpStatus.OK);
+        if (!JwtProvider.isJwtValid(token)) {
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.OK);
         }
         CommentUserInfoResponseDto responseDto = new CommentUserInfoResponseDto();
         responseDto.setUserId(JwtProvider.getUserPkId(token));
