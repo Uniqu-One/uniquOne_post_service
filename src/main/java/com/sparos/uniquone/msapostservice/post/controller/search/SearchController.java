@@ -1,9 +1,12 @@
 package com.sparos.uniquone.msapostservice.post.controller.search;
 
+import com.sparos.uniquone.msapostservice.post.dto.request.search.PostSearchRequestDto;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
+import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,20 +25,18 @@ public class SearchController {
     private final IPostRepository postRepository;
 
     @GetMapping("/{keyword}")
-    public ResponseEntity<?> searchPost(@PathVariable("keyword") String keyword){
+    public ResponseEntity<?> searchPost(@PathVariable("keyword") String keyword) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(postRepository.searchPostPageOfNonUser(keyword, PageRequest.of(0,10)));
+        return ResponseEntity.status(HttpStatus.OK).body(postRepository.searchPostOfNonUser(keyword, PageRequest.of(0, 10)));
     }
 
-    @GetMapping("/{keyword}/user")
-    public ResponseEntity<?> searchPost(@PathVariable("keyword") String keyword, HttpServletRequest request){
-        log.info("non HashTag start");
-        postRepository.searchHashTagPageOfNonUser(keyword,PageRequest.of(0,10));
-        log.info("non HashTag end");
-        log.info("user HashTag start");
-        postRepository.searchHashTagPageOfUser(keyword,5L,PageRequest.of(0,10));
-        log.info("user HashTag end");
+    @GetMapping("/user")
+    public ResponseEntity<?> searchPost(PostSearchRequestDto postSearchRequestDto, Pageable pageable, HttpServletRequest request) {
+
+        Long userPkId = JwtProvider.getUserPkId(request);
+
+        postRepository.searchPostOfUser(postSearchRequestDto, userPkId, pageable);
         return null;
-//        return ResponseEntity.status(HttpStatus.OK).body(postRepository.searchPostPageOfUser(keyword,4L ,PageRequest.of(0,10)));
+//        return ResponseEntity.status(HttpStatus.OK).body(postRepository.fullSearchPostPageOfUser(keyword,4L ,PageRequest.of(0,10)));
     }
 }

@@ -1,4 +1,4 @@
-package com.sparos.uniquone.msapostservice.post.repository.search;
+package com.sparos.uniquone.msapostservice.post.service.search;
 
 import com.sparos.uniquone.msapostservice.post.dto.request.search.PostSearchRequestDto;
 import com.sparos.uniquone.msapostservice.post.dto.response.search.PostFullSearchResponseDto;
@@ -9,11 +9,14 @@ import org.springframework.data.domain.Slice;
 
 import javax.servlet.http.HttpServletRequest;
 
-public interface SearchPostRepository {
+public interface SearchService {
+    Slice<PostSearchTitleResponseDto> fullSearchPostPageOfUser(PostSearchRequestDto postSearchRequestDto, Pageable pageable, HttpServletRequest request);
 
-    Page<PostSearchTitleResponseDto> searchPostOfUser(PostSearchRequestDto postSearchRequestDto, Long userPkId, Pageable pageable);
+    Slice<PostFullSearchResponseDto> fullSearchPostPageOfNonUser(PostSearchRequestDto postSearchRequestDto, Pageable pageable);
 
-    Page<PostSearchTitleResponseDto> searchPostOfNonUser(String keyword, Pageable pageable);
+    Page<PostSearchTitleResponseDto> searchPostOfUser(PostSearchRequestDto postSearchRequestDto, Pageable pageable, HttpServletRequest request);
+
+    Page<PostSearchTitleResponseDto> searchPostOfNonUser(PostSearchRequestDto postSearchRequestDto, Pageable pageable);
 
     Page<PostSearchTitleResponseDto> searchHashTagNonUser(String keyword, Pageable pageable);
 
@@ -22,5 +25,4 @@ public interface SearchPostRepository {
     Page<PostSearchTitleResponseDto> searchCornOfUser(String keyword, Pageable pageable, HttpServletRequest request);
 
     Page<PostSearchTitleResponseDto> searchCornOfNonUser(String keyword, Pageable pageable);
-
 }
