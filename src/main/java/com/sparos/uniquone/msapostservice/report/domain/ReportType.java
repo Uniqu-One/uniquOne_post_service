@@ -1,7 +1,10 @@
 package com.sparos.uniquone.msapostservice.report.domain;
 
 public enum ReportType {
-    BAD_CONTENT("나쁜 게시물");
+    DISGUSTING("선정적이거나 혐오감을 주는 게시물"),
+    ADVERTISEMENT("광고성 게시물"),
+    OVERLAP("중복 된 게시물"),
+    ETC("기타 사유");
 
     String reportType;
 
