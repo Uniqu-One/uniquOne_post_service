@@ -1,16 +1,15 @@
 package com.sparos.uniquone.msapostservice.follow.domain;
 
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Follow {
 
     @Id
@@ -28,4 +27,11 @@ public class Follow {
     @Column(name = "reg_date", updatable = false)
     private LocalDateTime regDate;
 
+    @Builder
+    public Follow(Long id, Long userId, Corn corn, LocalDateTime regDate) {
+        this.id = id;
+        this.userId = userId;
+        this.corn = corn;
+        this.regDate = regDate;
+    }
 }
