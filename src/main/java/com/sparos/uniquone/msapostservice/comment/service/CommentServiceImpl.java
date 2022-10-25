@@ -10,6 +10,8 @@ import com.sparos.uniquone.msapostservice.comment.repository.CommentRepositorySu
 import com.sparos.uniquone.msapostservice.comment.repository.ICommentRepository;
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
+import com.sparos.uniquone.msapostservice.noti.domain.NotiType;
+import com.sparos.uniquone.msapostservice.noti.service.INotiService;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
@@ -37,6 +39,8 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepositorySupport commentRepositorySupport;
 
     private final ICornRepository cornRepository;
+
+    private final INotiService iNotiService;
 
     @Override
     @Transactional
@@ -76,7 +80,7 @@ public class CommentServiceImpl implements CommentService {
             comment.setDepth(parent.getDepth() + 1);
         }
 
-        commentRepository.save(comment);
+        comment = commentRepository.save(comment);
 
         CommentResponseDto commentResponseDto = null;
 
@@ -101,6 +105,8 @@ public class CommentServiceImpl implements CommentService {
                     .build();
         }
 
+        iNotiService.send(post.getCorn().getUserId(), comment, NotiType.COMMENT);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(commentResponseDto);
     }
 
@@ -117,14 +123,11 @@ public class CommentServiceImpl implements CommentService {
 
         commentList.stream().forEach(c -> {
             CommentResponseDto cdto = new CommentResponseDto(c);
-
             //성능상 문제가 있을거같은데..  쿼리를 한번에 날려서 받아올것! 현재는 하다가 변경하려니 구조 자체가 망가짐.
             cornRepository.findByUserId(c.getUserId()).ifPresent(corn -> {
                         cdto.setCornImgUrl(corn.getImgUrl());
                     }
             );
-
-
             if (c.getParent() != null) {
                 cdto.setParentId(c.getParent().getId());
                 cdto.setParentNickname(c.getParent().getUserNickName());
@@ -182,8 +185,7 @@ public class CommentServiceImpl implements CommentService {
         //현재 content의 pkID requestPkId랑 비교.
 
         if (comment.getUserId() != JwtProvider.getUserPkId(request)) {
-
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.OK);
+            throw new UniquOneServiceException(ExceptionCode.INVALID_USERID, HttpStatus.OK);
         }
 
         comment.setContent(content);
@@ -205,7 +207,7 @@ public class CommentServiceImpl implements CommentService {
 
         //현재 content의 pkID requestPkId랑 비교.
         if (comment.getUserId() != JwtProvider.getUserPkId(request)) {
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.OK);
+            throw new UniquOneServiceException(ExceptionCode.INVALID_USERID, HttpStatus.OK);
         }
 
         commentRepository.deleteById(commentId);

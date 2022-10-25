@@ -8,9 +8,6 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class CornCreateDto {
 
-    @NonNull
-    private Long userId;
-
     @NotNull
     private String title;
 

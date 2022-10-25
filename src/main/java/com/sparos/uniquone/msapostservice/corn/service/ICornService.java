@@ -6,13 +6,16 @@ import com.sparos.uniquone.msapostservice.corn.dto.CornModifyDto;
 import com.sparos.uniquone.msapostservice.corn.dto.CornRandomNickNameDto;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 public interface ICornService {
 
-    Object AddCorn(CornCreateDto cornCreateDto, MultipartFile multipartFile) throws IOException;
+    Object AddCorn(CornCreateDto cornCreateDto, HttpServletRequest request , MultipartFile multipartFile) throws IOException;
 
-    CornInfoDto GetCornInfo(Long userId);
+    CornInfoDto GetMyCornInfo(Long userId);
+
+    CornInfoDto GetOtherCornInfo(Long cornId);
 
     CornInfoDto GetCornInfo(Long userId, Long cornId);
 

@@ -2,8 +2,16 @@ package com.sparos.uniquone.msapostservice.util.complex.controller;
 
 import com.sparos.uniquone.msapostservice.post.dto.PostChatResponseDto;
 import com.sparos.uniquone.msapostservice.util.complex.Service.IComplexService;
+import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
+import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
+import com.sparos.uniquone.msapostservice.util.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,6 +31,11 @@ public class ComplexController {
         return iComplexService.chatExistPost(postId, userId);
     }
 
+    @GetMapping("/main/search/contents/follow")
+    public ResponseEntity<SuccessResponse> getMain(HttpServletRequest httpServletRequest,@PageableDefault(size = 10) Pageable pageable){
+        Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iComplexService.getMainFollowContent(userPkId,pageable)));
+    }
 
 
 }

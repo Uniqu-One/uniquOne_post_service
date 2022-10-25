@@ -40,15 +40,20 @@ public class CornController {
     }
 
     @PostMapping("")
-    public ResponseEntity<SuccessResponse> cornInput(@RequestPart CornCreateDto cornCreateDto, @RequestPart(value = "imgfile", required = false) MultipartFile multipartFile) throws IOException {
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.AddCorn(cornCreateDto, multipartFile)));
+    public ResponseEntity<SuccessResponse> cornInput(@RequestPart CornCreateDto cornCreateDto,HttpServletRequest request ,@RequestPart(value = "imgfile", required = false) MultipartFile multipartFile) throws IOException {
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.AddCorn(cornCreateDto,request ,multipartFile)));
 
     }
 
     @GetMapping("")
-    public ResponseEntity<SuccessResponse> myCornGetInfo( HttpServletRequest httpServletRequest) {
+    public ResponseEntity<SuccessResponse> myCornGetInfo(HttpServletRequest httpServletRequest) {
         Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.GetCornInfo(userPkId)));
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.GetMyCornInfo(userPkId)));
+    }
+
+    @GetMapping("/{cornId}")
+    public ResponseEntity<SuccessResponse> myCornGetInfo(@PathVariable("cornId") Long cornId) {
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.GetOtherCornInfo(cornId)));
     }
 
     @GetMapping("/cornInfomodify")
@@ -58,13 +63,13 @@ public class CornController {
     }
 
     @PatchMapping("")
-    public ResponseEntity<SuccessResponse> PatchCornInfoModify(HttpServletRequest httpServletRequest,@RequestPart CornModifyDto cornModifyDto, @RequestPart(value = "imgfile", required = false) MultipartFile multipartFile) throws IOException {
+    public ResponseEntity<SuccessResponse> PatchCornInfoModify(HttpServletRequest httpServletRequest, @RequestPart CornModifyDto cornModifyDto, @RequestPart(value = "imgfile", required = false) MultipartFile multipartFile) throws IOException {
         Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.PatchCornModifyInfo(cornModifyDto, multipartFile, userPkId)));
     }
 
     @GetMapping("/randNick")
-    public ResponseEntity<SuccessResponse> generateCornNickName(){
+    public ResponseEntity<SuccessResponse> generateCornNickName() {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.generatedNickName()));
     }
 

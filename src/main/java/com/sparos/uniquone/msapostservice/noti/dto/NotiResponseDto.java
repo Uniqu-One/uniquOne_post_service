@@ -16,17 +16,17 @@ public class NotiResponseDto {
 
     private NotiType notiType;
 
-/*    private Long coolId;
+    private String nickName;
 
-    private Long commentId;
-
-    private Long followId;
-*/
     private Long notiId;
 
     private Long typeId;
 
     private String dsc;
+
+    private String userCornImg;
+
+    private String postImg;
 
     private Boolean isCheck;
 
