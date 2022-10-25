@@ -13,7 +13,7 @@ import static com.sparos.uniquone.msapostservice.corn.domain.QCorn.corn;
 public class FollowRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public FollowingInfoDto findByUserIdFollowingInfo(Long cornId){
+    public FollowingInfoDto findByCornIdFollowingInfo(Long cornId){
         return (FollowingInfoDto) jpaQueryFactory
                 .select(Projections.fields(FollowingInfoDto.class,
                         corn.imgUrl.as("cornImgUrl"),

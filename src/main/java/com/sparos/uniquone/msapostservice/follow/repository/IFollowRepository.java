@@ -15,6 +15,6 @@ public interface IFollowRepository extends JpaRepository<Follow, Long> {
     @Transactional
     Optional<Long>  deleteByUserIdAndCornId(Long userId, Long cornId);
     List<Follow> findByUserId(Long userId);
-    List<Follow> findByCorn(Long cornId);
+    List<Follow> findByCornId(Long cornId);
     List<Follow> findByCorn(Corn corn);
 }

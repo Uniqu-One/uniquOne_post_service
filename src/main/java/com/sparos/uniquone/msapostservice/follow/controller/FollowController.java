@@ -39,10 +39,15 @@ public class FollowController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iFollowService.getOtherFollowing(cornId)));
     }
 
-    @GetMapping("/follower/{cornId}")
-    public ResponseEntity<SuccessResponse> getFollower (HttpServletRequest httpServletRequest,@PathVariable("cornId")Long cornId ){
+    @GetMapping("/otherfollower/{cornId}")
+    public ResponseEntity<SuccessResponse> getOtherFollower (HttpServletRequest httpServletRequest,@PathVariable("cornId")Long cornId ){
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iFollowService.getOtherFollower(cornId)));
+    }
+
+    @GetMapping("/myfollower")
+    public ResponseEntity<SuccessResponse> getMyFollower (HttpServletRequest httpServletRequest){
         Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iFollowService.getFollower(cornId)));
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iFollowService.getFollower(userPkId)));
     }
 
 

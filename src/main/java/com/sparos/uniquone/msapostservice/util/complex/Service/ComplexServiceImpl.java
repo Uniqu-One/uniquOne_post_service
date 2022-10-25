@@ -1,18 +1,25 @@
 package com.sparos.uniquone.msapostservice.util.complex.Service;
 
+import com.sparos.uniquone.msapostservice.cool.repository.ICoolRepository;
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
+import com.sparos.uniquone.msapostservice.follow.domain.Follow;
+import com.sparos.uniquone.msapostservice.follow.repository.IFollowRepository;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostImg;
 import com.sparos.uniquone.msapostservice.post.dto.PostChatResponseDto;
 import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
+import com.sparos.uniquone.msapostservice.util.complex.dto.MainFollowContentsDto;
+import com.sparos.uniquone.msapostservice.util.complex.repository.ComplexRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -22,6 +29,11 @@ public class ComplexServiceImpl implements IComplexService {
     private final IPostRepository iPostRepository;
     private final IPostImgRepository iPostImgRepository;
     private final ICornRepository iCornRepository;
+    private final IFollowRepository iFollowRepository;
+
+    private final ComplexRepositoryCustom complexRepositoryCustom;
+
+    private final ICoolRepository iCoolRepository;
 
     // 채팅 - 게시물 정보 요청
     @Override
@@ -32,7 +44,7 @@ public class ComplexServiceImpl implements IComplexService {
         Optional<Corn> corn = iCornRepository.findByUserId(otherUserId);
         String imageUrl = null;
 
-        if (!corn.isPresent()){
+        if (!corn.isPresent()) {
             imageUrl = "https://uniquoneimg.s3.ap-northeast-2.amazonaws.com/img/KakaoTalk_20221014_140108315.png";
         } else {
             imageUrl = corn.get().getImgUrl();
@@ -55,16 +67,28 @@ public class ComplexServiceImpl implements IComplexService {
     public Boolean chatExistPost(Long postId, Long userId) {
 
         Optional<Corn> corn = iCornRepository.findByUserId(userId);
-        if (!corn.isPresent()){
-             return false;
+        if (!corn.isPresent()) {
+            return false;
         }
 
         Optional<Post> post = iPostRepository.findByIdAndCornId(postId, corn.get().getId());
-        if (!post.isPresent()){
+        if (!post.isPresent()) {
             return false;
         }
 
         return true;
     }
 
+    @Override
+    public Object getMainFollowContent(Long userId, Pageable pageable) {
+        List<Follow> followList = iFollowRepository.findByUserId(userId);
+        List<Long> followCornIdList = followList.stream().map(follow -> follow.getCorn().getId()).collect(Collectors.toList());
+        List<MainFollowContentsDto> mainFollowContentsDtoList = complexRepositoryCustom.findByCornIdMainFollowContentsList(followCornIdList,pageable);
+        mainFollowContentsDtoList.stream().map(mainFollowContentsDto -> {
+            mainFollowContentsDto.addIsCool(iCoolRepository.existsByUserIdAndPostId(userId, mainFollowContentsDto.getPostId()));
+            mainFollowContentsDto.addPostImgUrlList(iPostImgRepository.findUrlByPostIdList(mainFollowContentsDto.getPostId()));
+            return mainFollowContentsDto;
+        }).collect(Collectors.toList());
+        return mainFollowContentsDtoList;
+    }
 }
