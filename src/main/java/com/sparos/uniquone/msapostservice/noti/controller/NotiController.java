@@ -1,5 +1,6 @@
 package com.sparos.uniquone.msapostservice.noti.controller;
 
+import com.sparos.uniquone.msapostservice.noti.service.IEmitterService;
 import com.sparos.uniquone.msapostservice.noti.service.INotiService;
 import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
 import com.sparos.uniquone.msapostservice.util.response.SuccessResponse;
@@ -17,12 +18,13 @@ import javax.servlet.http.HttpServletRequest;
 public class NotiController {
 
     private final INotiService iNotiService;
+    private final IEmitterService iEmitterService;
 
     // 알림 구독
     @GetMapping(value = "/subscribe/{id}", produces = "text/event-stream")
     public SseEmitter subscribe(@PathVariable Long id,
                                 @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
-        return iNotiService.subscribe(id, lastEventId);
+        return iEmitterService.subscribe(id, lastEventId);
     }
 
     // 알림 내역 조회
