@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.Formula;
+import org.springframework.data.jpa.repository.Query;
 
 import javax.persistence.*;
 
@@ -46,6 +48,11 @@ public class Post extends BaseTimeEntity {
 
     @Column(nullable = false, columnDefinition = "tinyint(1) default 0")
     private Boolean isOffer;
+
+    //추천 정렬 용도로 작성했는데 일단은 고려중.
+    @Formula("(select count(c.post_id) from cool c where c.post_id = id group by c.post_id)")
+    @Basic(fetch = FetchType.LAZY)
+    private Long recommended;
 
     @Builder
     public Post(Long id, Corn corn, PostCategory postCategory, String title, String dsc, PostType postType, String conditions, Long price, String color, Boolean isOffer) {
