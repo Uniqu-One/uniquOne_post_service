@@ -1,8 +1,6 @@
 package com.sparos.uniquone.msapostservice.noti.repository;
 
-
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
 import java.util.Map;
 
 public interface IEmitterRepository {
