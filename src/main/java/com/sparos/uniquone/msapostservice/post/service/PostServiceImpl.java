@@ -49,8 +49,9 @@ public class PostServiceImpl implements IPostService {
                 .postCategory(iPostCategoryRepository.findByName(postInputDto.getPostCategoryName()).get())
                 .conditions(postInputDto.getConditions())
                 .color(postInputDto.getColor())
+                        .price(postInputDto.getPrice())
+                        .productSize(postInputDto.getProductSize())
                 .build());
-
         String[] postTagList = postInputDto.getPostTagLine().split("#");
         for (String postDsc : postTagList) {
             if (!postDsc.isEmpty() && !postDsc.equals(" ") && !post.equals(null))
@@ -272,5 +273,6 @@ public class PostServiceImpl implements IPostService {
                 .build();
         return postModInfoDto;
     }
+
 
 }

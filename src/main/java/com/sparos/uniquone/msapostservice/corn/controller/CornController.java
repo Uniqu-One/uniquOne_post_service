@@ -52,7 +52,7 @@ public class CornController {
     }
 
     @GetMapping("/{cornId}")
-    public ResponseEntity<SuccessResponse> myCornGetInfo(@PathVariable("cornId") Long cornId) {
+    public ResponseEntity<SuccessResponse> otherCornGetInfo(@PathVariable("cornId") Long cornId) {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.GetOtherCornInfo(cornId)));
     }
 

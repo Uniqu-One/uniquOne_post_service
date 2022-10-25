@@ -14,7 +14,7 @@ public class PostChatResponseDto {
 
     private Long postId;
     private String postDsc;
-    private Long postPrice;
+    private Integer postPrice;
     private PostType postType; // enum
     private Boolean isOffer;
     private String postImg;
