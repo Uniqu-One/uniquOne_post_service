@@ -1,6 +1,6 @@
 package com.sparos.uniquone.msapostservice.post.controller.search;
 
-import com.sparos.uniquone.msapostservice.post.dto.request.search.PostSearchRequestDto;
+import com.sparos.uniquone.msapostservice.post.dto.search.request.SearchRequestDto;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +31,11 @@ public class SearchController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<?> searchPost(PostSearchRequestDto postSearchRequestDto, Pageable pageable, HttpServletRequest request) {
+    public ResponseEntity<?> searchPost(SearchRequestDto searchRequestDto, Pageable pageable, HttpServletRequest request) {
 
         Long userPkId = JwtProvider.getUserPkId(request);
 
-        postRepository.searchPostOfUser(postSearchRequestDto, userPkId, pageable);
+        postRepository.searchPostOfUser(searchRequestDto, userPkId, pageable);
         return null;
 //        return ResponseEntity.status(HttpStatus.OK).body(postRepository.fullSearchPostPageOfUser(keyword,4L ,PageRequest.of(0,10)));
     }
