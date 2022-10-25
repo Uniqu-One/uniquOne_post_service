@@ -2,13 +2,15 @@ package com.sparos.uniquone.msapostservice.follow.domain;
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-
+@EntityListeners(value ={AuditingEntityListener.class})
 public class Follow {
 
     @Id
