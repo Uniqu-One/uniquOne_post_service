@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RequestMapping("/noti")
 @RequiredArgsConstructor
@@ -34,7 +35,11 @@ public class NotiController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
 
-
     // 알림 확인
+    @PatchMapping(value = "")
+    public ResponseEntity<SuccessResponse> notiChecked(@RequestBody Map<String, Long> notiId, HttpServletRequest request) {
+        JSONObject jsonObject = iNotiService.notiChecked(notiId.get("notiId"), request);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
+    }
 }
 
