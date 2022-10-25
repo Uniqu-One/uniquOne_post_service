@@ -40,8 +40,8 @@ public class CornController {
     }
 
     @PostMapping("")
-    public ResponseEntity<SuccessResponse> cornInput(@RequestPart CornCreateDto cornCreateDto, @RequestPart(value = "imgfile", required = false) MultipartFile multipartFile) throws IOException {
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.AddCorn(cornCreateDto, multipartFile)));
+    public ResponseEntity<SuccessResponse> cornInput(@RequestPart CornCreateDto cornCreateDto,HttpServletRequest request ,@RequestPart(value = "imgfile", required = false) MultipartFile multipartFile) throws IOException {
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.AddCorn(cornCreateDto,request ,multipartFile)));
 
     }
 

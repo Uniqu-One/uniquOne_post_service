@@ -17,6 +17,8 @@ public class Corn extends BaseTimeEntity {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    private String userNickName;
+
     @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(10)")
     private String title;
 
@@ -44,8 +46,9 @@ public class Corn extends BaseTimeEntity {
     }
 
     @Builder
-    public Corn (Long userId, String title, String dsc, String imgUrl, String url) {
+    public Corn (Long userId,String userNickName ,String title, String dsc, String imgUrl, String url) {
         this.userId = userId;
+        this.userNickName = userNickName;
         this.title = title;
         this.dsc = dsc;
         this.imgUrl = imgUrl;

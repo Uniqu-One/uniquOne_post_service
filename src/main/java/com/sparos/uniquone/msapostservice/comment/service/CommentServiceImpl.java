@@ -123,14 +123,11 @@ public class CommentServiceImpl implements CommentService {
 
         commentList.stream().forEach(c -> {
             CommentResponseDto cdto = new CommentResponseDto(c);
-
             //성능상 문제가 있을거같은데..  쿼리를 한번에 날려서 받아올것! 현재는 하다가 변경하려니 구조 자체가 망가짐.
             cornRepository.findByUserId(c.getUserId()).ifPresent(corn -> {
                         cdto.setCornImgUrl(corn.getImgUrl());
                     }
             );
-
-
             if (c.getParent() != null) {
                 cdto.setParentId(c.getParent().getId());
                 cdto.setParentNickname(c.getParent().getUserNickName());
@@ -188,8 +185,7 @@ public class CommentServiceImpl implements CommentService {
         //현재 content의 pkID requestPkId랑 비교.
 
         if (comment.getUserId() != JwtProvider.getUserPkId(request)) {
-
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.OK);
+            throw new UniquOneServiceException(ExceptionCode.INVALID_USERID, HttpStatus.OK);
         }
 
         comment.setContent(content);
@@ -211,7 +207,7 @@ public class CommentServiceImpl implements CommentService {
 
         //현재 content의 pkID requestPkId랑 비교.
         if (comment.getUserId() != JwtProvider.getUserPkId(request)) {
-            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.OK);
+            throw new UniquOneServiceException(ExceptionCode.INVALID_USERID, HttpStatus.OK);
         }
 
         commentRepository.deleteById(commentId);

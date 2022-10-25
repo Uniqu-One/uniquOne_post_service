@@ -92,6 +92,10 @@ public class JwtProvider {
     public static String getUserNickName(String token) {
         return extractClaims(token).get("nickName", String.class);
     }
+    public static String getUserNickName(HttpServletRequest request) {
+        String token = request.getHeader(tokenNameOfRequestHeader);
+        return getUserNickName(token);
+    }
 
     public static String getUserEmail(String token) {
         return extractClaims(token).get("email", String.class);
