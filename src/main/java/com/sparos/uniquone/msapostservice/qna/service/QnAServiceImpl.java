@@ -3,6 +3,7 @@ package com.sparos.uniquone.msapostservice.qna.service;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 
 import com.sparos.uniquone.msapostservice.noti.domain.NotiType;
+import com.sparos.uniquone.msapostservice.noti.service.IEmitterService;
 import com.sparos.uniquone.msapostservice.noti.service.INotiService;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostType;
@@ -29,7 +30,7 @@ public class QnAServiceImpl implements IQnAService {
 
     private final IQnARepository iQnARepository;
     private final ICornRepository iCornRepository;
-    private final INotiService iNotiService;
+    private final IEmitterService iEmitterService;
 
     // 문의 등록
     @Override
@@ -106,7 +107,7 @@ public class QnAServiceImpl implements IQnAService {
 
         jsonObject.put("data", qna);
 
-        iNotiService.send(qna.getUserId(), qna, NotiType.QNA);
+        iEmitterService.send(qna.getUserId(), qna, NotiType.QNA);
         return jsonObject;
     }
 }

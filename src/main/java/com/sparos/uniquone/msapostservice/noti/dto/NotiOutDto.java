@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NotiResponseDto {
+public class NotiOutDto {
 
     private NotiType notiType;
 
@@ -31,7 +31,6 @@ public class NotiResponseDto {
     private Boolean isCheck;
 
     private LocalDateTime regDate;
-
 
     public void setTypeId(Long typeId) {
         this.typeId = typeId;

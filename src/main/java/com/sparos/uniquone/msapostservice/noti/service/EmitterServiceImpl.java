@@ -7,7 +7,7 @@ import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.follow.domain.Follow;
 import com.sparos.uniquone.msapostservice.noti.domain.Noti;
 import com.sparos.uniquone.msapostservice.noti.domain.NotiType;
-import com.sparos.uniquone.msapostservice.noti.dto.NotiResponseDto;
+import com.sparos.uniquone.msapostservice.noti.dto.NotiOutDto;
 import com.sparos.uniquone.msapostservice.noti.repository.EmitterRepositoryImpl;
 import com.sparos.uniquone.msapostservice.noti.repository.INotiRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
@@ -34,7 +34,6 @@ public class EmitterServiceImpl implements IEmitterService {
     private final ICornRepository iCornRepository;
     private final IPostImgRepository iPostImgRepository;
     private final IUserConnect iUserConnect;
-
 
     private String makeTimeIncludeId(Long userId) {
         return userId + "_" + System.currentTimeMillis();
@@ -67,19 +66,6 @@ public class EmitterServiceImpl implements IEmitterService {
         return emitter;
     }
 
-    // 3
-    private void sendToClient(SseEmitter emitter, String id, Object data) {
-        try {
-            emitter.send(SseEmitter.event()
-                    .id(id)
-                    .name("sse")
-                    .data(data));
-        } catch (IOException exception) {
-            emitterRepository.deleteById(id);
-            throw new RuntimeException("연결 오류!");
-        }
-    }
-
     @Override
     public void send(Long userId, Object object, NotiType notiType) {
         Noti notification = createNotification(userId, object, notiType, false);
@@ -92,9 +78,22 @@ public class EmitterServiceImpl implements IEmitterService {
                     // 데이터 캐시 저장(유실된 데이터 처리하기 위함)
                     emitterRepository.saveEventCache(key, notification);
                     // 데이터 전송
-                    sendToClient(emitter, key, entityToDto(notification));
+                    sendToClient(emitter, key, entityToNotiOutDto(notification));
                 }
         );
+    }
+
+    // 3
+    private void sendToClient(SseEmitter emitter, String id, Object data) {
+        try {
+            emitter.send(SseEmitter.event()
+                    .id(id)
+                    .name("sse")
+                    .data(data));
+        } catch (IOException exception) {
+            emitterRepository.deleteById(id);
+            throw new RuntimeException("연결 오류!");
+        }
     }
 
     private Noti createNotification(Long userId, Object object, NotiType notiType, Boolean isCheck) {
@@ -127,12 +126,13 @@ public class EmitterServiceImpl implements IEmitterService {
         return iNotiRepository.save(noti);
     }
 
-    private NotiResponseDto entityToDto(Noti notification) {
+    private NotiOutDto entityToNotiOutDto(Noti notification) {
 
         Long typeId = 0l;
         String nickName = null;
         String userCornImg = null;
         String postImg = null;
+
         switch (notification.getNotiType()){
             case COOL:
                 typeId = notification.getCool().getPost().getId();
@@ -158,7 +158,7 @@ public class EmitterServiceImpl implements IEmitterService {
                 break;
         }
 
-        return NotiResponseDto.builder()
+        return NotiOutDto.builder()
                 .notiType(notification.getNotiType())
                 .notiId(notification.getId())
                 .typeId(typeId)
@@ -170,5 +170,4 @@ public class EmitterServiceImpl implements IEmitterService {
                 .userCornImg(userCornImg)
                 .build();
     }
-
 }
