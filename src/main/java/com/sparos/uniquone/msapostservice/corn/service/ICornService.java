@@ -12,7 +12,9 @@ public interface ICornService {
 
     Object AddCorn(CornCreateDto cornCreateDto, MultipartFile multipartFile) throws IOException;
 
-    CornInfoDto GetCornInfo(Long userId);
+    CornInfoDto GetMyCornInfo(Long userId);
+
+    CornInfoDto GetOtherCornInfo(Long cornId);
 
     CornInfoDto GetCornInfo(Long userId, Long cornId);
 

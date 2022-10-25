@@ -45,7 +45,7 @@ public class CornServiceImpl implements ICornService {
     }
 
     @Override
-    public CornInfoDto GetCornInfo(Long userId) {
+    public CornInfoDto GetMyCornInfo(Long userId) {
         Optional<Corn> corn = iCornRepository.findByUserId(userId);
         ReviewStarPostEAInfoOutputDto reviewStarPostEAInfoOutputDto = cornRepositoryCustom.findByCornIdPostReview(corn.get().getId());
         return CornInfoDto.builder()
@@ -58,6 +58,21 @@ public class CornServiceImpl implements ICornService {
                 .followingEA(iFollowRepository.countByUserId(userId).get())
                 .url(corn.get().getUrl())
                 .dsc(corn.get().getDsc()).build();
+    }
+    @Override
+    public CornInfoDto GetOtherCornInfo(Long cornId) {
+        Corn corn = iCornRepository.findById(cornId).orElseThrow();
+        ReviewStarPostEAInfoOutputDto reviewStarPostEAInfoOutputDto = cornRepositoryCustom.findByCornIdPostReview(cornId);
+        return CornInfoDto.builder()
+                .imgUrl(corn.getImgUrl())
+                .title(corn.getTitle())
+                .reviewStar(reviewStarPostEAInfoOutputDto.getReviewStar())
+                .reviewEA(reviewStarPostEAInfoOutputDto.getReviewEA())
+                .postEA(reviewStarPostEAInfoOutputDto.getPostEA())
+                .followerEA(iFollowRepository.countByCorn(corn).get())
+                .followingEA(iFollowRepository.countByUserId(corn.getUserId()).get())
+                .url(corn.getUrl())
+                .dsc(corn.getDsc()).build();
     }
 
     @Override
