@@ -104,8 +104,6 @@ public class QnAServiceImpl implements IQnAService {
         qna.setAnswer(answerInputDto.getAnswer());
         qna = iQnARepository.save(qna);
 
-
-
         jsonObject.put("data", qna);
 
         iNotiService.send(qna.getUserId(), qna, NotiType.QNA);

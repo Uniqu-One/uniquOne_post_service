@@ -10,6 +10,8 @@ import com.sparos.uniquone.msapostservice.comment.repository.CommentRepositorySu
 import com.sparos.uniquone.msapostservice.comment.repository.ICommentRepository;
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
+import com.sparos.uniquone.msapostservice.noti.domain.NotiType;
+import com.sparos.uniquone.msapostservice.noti.service.INotiService;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
@@ -37,6 +39,8 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepositorySupport commentRepositorySupport;
 
     private final ICornRepository cornRepository;
+
+    private final INotiService iNotiService;
 
     @Override
     @Transactional
@@ -76,7 +80,7 @@ public class CommentServiceImpl implements CommentService {
             comment.setDepth(parent.getDepth() + 1);
         }
 
-        commentRepository.save(comment);
+        comment = commentRepository.save(comment);
 
         CommentResponseDto commentResponseDto = null;
 
@@ -100,6 +104,8 @@ public class CommentServiceImpl implements CommentService {
                     .modDate(comment.getModDate())
                     .build();
         }
+
+        iNotiService.send(post.getCorn().getUserId(), comment, NotiType.COMMENT);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(commentResponseDto);
     }
