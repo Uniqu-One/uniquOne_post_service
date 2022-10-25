@@ -2,6 +2,7 @@ package com.sparos.uniquone.msapostservice.util.complex.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 @Getter
 @AllArgsConstructor
@@ -15,6 +16,7 @@ public class MainFollowContentsDto {
     private Boolean isFollow;
     private String cornTitle;
     private String cornImgUrl;
+    private LocalDateTime regDate;
     private List<String> postImgUrlList;
 
     public void addIsCool(Boolean isCool){

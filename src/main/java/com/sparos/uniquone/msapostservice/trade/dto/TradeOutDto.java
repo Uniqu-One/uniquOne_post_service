@@ -20,7 +20,7 @@ public class TradeOutDto {
     private Long postId;
     private String postTitle;
     private String postImg;
-    private Long price;
+    private Integer price;
 
 
 }

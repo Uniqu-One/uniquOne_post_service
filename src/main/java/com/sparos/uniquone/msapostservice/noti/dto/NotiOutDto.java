@@ -32,7 +32,6 @@ public class NotiOutDto {
 
     private LocalDateTime regDate;
 
-
     public void setTypeId(Long typeId) {
         this.typeId = typeId;
     }

@@ -25,7 +25,8 @@ public class ComplexRepositoryCustom {
                         corn.id.as("cornId"),
                         corn.userId.as("userId"),
                         corn.title.as("cornTitle"),
-                        corn.imgUrl.as("cornImgUrl") ))
+                        corn.imgUrl.as("cornImgUrl"),
+                        post.regDate.as("regDate")))
                 .from(corn)
                 .innerJoin(post).on(post.corn.eq(corn))
                 .offset(pageable.getOffset())

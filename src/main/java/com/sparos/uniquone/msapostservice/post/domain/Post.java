@@ -42,7 +42,9 @@ public class Post extends BaseTimeEntity {
     @Column(columnDefinition = "VARCHAR(10)")
     private String conditions;
 
-    private Long price;
+    private Integer price;
+
+    private ProductSize productSize;
 
     private String color;
 
@@ -55,7 +57,7 @@ public class Post extends BaseTimeEntity {
     private Long recommended;
 
     @Builder
-    public Post(Long id, Corn corn, PostCategory postCategory, String title, String dsc, PostType postType, String conditions, Long price, String color, Boolean isOffer) {
+    public Post(Long id, Corn corn, PostCategory postCategory, String title, String dsc, PostType postType, String conditions, Integer price, ProductSize productSize, String color, Boolean isOffer, Long recommended) {
         this.id = id;
         this.corn = corn;
         this.postCategory = postCategory;
@@ -64,9 +66,12 @@ public class Post extends BaseTimeEntity {
         this.postType = postType;
         this.conditions = conditions;
         this.price = price;
+        this.productSize = productSize;
         this.color = color;
         this.isOffer = isOffer;
+        this.recommended = recommended;
     }
+
     public void modDsc(String dsc){
         this.dsc = dsc;
     }

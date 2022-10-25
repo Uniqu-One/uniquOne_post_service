@@ -2,11 +2,11 @@ package com.sparos.uniquone.msapostservice.noti.domain;
 
 public enum NotiType {
 
-    APPLY("알리미"),
     COOL("좋아요"),
     COMMENT("댓글"),
     FOLLOW("팔로우"),
-    QNA("문의");
+    QNA("문의"),
+    OFFER("오퍼");
 
     String notiType;
 

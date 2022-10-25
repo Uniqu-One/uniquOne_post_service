@@ -44,6 +44,21 @@ public class NotiServiceImpl implements INotiService {
         return jsonObject;
     }
 
+    // 알림 확인
+    @Override
+    public JSONObject notiChecked(Long notiId, HttpServletRequest request) {
+        JSONObject jsonObject = new JSONObject();
+        Long userId = JwtProvider.getUserPkId(request);
+        Noti noti = iNotiRepository.findByIdAndUserId(notiId, userId)
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+
+        noti.modCheck(true);
+
+        noti = iNotiRepository.save(noti);
+
+        jsonObject.put("data", noti);
+        return jsonObject;
+    }
 
     private NotiOutDto entityToNotiOutDto(Noti notification) {
 
@@ -51,6 +66,7 @@ public class NotiServiceImpl implements INotiService {
         String nickName = null;
         String userCornImg = null;
         String postImg = null;
+
         switch (notification.getNotiType()){
             case COOL:
                 typeId = notification.getCool().getPost().getId();

@@ -1,5 +1,6 @@
 package com.sparos.uniquone.msapostservice.noti.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparos.uniquone.msapostservice.comment.domain.Comment;
 import com.sparos.uniquone.msapostservice.cool.domain.Cool;
 import com.sparos.uniquone.msapostservice.follow.domain.Follow;
@@ -26,23 +27,28 @@ public class Noti {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @OneToOne
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cool_id")
     private Cool cool;
 
-    @OneToOne
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @OneToOne
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "follow_id")
     private Follow follow;
 
-    @OneToOne
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qna_id")
     private QnA qna;
 
-    @JoinColumn(name = "noti_type")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "varchar(10)")
     private NotiType notiType;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(100)")
@@ -85,5 +91,9 @@ public class Noti {
 
     public void setDsc(String dsc) {
         this.dsc = dsc;
+    }
+
+    public void modCheck(Boolean check) {
+        isCheck = check;
     }
 }
