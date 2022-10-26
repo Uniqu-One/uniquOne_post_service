@@ -13,6 +13,14 @@ public class SearchCornDto {
     private String userNickName;
     private boolean isFollow;
 
+    public SearchCornDto(Long cornId,String cornImgUrl ,String cornNickName, String userNickName) {
+        this.cornId = cornId;
+        this.cornImgUrl = cornImgUrl;
+        this.cornNickName = cornNickName;
+        this.userNickName = userNickName;
+        this.isFollow = false;
+    }
+
 
     public SearchCornDto(Long cornId,String cornImgUrl ,String cornNickName, String userNickName, boolean isFollow) {
         this.cornId = cornId;

@@ -11,17 +11,16 @@ import org.springframework.data.domain.Pageable;
 import javax.servlet.http.HttpServletRequest;
 
 public interface SearchPostRepository {
-
     SearchPostListResponseDto searchPostOfUser(SearchRequestDto searchRequestDto, Long userPkId, Pageable pageable);
 
-    Page<SearchSingleDto> searchPostOfNonUser(String keyword, Pageable pageable);
+    SearchPostListResponseDto searchPostOfNonUser(SearchRequestDto searchRequestDto, Pageable pageable);
 
-    Page<SearchSingleDto> searchHashTagNonUser(String keyword, Pageable pageable);
+    SearchHashTagListResponseDto searchHashTagNonUser(String keyword, Pageable pageable);
 
     SearchHashTagListResponseDto searchHashTagOfUser(String keyword, Long userPkId, Pageable pageable);
 
     SearchCornListResponseDto searchCornOfUser(String keyword, Long userPkId ,Pageable pageable);
 
-    Page<SearchSingleDto> searchCornOfNonUser(String keyword, Pageable pageable);
+    SearchCornListResponseDto searchCornOfNonUser(String keyword, Pageable pageable);
 
 }
