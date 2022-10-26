@@ -24,7 +24,7 @@ public interface IPostRepository extends JpaRepository<Post, Long>, SearchPostRe
 
     Slice<Post> findByCornIdOrderByRegDateDesc(Long cornId, Pageable pageable);
 
-    Slice<Post> findByCornIdAndPostTypeOrderByRegDateDesc(Long cornId, PostType postType);
+    Slice<Post> findByCornIdAndPostTypeOrderByRegDateDesc(Long cornId, PostType postType,Pageable pageable);
 
     Optional<Post> findByIdAndCornId(Long postId, Long cornId);
 

@@ -11,16 +11,18 @@ import java.io.IOException;
 
 public interface ICornService {
 
-    Object AddCorn(CornCreateDto cornCreateDto, HttpServletRequest request , MultipartFile multipartFile) throws IOException;
+    Object addCorn(CornCreateDto cornCreateDto, HttpServletRequest request , MultipartFile multipartFile) throws IOException;
 
-    CornInfoDto GetMyCornInfo(Long userId);
+    CornInfoDto getMyCornInfo(Long userId);
 
-    CornInfoDto GetOtherCornInfo(Long cornId);
+    CornInfoDto getOtherCornInfo(Long cornId);
 
-    CornInfoDto GetCornInfo(Long userId, Long cornId);
+    CornInfoDto getCornInfo(Long userId, Long cornId);
 
-    CornModifyDto GetCornModifyInfo(Long userId);
+    CornModifyDto getCornModifyInfo(Long userId);
 
-    Object PatchCornModifyInfo(CornModifyDto cornModifyDto, MultipartFile multipartFile, Long userId) throws IOException;
+    Object patchCornModifyInfo(CornModifyDto cornModifyDto, MultipartFile multipartFile, Long userId) throws IOException;
     CornRandomNickNameDto generatedNickName();
+
+    Object isCornExistence(HttpServletRequest httpServletRequest);
 }

@@ -141,7 +141,29 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Object getOtherPostAllList(Long cornId, Long userId, Pageable pageable) {
+    public Object getMyPostAllList(Long userId, Pageable pageable) {
+        Long cornId = iCornRepository.findByUserId(userId).orElseThrow().getId();
+        Slice<Post> postList = iPostRepository.findByCornIdOrderByRegDateDesc(cornId, pageable);
+        List<PostListInfoDto> postListInfoDtoList = postList.stream().map(post ->
+                PostListInfoDto.builder()
+                        .postId(post.getId())
+                        .postImg(iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1).getUrl())
+                        .postType(post.getPostType())
+                        .reg_date(post.getRegDate())
+                        .build()
+        ).collect(Collectors.toList());
+
+        PostSlicePageDto postSlicePageDto = PostSlicePageDto.builder()
+                //todo Collections.singleton 공부
+                .content(Collections.singletonList(postListInfoDtoList))
+                .pageNumber(postList.getPageable().getPageNumber())
+                .pageFirst(postList.isFirst())
+                .pageLast(postList.isLast()).build();
+        return postSlicePageDto;
+    }
+
+    @Override
+    public Object getOtherPostAllList(Long cornId, Pageable pageable) {
         Slice<Post> postList = iPostRepository.findByCornIdOrderByRegDateDesc(cornId, pageable);
         List<PostListInfoDto> postListInfoDtoList = postList.stream().map(post ->
                 PostListInfoDto.builder()
@@ -170,9 +192,26 @@ public class PostServiceImpl implements IPostService {
 //        }
         return postSlicePageDto;
     }
+    @Override
+    public Object getMyPostProductList(Long userId, Pageable pageable) {
+        Long cornId = iCornRepository.findByUserId(userId).orElseThrow().getId();
+        List<PostType> postTypeList = new ArrayList<>();
+        postTypeList.add(SALE);
+        postTypeList.add(DISCONTINUED);
+        postTypeList.add(SOLD_OUT);
+        List<PostListInfoDto> postListInfoDtoList = postRepositoryCustom.PostProductListInfo(postTypeList, cornId, pageable);
+        Boolean isFirst = pageable.getPageNumber() == 0;
+        Boolean isLast = postListInfoDtoList.size() < pageable.getPageSize() - 1;
+        return PostSlicePageDto.builder()
+                .content(Collections.singletonList(postListInfoDtoList))
+                .pageNumber(pageable.getPageNumber())
+                .pageFirst(isFirst)
+                .pageLast(isLast)
+                .build();
+    }
 
     @Override
-    public Object getOtherPostProductList(Long cornId, Long userId, Pageable pageable) {
+    public Object getOtherPostProductList(Long cornId, Pageable pageable) {
         List<PostType> postTypeList = new ArrayList<>();
         postTypeList.add(SALE);
         postTypeList.add(DISCONTINUED);
@@ -220,10 +259,28 @@ public class PostServiceImpl implements IPostService {
 //                .postSaleListInfoDtoList(postSaleListInfoDtoList)
 //                .postSoldOutListInfoDtoList(postSoldOutListInfoDtoList).build();
     }
+    @Override
+    public Object getMyPostStyleList(Long userId, Pageable pageable) {
+        Long cornId = iCornRepository.findByUserId(userId).orElseThrow().getId();
+        Slice<Post> postList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, STYLE, pageable);
+        List<PostListInfoDto> postListInfoDtoList = postList.stream().map(post -> PostListInfoDto.builder()
+                .postId(post.getId())
+                .postImg(iPostImgRepository.findUrlByPostId(post.getId()))
+                .postType(post.getPostType())
+                .reg_date(post.getRegDate())
+                .build()).collect(Collectors.toList());
+        PostSlicePageDto postSlicePageDto = PostSlicePageDto.builder()
+                .content(Collections.singletonList(postListInfoDtoList))
+                .pageNumber(postList.getNumber())
+                .pageFirst(postList.isFirst())
+                .pageLast(postList.isLast())
+                .build();
+        return postSlicePageDto;
+    }
 
     @Override
-    public Object getOtherPostStyleList(Long userId, Long cornId, Pageable pageable) {
-        Slice<Post> postList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, STYLE);
+    public Object getOtherPostStyleList(Long cornId, Pageable pageable) {
+        Slice<Post> postList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, STYLE, pageable);
         List<PostListInfoDto> postListInfoDtoList = postList.stream().map(post -> PostListInfoDto.builder()
                 .postId(post.getId())
                 .postImg(iPostImgRepository.findUrlByPostId(post.getId()))
@@ -279,7 +336,7 @@ public class PostServiceImpl implements IPostService {
         Post post = iPostRepository.findById(postId).orElseThrow();
         List<String> colorList = List.of(post.getColor().split(","));
         List<PostTag> postTagList = iPostTagRepository.findByPostId(postId);
-        List<String> postTagDscList = postTagList.stream().map(postTag -> "#"+postTag.getDsc()).collect(Collectors.toList());
+        List<String> postTagDscList = postTagList.stream().map(postTag -> "#" + postTag.getDsc()).collect(Collectors.toList());
         List<PostAndLook> postAndLookList = iPostAndLookRepository.findByPostId(postId);
         List<Long> postAndLookIdList = postAndLookList.stream().map(postAndLook -> postAndLook.getLook().getId()).collect(Collectors.toList());
         PostDetailInfoDto postDetailInfoDto = PostDetailInfoDto.builder()

@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -30,7 +32,7 @@ public class CornServiceImpl implements ICornService {
     private final GenerateRandomConNick generateRandomConNick;
 
     @Override
-    public Object AddCorn(CornCreateDto cornCreateDto, HttpServletRequest request, MultipartFile multipartFile) throws IOException {
+    public Object addCorn(CornCreateDto cornCreateDto, HttpServletRequest request, MultipartFile multipartFile) throws IOException {
 //        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 //        Corn corn = modelMapper.map(cornCreateDto, Corn.class);
         Long userPkId = JwtProvider.getUserPkId(request);
@@ -60,7 +62,7 @@ public class CornServiceImpl implements ICornService {
     }
 
     @Override
-    public CornInfoDto GetMyCornInfo(Long userId) {
+    public CornInfoDto getMyCornInfo(Long userId) {
         Optional<Corn> corn = iCornRepository.findByUserId(userId);
         ReviewStarPostEAInfoOutputDto reviewStarPostEAInfoOutputDto = cornRepositoryCustom.findByCornIdPostReview(corn.get().getId());
         return CornInfoDto.builder()
@@ -76,7 +78,7 @@ public class CornServiceImpl implements ICornService {
     }
 
     @Override
-    public CornInfoDto GetOtherCornInfo(Long cornId) {
+    public CornInfoDto getOtherCornInfo(Long cornId) {
         Corn corn = iCornRepository.findById(cornId).orElseThrow();
         ReviewStarPostEAInfoOutputDto reviewStarPostEAInfoOutputDto = cornRepositoryCustom.findByCornIdPostReview(cornId);
         return CornInfoDto.builder()
@@ -92,7 +94,7 @@ public class CornServiceImpl implements ICornService {
     }
 
     @Override
-    public CornInfoDto GetCornInfo(Long userId, Long cornId) {
+    public CornInfoDto getCornInfo(Long userId, Long cornId) {
         Optional<Corn> corn = iCornRepository.findByUserId(userId);
         ReviewStarPostEAInfoOutputDto reviewStarPostEAInfoOutputDto = cornRepositoryCustom.findByCornIdPostReview(corn.get().getId());
         return CornInfoDto.builder()
@@ -109,7 +111,7 @@ public class CornServiceImpl implements ICornService {
     }
 
     @Override
-    public CornModifyDto GetCornModifyInfo(Long userId) {
+    public CornModifyDto getCornModifyInfo(Long userId) {
         Optional<Corn> corn = iCornRepository.findByUserId(userId);
         return CornModifyDto.builder()
                 .imgUrl(corn.get().getImgUrl())
@@ -120,7 +122,7 @@ public class CornServiceImpl implements ICornService {
     }
 
     @Override
-    public Object PatchCornModifyInfo(CornModifyDto cornModifyDto, MultipartFile multipartFile, Long userId) throws IOException {
+    public Object patchCornModifyInfo(CornModifyDto cornModifyDto, MultipartFile multipartFile, Long userId) throws IOException {
         if ( multipartFile != null && !multipartFile.isEmpty()) {
             Optional<Corn> corn = iCornRepository.findByUserId(userId);
             corn.get().modImgUrl(awsS3UploaderService.upload(multipartFile, "uniquoneimg", "img"));
@@ -143,6 +145,14 @@ public class CornServiceImpl implements ICornService {
     @Override
     public CornRandomNickNameDto generatedNickName() {
         return new CornRandomNickNameDto(generateRandomConNick.generate());
+    }
+
+    @Override
+    public Object isCornExistence(HttpServletRequest httpServletRequest) {
+        Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
+        Map<String, Boolean> isMap = new HashMap<>();
+        isMap.put("isCornExistence",iCornRepository.existsByUserId(userPkId));
+        return isMap;
     }
 
 
