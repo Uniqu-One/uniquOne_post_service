@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparos.uniquone.msapostservice.comment.domain.Comment;
 import com.sparos.uniquone.msapostservice.cool.domain.Cool;
 import com.sparos.uniquone.msapostservice.follow.domain.Follow;
+import com.sparos.uniquone.msapostservice.offer.domain.Offer;
 import com.sparos.uniquone.msapostservice.qna.domain.QnA;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -47,8 +48,13 @@ public class Noti {
     @JoinColumn(name = "qna_id")
     private QnA qna;
 
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "offer_id")
+    private Offer offer;
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "varchar(10)")
+    @Column(nullable = false, columnDefinition = "varchar(20)")
     private NotiType notiType;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(100)")
@@ -91,6 +97,10 @@ public class Noti {
 
     public void setDsc(String dsc) {
         this.dsc = dsc;
+    }
+
+    public void setOffer(Offer offer) {
+        this.offer = offer;
     }
 
     public void modCheck(Boolean check) {

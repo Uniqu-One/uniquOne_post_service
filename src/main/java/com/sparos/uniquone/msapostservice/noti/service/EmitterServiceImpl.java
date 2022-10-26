@@ -10,6 +10,7 @@ import com.sparos.uniquone.msapostservice.noti.domain.NotiType;
 import com.sparos.uniquone.msapostservice.noti.dto.NotiOutDto;
 import com.sparos.uniquone.msapostservice.noti.repository.EmitterRepositoryImpl;
 import com.sparos.uniquone.msapostservice.noti.repository.INotiRepository;
+import com.sparos.uniquone.msapostservice.offer.domain.Offer;
 import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.qna.domain.QnA;
 import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
@@ -117,6 +118,14 @@ public class EmitterServiceImpl implements IEmitterService {
                 noti.setFollow((Follow) object);
                 noti.setDsc("님이 회원님을 팔로우하기 시작했습니다.");
                 break;
+            case OFFER:
+                noti.setOffer((Offer) object);
+                noti.setDsc("님이 오퍼를 보냈습니다.");
+                break;
+            case OFFER_CHECK:
+                noti.setOffer((Offer) object);
+                noti.setDsc("님이 오퍼를 확인했습니다.");
+                break;
             case QNA:
                 noti.setQna((QnA) object);
                 noti.setDsc(" 문의글에 답글이 작성되었습니다. : " + ((QnA) object).getAnswer());
@@ -151,6 +160,18 @@ public class EmitterServiceImpl implements IEmitterService {
                 typeId = corn.getId();
                 nickName = iUserConnect.getUserNickName(notification.getFollow().getUserId());
                 userCornImg = iCornRepository.findImgUrlByUserId(notification.getFollow().getUserId());
+                break;
+            case OFFER:
+                typeId = notification.getOffer().getId();
+                nickName = iUserConnect.getUserNickName(notification.getOffer().getUserId());
+                userCornImg = iCornRepository.findImgUrlByUserId(notification.getOffer().getUserId());
+                postImg = iPostImgRepository.findUrlByPostId(notification.getOffer().getPost().getId());
+                break;
+            case OFFER_CHECK:
+                typeId = notification.getOffer().getId();
+                nickName = iUserConnect.getUserNickName(notification.getOffer().getPost().getCorn().getUserId());
+                userCornImg = iCornRepository.findImgUrlByUserId(notification.getOffer().getPost().getCorn().getUserId());
+                postImg = iPostImgRepository.findUrlByPostId(notification.getOffer().getPost().getId());
                 break;
             case QNA:
                 typeId = notification.getQna().getId();

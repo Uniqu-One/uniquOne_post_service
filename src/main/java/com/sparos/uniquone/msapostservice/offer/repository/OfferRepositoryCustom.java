@@ -9,6 +9,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.sparos.uniquone.msapostservice.offer.domain.QOffer.offer;
 import static com.sparos.uniquone.msapostservice.post.domain.QPost.post;
@@ -22,21 +23,32 @@ public class OfferRepositoryCustom {
 
     public List<OfferCntDto> findCntByPostIdIn(List<Long> postIds){
 
-        List<OfferCntDto> offerCnt = jpaQueryFactory
+        return jpaQueryFactory
                 .select(Projections.fields(OfferCntDto.class,
                         offer.post.id.as("postId"),
                         offer.price.as("price"),
                         offer.waitingCnt.as("waitingCnt"),
                         offer.acceptCount.as("acceptCount"),
                         offer.refuseCount.as("refuseCount")))
-//                        offer.offerType.count().as("waitingCnt")))
                 .from(offer)
-//                .join(offer.post, post)
                 .where(offer.post.id.in(postIds))
                 .groupBy(offer.post.id)
                 .fetch();
+    }
 
-        return offerCnt;
+    public Optional<OfferCntDto> findCntByPostId(Long postId){
+
+        return Optional.ofNullable(jpaQueryFactory
+                .select(Projections.fields(OfferCntDto.class,
+                        offer.post.id.as("postId"),
+                        offer.price.as("price"),
+                        offer.waitingCnt.as("waitingCnt"),
+                        offer.acceptCount.as("acceptCount"),
+                        offer.refuseCount.as("refuseCount")))
+                .from(offer)
+                .where(offer.post.id.eq(postId))
+                .groupBy(offer.post.id)
+                .fetchOne());
     }
 
 }
