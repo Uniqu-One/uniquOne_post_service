@@ -4,10 +4,7 @@ import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.look.repository.ILookRepository;
 import com.sparos.uniquone.msapostservice.post.domain.*;
-import com.sparos.uniquone.msapostservice.post.dto.PostInputDto;
-import com.sparos.uniquone.msapostservice.post.dto.PostListInfoDto;
-import com.sparos.uniquone.msapostservice.post.dto.PostModInfoDto;
-import com.sparos.uniquone.msapostservice.post.dto.PostSlicePageDto;
+import com.sparos.uniquone.msapostservice.post.dto.*;
 import com.sparos.uniquone.msapostservice.post.repository.*;
 import com.sparos.uniquone.msapostservice.util.s3.AwsS3UploaderService;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +46,8 @@ public class PostServiceImpl implements IPostService {
                 .postCategory(iPostCategoryRepository.findByName(postInputDto.getPostCategoryName()).get())
                 .conditions(postInputDto.getConditions())
                 .color(postInputDto.getColor())
-                        .price(postInputDto.getPrice())
-                        .productSize(postInputDto.getProductSize())
+                .price(postInputDto.getPrice())
+                .productSize(postInputDto.getProductSize())
                 .build());
         String[] postTagList = postInputDto.getPostTagLine().split("#");
         for (String postDsc : postTagList) {
@@ -263,6 +260,7 @@ public class PostServiceImpl implements IPostService {
         List<String> postImgUrlList = postImgList.stream().map(postImg -> postImg.getUrl()).collect(Collectors.toList());
         PostModInfoDto postModInfoDto = PostModInfoDto.builder()
                 .postImgList(postImgUrlList)
+                .title(post.getTitle())
                 .dsc(post.getDsc())
                 .postTagNameList(postTagNameList)
                 .postType(post.getPostType())
@@ -270,8 +268,31 @@ public class PostServiceImpl implements IPostService {
                 .conditions(post.getConditions())
                 .lookList(postAndLookNameList)
                 .color(colorList)
+                .price(post.getPrice())
+                .productSize(post.getProductSize())
                 .build();
         return postModInfoDto;
+    }
+
+    @Override
+    public Object getPostDetailInfo(Long postId) {
+        Post post = iPostRepository.findById(postId).orElseThrow();
+        List<String> colorList = List.of(post.getColor().split(","));
+        List<PostTag> postTagList = iPostTagRepository.findByPostId(postId);
+        List<String> postTagDscList = postTagList.stream().map(postTag -> "#"+postTag.getDsc()).collect(Collectors.toList());
+        List<PostAndLook> postAndLookList = iPostAndLookRepository.findByPostId(postId);
+        List<Long> postAndLookIdList = postAndLookList.stream().map(postAndLook -> postAndLook.getLook().getId()).collect(Collectors.toList());
+        PostDetailInfoDto postDetailInfoDto = PostDetailInfoDto.builder()
+                .title(post.getTitle())
+                .dsc(post.getDsc())
+                .postTagList(postTagDscList)
+                .postCategoryId(post.getPostCategory().getId())
+                .postType(post.getPostType())
+                .LookId(postAndLookIdList)
+                .colorList(colorList)
+                .productSize(post.getProductSize())
+                .condition(post.getConditions()).build();
+        return postDetailInfoDto;
     }
 
 
