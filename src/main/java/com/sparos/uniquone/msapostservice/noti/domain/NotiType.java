@@ -6,7 +6,8 @@ public enum NotiType {
     COMMENT("댓글"),
     FOLLOW("팔로우"),
     QNA("문의"),
-    OFFER("오퍼");
+    OFFER("오퍼"),
+    OFFER_CHECK("오퍼확인");
 
     String notiType;
 

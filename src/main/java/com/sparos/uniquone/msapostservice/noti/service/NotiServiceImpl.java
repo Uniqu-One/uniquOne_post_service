@@ -12,6 +12,9 @@ import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +32,12 @@ public class NotiServiceImpl implements INotiService {
 
     // 알림 조회
     @Override
-    public JSONObject findMyNoti(HttpServletRequest request) {
+    public JSONObject findMyNoti(int pageNum, HttpServletRequest request) {
 
         JSONObject jsonObject = new JSONObject();
-        List<Noti> notis = iNotiRepository.findByUserId(JwtProvider.getUserPkId(request));
+
+        Pageable pageable = PageRequest.of(pageNum - 1, 5, Sort.by(Sort.Direction.DESC, "regDate"));
+        List<Noti> notis = iNotiRepository.findByUserId(JwtProvider.getUserPkId(request), pageable);
 
         if (notis.isEmpty())
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);

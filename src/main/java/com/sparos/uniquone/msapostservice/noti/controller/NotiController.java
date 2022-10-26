@@ -29,9 +29,9 @@ public class NotiController {
     }
 
     // 알림 내역 조회
-    @GetMapping(value = "")
-    public ResponseEntity<SuccessResponse> findMyNoti(HttpServletRequest request) {
-        JSONObject jsonObject = iNotiService.findMyNoti(request);
+    @GetMapping(value = "/{pageNum}")
+    public ResponseEntity<SuccessResponse> findMyNoti(@PathVariable int pageNum, HttpServletRequest request) {
+        JSONObject jsonObject = iNotiService.findMyNoti(pageNum, request);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
 

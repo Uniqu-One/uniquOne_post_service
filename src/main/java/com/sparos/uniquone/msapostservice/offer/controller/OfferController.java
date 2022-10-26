@@ -1,5 +1,7 @@
 package com.sparos.uniquone.msapostservice.offer.controller;
 
+import com.sparos.uniquone.msapostservice.offer.domain.OfferType;
+import com.sparos.uniquone.msapostservice.offer.dto.OfferCheckedInPutDto;
 import com.sparos.uniquone.msapostservice.offer.dto.OfferInputDto;
 import com.sparos.uniquone.msapostservice.offer.service.IOfferService;
 import com.sparos.uniquone.msapostservice.qna.dto.QuestionInputDto;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RequestMapping("/offer")
 @RequiredArgsConstructor
@@ -41,7 +44,19 @@ public class OfferController {
         JSONObject jsonObject = iOfferService.findCornOfferDetail(postId, request);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
+
     // 회원이 보낸 오퍼 조회
+    @GetMapping("")
+    public ResponseEntity<SuccessResponse> findMyOffer(HttpServletRequest request) {
+        JSONObject jsonObject = iOfferService.findMyOffer(request);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
+    }
+
     // 오퍼 확인
+    @PatchMapping("")
+    public ResponseEntity<SuccessResponse> offerChecked(@RequestBody OfferCheckedInPutDto offerCheckedInPutDto, HttpServletRequest request) {
+        JSONObject jsonObject = iOfferService.offerChecked(offerCheckedInPutDto ,request);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
+    }
 
 }
