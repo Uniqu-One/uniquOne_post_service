@@ -6,16 +6,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OfferDetailIndividualOutDto {
+public class OfferMyOutDto {
 
-    private Long offerId;
-    private String cornImg;
-    private Long userId;
-    private String userNickName;
+    private Long postId;
+    private String postTitle;
+    private String postImg;
+    private Long postPrice;
     private String offerRegDate;
     private String offerCheckDate;
     private Long offerPrice;

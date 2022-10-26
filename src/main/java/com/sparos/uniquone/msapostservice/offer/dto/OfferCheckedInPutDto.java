@@ -10,15 +10,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OfferDetailIndividualOutDto {
+public class OfferCheckedInPutDto {
 
     private Long offerId;
-    private String cornImg;
-    private Long userId;
-    private String userNickName;
-    private String offerRegDate;
-    private String offerCheckDate;
-    private Long offerPrice;
     private OfferType offerType;
 
 }
