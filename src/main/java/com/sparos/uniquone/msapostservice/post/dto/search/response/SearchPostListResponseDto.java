@@ -10,10 +10,12 @@ public class SearchPostListResponseDto {
     private List<SearchSingleDto> searchSingleDtoList;
     private boolean hasNext;
 
+    private Long totalSearchCnt;
     public SearchPostListResponseDto(){}
 
-    public SearchPostListResponseDto(List<SearchSingleDto> searchSingleDtoList, boolean hasNext) {
+    public SearchPostListResponseDto(List<SearchSingleDto> searchSingleDtoList,Long totalSearchCnt ,boolean hasNext) {
         this.searchSingleDtoList = searchSingleDtoList;
+        this.totalSearchCnt = totalSearchCnt;
         this.hasNext = hasNext;
     }
 }

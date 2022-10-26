@@ -12,7 +12,6 @@ public class SearchSingleDto {
     private Long postId;
     private String imgUrl;
     private boolean isCool;
-    //Test용
     private Long coolCnt;
 
     public SearchSingleDto(Long postId, String imgUrl) {
