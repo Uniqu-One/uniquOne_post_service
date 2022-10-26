@@ -41,29 +41,38 @@ public class PostController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.delPost(postId, userPkId)));
     }
 
-    @GetMapping("/listall/{cornId}")
-    public ResponseEntity<SuccessResponse> getOtherUserPostAllListInfo(@PathVariable("cornId") Long cornId,HttpServletRequest httpServletRequest,@PageableDefault(size = 20) Pageable pageable) {
+    //마이포스트리스트
+    @GetMapping("/mylistall")
+    public ResponseEntity<SuccessResponse> getMyPostAllListInfo(HttpServletRequest httpServletRequest,@PageableDefault(size = 20) Pageable pageable) {
         Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.getOtherPostAllList(cornId, userPkId,pageable)));
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.getMyPostAllList(userPkId,pageable)));
     }
 
-    //마이포스트리스트
-    @GetMapping("/mylistall/{cornId}")
-    public ResponseEntity<SuccessResponse> getMyPostAllListInfo(@PathVariable("cornId") Long cornId, HttpServletRequest httpServletRequest,@PageableDefault(size = 20) Pageable pageable) {
+    @GetMapping("/listall/{cornId}")
+    public ResponseEntity<SuccessResponse> getOtherPostAllListInfo(@PathVariable("cornId") Long cornId, HttpServletRequest httpServletRequest,@PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.getOtherPostAllList(cornId,pageable)));
+    }
+
+    @GetMapping("/mylistproduct")
+    public ResponseEntity<SuccessResponse> getMyOUserPostProductListInfo(HttpServletRequest httpServletRequest,@PageableDefault(size = 20) Pageable pageable) {
         Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.getOtherPostAllList(cornId, userPkId,pageable)));
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.getMyPostProductList(userPkId, pageable)));
     }
 
     @GetMapping("/listproduct/{cornId}")
     public ResponseEntity<SuccessResponse> getOtherUserPostProductListInfo(@PathVariable("cornId") Long cornId,HttpServletRequest httpServletRequest,@PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.getOtherPostProductList(cornId, pageable)));
+    }
+
+    @GetMapping("/myliststyle")
+    public ResponseEntity<SuccessResponse> getMyUserPostStyleListInfo(HttpServletRequest httpServletRequest,@PageableDefault(size = 20) Pageable pageable) {
         Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.getOtherPostProductList(cornId, userPkId, pageable)));
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.getMyPostStyleList(userPkId, pageable)));
     }
 
     @GetMapping("/liststyle/{cornId}")
     public ResponseEntity<SuccessResponse> getOtherUserPostStyleListInfo(@PathVariable("cornId") Long cornId,HttpServletRequest httpServletRequest,@PageableDefault(size = 20) Pageable pageable) {
-        Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.getOtherPostStyleList(cornId, userPkId, pageable)));
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.getOtherPostStyleList(cornId, pageable)));
     }
 
     @GetMapping("/mod/{postId}")
