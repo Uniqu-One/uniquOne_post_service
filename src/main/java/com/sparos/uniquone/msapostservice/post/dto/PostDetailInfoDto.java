@@ -1,28 +1,32 @@
 package com.sparos.uniquone.msapostservice.post.dto;
 
 import com.sparos.uniquone.msapostservice.post.domain.PostType;
+import com.sparos.uniquone.msapostservice.post.domain.ProductSize;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
+@Builder
 public class PostDetailInfoDto {
 
     private String title;
 
-    private String desc;
+    private String dsc;
 
     private List<String> postTagList;
 
-    private String postCategoryName;
+    private Long postCategoryId;
 
     private PostType postType;
 
-    private String LookName;
+    private List<Long> LookId;
 
-    private String color;
+    private List<String> colorList;
 
-    private String size;
+    private ProductSize productSize;
 
     private String condition;
-
 
 }
