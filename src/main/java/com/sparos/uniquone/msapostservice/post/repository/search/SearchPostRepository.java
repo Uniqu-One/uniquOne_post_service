@@ -1,6 +1,8 @@
 package com.sparos.uniquone.msapostservice.post.repository.search;
 
 import com.sparos.uniquone.msapostservice.post.dto.search.request.SearchRequestDto;
+import com.sparos.uniquone.msapostservice.post.dto.search.response.SearchCornListResponseDto;
+import com.sparos.uniquone.msapostservice.post.dto.search.response.SearchHashTagListResponseDto;
 import com.sparos.uniquone.msapostservice.post.dto.search.response.SearchPostListResponseDto;
 import com.sparos.uniquone.msapostservice.post.dto.search.response.SearchSingleDto;
 import org.springframework.data.domain.Page;
@@ -16,9 +18,9 @@ public interface SearchPostRepository {
 
     Page<SearchSingleDto> searchHashTagNonUser(String keyword, Pageable pageable);
 
-    SearchPostListResponseDto searchHashTagOfUser(String keyword, Long userPkId, Pageable pageable);
+    SearchHashTagListResponseDto searchHashTagOfUser(String keyword, Long userPkId, Pageable pageable);
 
-    Page<SearchSingleDto> searchCornOfUser(String keyword, Pageable pageable, HttpServletRequest request);
+    SearchCornListResponseDto searchCornOfUser(String keyword, Long userPkId ,Pageable pageable);
 
     Page<SearchSingleDto> searchCornOfNonUser(String keyword, Pageable pageable);
 
