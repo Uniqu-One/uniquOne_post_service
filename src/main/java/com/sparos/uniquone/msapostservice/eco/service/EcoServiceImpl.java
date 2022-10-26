@@ -4,10 +4,12 @@ import com.sparos.uniquone.msapostservice.eco.repository.IEcoRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
+@Component
 public class EcoServiceImpl implements IEcoService{
 
     private final IEcoRepository iEcoRepository;
