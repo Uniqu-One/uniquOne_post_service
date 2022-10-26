@@ -26,5 +26,6 @@ public interface IPostService {
 
     Object getModPostInfo(Long userId, Long postId);
 
+    Object getPostDetailInfo(Long postId);
 
 }

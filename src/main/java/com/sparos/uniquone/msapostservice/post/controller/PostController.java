@@ -72,4 +72,9 @@ public class PostController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.getModPostInfo(userPkId, postId)));
     }
 
+    @GetMapping("/detail/{postId}")
+    public ResponseEntity<SuccessResponse> getPostDetailInfo(@PathVariable("postId") Long postId){
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.getPostDetailInfo(postId)));
+    }
+
 }
