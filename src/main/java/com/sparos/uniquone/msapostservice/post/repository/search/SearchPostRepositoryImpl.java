@@ -7,28 +7,22 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparos.uniquone.msapostservice.corn.domain.QCorn;
-import com.sparos.uniquone.msapostservice.follow.domain.QFollow;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostType;
 import com.sparos.uniquone.msapostservice.post.domain.QPostAndLook;
 import com.sparos.uniquone.msapostservice.post.dto.search.request.SearchRequestDto;
 import com.sparos.uniquone.msapostservice.post.dto.search.response.*;
-import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.sparos.uniquone.msapostservice.cool.domain.QCool.cool;
@@ -54,32 +48,6 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
     //A(왼쪽) 테이블과 B(오른쪽) 테이블을 조인을 걸건데,
     // B테이블에 A테이블과 맵핑되는 값이 있건 없건 A의 값은 반드시 모두 나오게 됩니다.
 
-    public Slice<SearchSingleDto> fullSearchPostPageOfUser(String keyword, Pageable pageable, HttpServletRequest request) {
-        //토큰 꺼냄.
-        Long userPkId = JwtProvider.getUserPkId(request);
-
-        //해당 키워드가 포환된 포스트 + 유저가해당 포스트 좋아요 유무 + 포스트 이미지 1번.
-        List<SearchSingleDto> result = queryFactory
-                .select(Projections.constructor(SearchSingleDto.class
-                                , post.id.as("postId")
-                                , postImg.url.as("imgUrl")
-                                , cool.id.isNull().as("isCool")
-                        )
-                )
-                .from(post)
-                .leftJoin(postImg).on(post.eq(postImg.post))
-                .leftJoin(cool).on(post.eq(cool.post))
-                .where(searchPostImgIdxEq()
-                        , searchPostTitleContain(keyword)
-                        , searchCoolUserPkIdEq(userPkId)
-                )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1)
-                .fetch();
-
-        return null;
-    }
-
     @Override
     public SearchPostListResponseDto searchPostOfUser(SearchRequestDto searchRequestDto, Long userPkId, Pageable pageable) {
 
@@ -93,9 +61,9 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
         Long totalSearchCount = 0L;
 
         if (searchRequestDto.getLooks().size() != 0) {
-            result = detailSearchPostCaseInLooks(searchRequestDto, userPkId, pageable);
+            result = detailSearchPostCaseInLooksOfUser(searchRequestDto, userPkId, pageable);
 
-            totalSearchCount = getCntDetailSearchPostCaseInLooks(searchRequestDto, userPkId, pageable);
+            totalSearchCount = getCntDetailSearchPostCaseInLooksOfUser(searchRequestDto, userPkId, pageable);
 
         } else {
             result = queryFactory
@@ -125,7 +93,7 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize() + 1)
                     //오더 조건.
-
+                    .orderBy(setSort(pageable))
                     .fetch();
 
             totalSearchCount = queryFactory
@@ -165,23 +133,74 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
     }
 
     @Override
-    public Page<SearchSingleDto> searchPostOfNonUser(String keyword, Pageable pageable) {
-//        QPostImg qPostImg = QPostImg.postImg;
-        //해당 키워드가 포함된 포스트 + 포스트 이미지 1번.
-        List<SearchSingleDto> result = queryFactory
-                .select(Projections.fields(SearchSingleDto.class
-                        , post.id.as("postId")
-                        , postImg.url.as("imgUrl")))
-                .from(post)
-                .leftJoin(postImg).on(post.eq(postImg.post))
-                .where(searchPostImgIdxEq()
-                        , searchPostTitleContain(keyword))
-                .fetch();
+    public SearchPostListResponseDto searchPostOfNonUser(SearchRequestDto searchRequestDto, Pageable pageable) {
 
-        for (SearchSingleDto dto : result) {
-            System.out.println("dto = " + dto);
+        if (!StringUtils.hasText(searchRequestDto.getKeyword())) {
+            throw new UniquOneServiceException(ExceptionCode.KEYWORD_EMPTY, HttpStatus.OK);
         }
-        return null;
+
+        List<SearchSingleDto> result;
+
+        boolean hasNext = false;
+        Long totalSearchCount = 0L;
+
+        if (searchRequestDto.getLooks().size() != 0) {
+            result = detailSearchPostCaseInLooksOfNonUser(searchRequestDto, pageable);
+
+            totalSearchCount = getCntDetailSearchPostCaseInLooksOfNonUser(searchRequestDto, pageable);
+
+        } else {
+            result = queryFactory
+                    .select(Projections.constructor(SearchSingleDto.class
+                                    , post.id.as("postId")
+                                    , postImg.url.as("imgUrl")
+                                    , post.recommended.as("coolCnt")
+                            )
+                    )
+                    .from(post)
+                    .leftJoin(postImg).on(post.eq(postImg.post))
+                    .where(
+                            searchPostImgIdxEq(),
+                            //타이틀 키워드
+                            searchPostTitleContain(searchRequestDto.getKeyword())
+                            //컬러 리스트
+                            , searchPostColorListContains(searchRequestDto.getColors())
+                            //카테고리 ID
+                            , searchPostCategoryIdEq(searchRequestDto.getCategoryId())
+                            //상태 리스트
+                            , searchPostConditionListEq(searchRequestDto.getConditions())
+                            //포스트 타입(판매중, 세일중)
+                            , searchPostTypeListEq(searchRequestDto.getPostType())
+                    )
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize() + 1)
+                    //오더 조건.
+
+                    .fetch();
+
+            totalSearchCount = queryFactory
+                    .select(post.count())
+                    .from(post)
+                    .leftJoin(postImg).on(post.eq(postImg.post))
+                    .where(
+                            searchPostImgIdxEq(),
+                            //타이틀 키워드
+                            searchPostTitleContain(searchRequestDto.getKeyword())
+                            //컬러 리스트
+                            , searchPostColorListContains(searchRequestDto.getColors())
+                            //카테고리 ID
+                            , searchPostCategoryIdEq(searchRequestDto.getCategoryId())
+                            //상태 리스트
+                            , searchPostConditionListEq(searchRequestDto.getConditions())
+                            //포스트 타입(판매중, 세일중)
+                            , searchPostTypeListEq(searchRequestDto.getPostType())
+                    )
+                    .fetchOne();
+
+        }
+        hasNext = getPageHasNext(result, result.size(), pageable.getPageSize());
+
+        return new SearchPostListResponseDto(result, totalSearchCount, hasNext);
     }
 
     @Override
@@ -197,7 +216,7 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
                 .from(post)
                 .leftJoin(postImg).on(post.eq(postImg.post))
                 .leftJoin(postTag).on(post.eq(postTag.post))
-                .leftJoin(cool).on(post.eq(cool.post))
+                .leftJoin(cool).on(post.eq(cool.post).and(cool.userId.eq(userPkId)))
                 .where(
                         searchPostImgIdxEq(),
                         searchHasTagEq(keyword)
@@ -217,7 +236,7 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
                 .from(post)
                 .leftJoin(postImg).on(post.eq(postImg.post))
                 .leftJoin(postTag).on(post.eq(postTag.post))
-                .leftJoin(cool).on(post.eq(cool.post))
+                .leftJoin(cool).on(post.eq(cool.post).and(cool.userId.eq(userPkId)))
                 .where(
                         searchPostImgIdxEq(),
                         searchHasTagEq(keyword)
@@ -229,12 +248,11 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
 
 
     @Override
-    public Page<SearchSingleDto> searchHashTagNonUser(String keyword, Pageable pageable) {
+    public SearchHashTagListResponseDto searchHashTagNonUser(String keyword, Pageable pageable) {
 
         //포스트 의 입력된 키워드와 같은 헤쉬태그 이름 + 포스트 이미지 1번.
-
         List<SearchSingleDto> result = queryFactory
-                .select(Projections.fields(SearchSingleDto.class
+                .select(Projections.constructor(SearchSingleDto.class
                                 , post.id.as("postId")
                                 , postImg.url.as("imgUrl")
                         )
@@ -242,22 +260,36 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
                 .from(post)
                 .leftJoin(postImg).on(post.eq(postImg.post))
                 .leftJoin(postTag).on(post.eq(postTag.post))
-                .where(searchHasTagEq(keyword)
-                        , searchPostImgIdxEq())
+                .where(
+                        searchPostImgIdxEq(),
+                        searchHasTagEq(keyword)
+                )
+                //페이징 처리.
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                //정렬 처리.
+
                 .fetch();
 
-        for (SearchSingleDto dto : result) {
-            System.out.println("dto = " + dto);
-        }
+        //hasNext
+        boolean hasNext = getPageHasNext(result, result.size(), pageable.getPageSize());
 
-        return null;
+        //검색 결과수. TODO 나중에 조인 빼고 결과 비교 해보기.
+        Long totalSearchCnt = queryFactory.select(post.count())
+                .from(post)
+                .leftJoin(postImg).on(post.eq(postImg.post))
+                .leftJoin(postTag).on(post.eq(postTag.post))
+                .where(
+                        searchPostImgIdxEq(),
+                        searchHasTagEq(keyword)
+                ).fetchOne();
+
+        //결과 반환.
+        return new SearchHashTagListResponseDto(result, totalSearchCnt, hasNext);
     }
 
-
-    //완료.
     @Override
     public SearchCornListResponseDto searchCornOfUser(String keyword, Long userPkId, Pageable pageable) {
-
         //콘을 검색하는거임. usernickname or corn nickname cool 대신 팔로우 여부.;
         List<SearchCornDto> result = queryFactory
                 .select(Projections.constructor(SearchCornDto.class
@@ -281,7 +313,7 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
         Long totalSearchCnt = queryFactory
                 .select(corn.count())
                 .from(corn)
-                .leftJoin(follow).on(corn.id.eq(follow.corn.id))
+                .leftJoin(follow).on(corn.id.eq(follow.corn.id).and(follow.userId.eq(userPkId)))
                 .where(searchCornNickOrUserNickContain(keyword))
                 .fetchOne();
         //전체 검색 게시물 Dto 처리.
@@ -289,16 +321,38 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
     }
 
     @Override
-    public Page<SearchSingleDto> searchCornOfNonUser(String keyword, Pageable pageable) {
-        return null;
+    public SearchCornListResponseDto searchCornOfNonUser(String keyword, Pageable pageable) {
+        List<SearchCornDto> result = queryFactory
+                .select(Projections.constructor(SearchCornDto.class
+                        , corn.id.as("cornId")
+                        , corn.imgUrl.as("cornImgUrl")
+                        , corn.title.as("cornNickName")
+                        , corn.userNickName.as("userNickName")
+                ))
+                .from(corn)
+                .where(searchCornNickOrUserNickContain(keyword))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                //오더 조건.
+                .fetch();
+
+        //hasNext
+        boolean hasNext = getPageHasNext(result, result.size(), pageable.getPageSize());
+        //검색 된 결과수.
+        Long totalSearchCnt = queryFactory
+                .select(corn.count())
+                .from(corn)
+                .where(searchCornNickOrUserNickContain(keyword))
+                .fetchOne();
+        //전체 검색 게시물 Dto 처리.
+        return new SearchCornListResponseDto(result, totalSearchCnt, hasNext);
     }
 
-    private List<SearchSingleDto> detailSearchPostCaseInLooks(SearchRequestDto searchRequestDto, Long userPkId, Pageable pageable) {
+    private List<SearchSingleDto> detailSearchPostCaseInLooksOfUser(SearchRequestDto searchRequestDto, Long userPkId, Pageable pageable) {
         return queryFactory
                 .select(Projections.constructor(SearchSingleDto.class
                                 , post.id.as("postId")
                                 , postImg.url.as("imgUrl")
-
                                 , cool.userId.eq(userPkId).as("isCool")
                                 , post.recommended.as("coolCnt")
                         )
@@ -326,16 +380,74 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 //오더 조건.
+                .orderBy(setSort(pageable))
+                .fetch();
+    }
+
+    private List<SearchSingleDto> detailSearchPostCaseInLooksOfNonUser(SearchRequestDto searchRequestDto, Pageable pageable) {
+        return queryFactory
+                .select(Projections.constructor(SearchSingleDto.class
+                                , post.id.as("postId")
+                                , postImg.url.as("imgUrl")
+                                , post.recommended.as("coolCnt")
+                        )
+                )
+                .from(post)
+                .leftJoin(postImg).on(post.eq(postImg.post))
+                .leftJoin(postAndLook).on(post.eq(postAndLook.post))
+                .where(
+                        searchPostImgIdxEq(),
+                        //타이틀 키워드
+                        searchPostTitleContain(searchRequestDto.getKeyword())
+                        //컬러 리스트
+                        , searchPostColorListContains(searchRequestDto.getColors())
+                        //카테고리 ID
+                        , searchPostCategoryIdEq(searchRequestDto.getCategoryId())
+                        //상태 리스트
+                        , searchPostConditionListEq(searchRequestDto.getConditions())
+                        //포스트 타입(판매중, 세일중)
+                        , searchPostTypeListEq(searchRequestDto.getPostType())
+                        //스타일 ID
+                        , searchPostLookListEq(searchRequestDto.getLooks())
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                //오더 조건.
 
                 .fetch();
     }
 
-    private Long getCntDetailSearchPostCaseInLooks(SearchRequestDto searchRequestDto, Long userPkId, Pageable pageable) {
+
+    private Long getCntDetailSearchPostCaseInLooksOfUser(SearchRequestDto searchRequestDto, Long userPkId, Pageable pageable) {
         return queryFactory
                 .select(post.count())
                 .from(post)
                 .leftJoin(postImg).on(post.eq(postImg.post))
-                .leftJoin(cool).on(post.eq(cool.post))
+                .leftJoin(cool).on(post.eq(cool.post).and(cool.userId.eq(userPkId)))
+                .leftJoin(postAndLook).on(post.eq(postAndLook.post))
+                .where(
+                        searchPostImgIdxEq(),
+                        //타이틀 키워드
+                        searchPostTitleContain(searchRequestDto.getKeyword())
+                        //컬러 리스트
+                        , searchPostColorListContains(searchRequestDto.getColors())
+                        //카테고리 ID
+                        , searchPostCategoryIdEq(searchRequestDto.getCategoryId())
+                        //상태 리스트
+                        , searchPostConditionListEq(searchRequestDto.getConditions())
+                        //포스트 타입(판매중, 세일중)
+                        , searchPostTypeListEq(searchRequestDto.getPostType())
+                        //스타일 ID
+                        , searchPostLookListEq(searchRequestDto.getLooks())
+                )
+                .fetchOne();
+    }
+
+    private Long getCntDetailSearchPostCaseInLooksOfNonUser(SearchRequestDto searchRequestDto, Pageable pageable) {
+        return queryFactory
+                .select(post.count())
+                .from(post)
+                .leftJoin(postImg).on(post.eq(postImg.post))
                 .leftJoin(postAndLook).on(post.eq(postAndLook.post))
                 .where(
                         searchPostImgIdxEq(),
@@ -373,7 +485,6 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
         if (!pageable.getSort().isEmpty()) {
             for (Sort.Order o : pageable.getSort()) {
                 Order direction = o.getDirection().isAscending() ? Order.ASC : Order.DESC;
-
                 switch (o.getProperty()) {
                     case "price":
                         return new OrderSpecifier(direction, post.price);
@@ -385,7 +496,7 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
 
             }
         }
-        return null;
+        return new OrderSpecifier<>(Order.DESC, post.regDate);
     }
 
     //    private BooleanBuilder searchPostLookListEq(List<Long> looks) {

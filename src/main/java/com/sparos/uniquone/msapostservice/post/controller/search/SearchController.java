@@ -1,22 +1,28 @@
 package com.sparos.uniquone.msapostservice.post.controller.search;
 
 import com.sparos.uniquone.msapostservice.post.dto.search.request.SearchRequestDto;
-import com.sparos.uniquone.msapostservice.post.dto.search.response.*;
-import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
+import com.sparos.uniquone.msapostservice.post.dto.search.response.FullSearchResponseDto;
+import com.sparos.uniquone.msapostservice.post.dto.search.response.SearchCornListResponseDto;
+import com.sparos.uniquone.msapostservice.post.dto.search.response.SearchHashTagListResponseDto;
+import com.sparos.uniquone.msapostservice.post.dto.search.response.SearchPostListResponseDto;
+import com.sparos.uniquone.msapostservice.post.service.search.SearchService;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
+import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
+import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
 @RequestMapping("/search")
@@ -24,57 +30,64 @@ import java.util.List;
 @Slf4j
 public class SearchController {
 
-    private final IPostRepository postRepository;
+    private final SearchService searchService;
 
-    @GetMapping("/{keyword}")
-    public ResponseEntity<?> searchPost(@PathVariable("keyword") String keyword) {
-
-        return ResponseEntity.status(HttpStatus.OK).body(postRepository.searchPostOfNonUser(keyword, PageRequest.of(0, 10)));
+    //                    case "price":
+    //                    case "regdt":
+    //                    case "recom":
+    @GetMapping("/all")
+    public FullSearchResponseDto getSearchAllResult(SearchRequestDto searchRequestDto, Pageable pageable, HttpServletRequest request) {
+        //헤더에 토큰 유무 판단.
+        if (searchService.isUser(request)) {
+            return searchService.fullSearchPostPageOfUser(searchRequestDto, pageable, request);
+        }
+        return searchService.fullSearchPostPageOfNonUser(searchRequestDto, pageable);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<?> getSearchAllResult(SearchRequestDto searchRequestDto, Pageable pageable, HttpServletRequest request) {
-
-        Long userPkId = JwtProvider.getUserPkId(request);
-
-        //포스트 검색.
-        SearchPostListResponseDto searchPostListResponseDto = postRepository.searchPostOfUser(searchRequestDto, userPkId, pageable);
-        List<SearchSingleDto> searchSingleDtoList = searchPostListResponseDto.getSearchSingleDtoList();
-        for (SearchSingleDto searchSingleDto : searchSingleDtoList) {
-            log.info("post dto = {} ", searchSingleDto);
+    @GetMapping("/post")
+    public SearchPostListResponseDto getSearchPost(SearchRequestDto searchRequestDto, Pageable pageable, HttpServletRequest request) {
+        if (!StringUtils.hasText(searchRequestDto.getKeyword())) {
+            throw new UniquOneServiceException(ExceptionCode.KEYWORD_EMPTY, HttpStatus.OK);
         }
-        //해쉬 태그 유저.
-//
-//        SearchHashTagListResponseDto hashTagResultDto = postRepository.searchHashTagOfUser(searchRequestDto.getKeyword(), userPkId, pageable);
-//
-//        log.info("hashTag = {} ", hashTagResultDto);
-//
-//        List<SearchSingleDto> hashTagResult = hashTagResultDto.getResult();
-//
-//        for (SearchSingleDto searchSingleDto : hashTagResult) {
-//            log.info("hashTag = {} ", searchSingleDto);
-//        }
 
-        //콘 검색 유저
-//        SearchCornListResponseDto cornResult = postRepository.searchCornOfUser(searchRequestDto.getKeyword(), userPkId, pageable);
-//        log.info("corn hasNext = {}",cornResult.getTotalSearchCnt());
-//        log.info("corn has = {} ", cornResult);
-//        //test
-//        List<SearchCornDto> result = cornResult.getResult();
-//        for (SearchCornDto searchCornDto : result) {
-//            log.info("corn info : {}", searchCornDto);
-//        }
+        if (searchService.isUser(request)) {
+            return searchService.searchPostOfUser(searchRequestDto, pageable, request);
+        }
+        return searchService.searchPostOfNonUser(searchRequestDto, pageable);
+    }
 
+    @GetMapping("/hashTag")
+    public SearchHashTagListResponseDto getSearchHashTag(SearchRequestDto searchRequestDto, Pageable pageable, HttpServletRequest request) {
+        if (!StringUtils.hasText(searchRequestDto.getKeyword())) {
+            throw new UniquOneServiceException(ExceptionCode.KEYWORD_EMPTY, HttpStatus.OK);
+        }
 
-        return null;
+        //keyword 만 받아 버릴까?
+        if (searchService.isUser(request)) {
+            return searchService.searchHashTagOfUser(searchRequestDto.getKeyword(), pageable, request);
+        }
+        return searchService.searchHashTagNonUser(searchRequestDto.getKeyword(), pageable);
+    }
+
+    @GetMapping("/corn")
+    public SearchCornListResponseDto getSearchCorn(SearchRequestDto searchRequestDto, Pageable pageable, HttpServletRequest request) {
+        //keyword 만 받아 버릴까?
+        if (!StringUtils.hasText(searchRequestDto.getKeyword())) {
+            throw new UniquOneServiceException(ExceptionCode.KEYWORD_EMPTY, HttpStatus.OK);
+        }
+
+        if (searchService.isUser(request)) {
+            return searchService.searchCornOfUser(searchRequestDto.getKeyword(), pageable, request);
+        }
+        return searchService.searchCornOfNonUser(searchRequestDto.getKeyword(), pageable);
     }
 
     @GetMapping("/user")
     public ResponseEntity<?> searchPost(SearchRequestDto searchRequestDto, Pageable pageable, HttpServletRequest request) {
-
-        Long userPkId = JwtProvider.getUserPkId(request);
-
-        postRepository.searchPostOfUser(searchRequestDto, userPkId, pageable);
+//
+//        Long userPkId = JwtProvider.getUserPkId(request);
+//
+//        postRepository.searchPostOfUser(searchRequestDto, userPkId, pageable);
         return null;
 //        return ResponseEntity.status(HttpStatus.OK).body(postRepository.fullSearchPostPageOfUser(keyword,4L ,PageRequest.of(0,10)));
     }

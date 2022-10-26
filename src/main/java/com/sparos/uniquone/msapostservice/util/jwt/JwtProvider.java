@@ -50,9 +50,43 @@ public class JwtProvider {
         return Jwts.parserBuilder().setSigningKey(getKey(key)).build().parseClaimsJws(token)
                 .getBody();
     }
+//    public static boolean verifyJwt(HttpServletRequest request){
+//        String token = getTokenFromRequestHeader(request);
+//        boolean isValid = true;
+//        String subject = null;
+//        try{
+//             subject = extractClaims(token).getSubject();
+//        }catch (Exception ex){
+//            isValid = false;
+//        }
+//        if(subject == null || subject.isEmpty())
+//            isValid = false;
+//
+//        return isValid;
+//    }
 
     //서브젝트 비어있는지 유무로 판단함. 조금 더 보안할필요는 있을듯함.
     public static boolean isJwtValid(String token){
+        boolean returnValue = true;
+
+        String subject = null;
+
+        try{
+            subject = extractClaims(token).getSubject();
+
+        }catch (Exception ex){
+            returnValue =false;
+        }
+
+        if(subject == null || subject.isEmpty()){
+            returnValue = false;
+        }
+
+        return returnValue;
+    }
+    public static boolean isJwtValid(HttpServletRequest request){
+        String token = getTokenFromRequestHeader(request);
+
         boolean returnValue = true;
 
         String subject = null;
