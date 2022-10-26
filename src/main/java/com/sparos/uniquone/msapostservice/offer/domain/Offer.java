@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.Formula;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -32,8 +33,20 @@ public class Offer extends BaseTimeEntity {
     private Long price;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "offer_type", nullable = false, columnDefinition = "VARCHAR(5) default '대기'")
+    @Column(name = "offer_type", nullable = false, columnDefinition = "VARCHAR(5) default 'WAITING'")
     private OfferType offerType;
+
+    @Formula("(select count(1) from offer o where o.post_id = post_id and o.offer_type = \"WAITING\")")
+    @Basic(fetch = FetchType.LAZY)
+    private Long waitingCnt;
+
+    @Formula("(select count(1) from offer o where o.post_id = post_id and o.offer_type = \"ACCEPT\")")
+    @Basic(fetch = FetchType.LAZY)
+    private Long acceptCount;
+
+    @Formula("(select count(1) from offer o where o.post_id = post_id and o.offer_type = \"REFUSE\")")
+    @Basic(fetch = FetchType.LAZY)
+    private Long refuseCount;
 
     @LastModifiedDate
     @Column(name = "check_date")

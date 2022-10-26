@@ -24,14 +24,14 @@ public class OfferUtils {
                 .build();
     }
 
-    public static OfferOutDto entityToOfferOutDto(OfferCntDto offer) {
+    public static OfferOutDto entityToOfferOutDto(OfferCntDto offerCntDto, String postImgUrl) {
         return OfferOutDto.builder()
-                .postId(1L)
-                .postImg("img")
-                .price(1222l)
-                .totalCount(1)
-                .acceptCount(1)
-                .refuseCount(1)
+                .postId(offerCntDto.getPostId())
+                .postImg(postImgUrl)
+                .price(offerCntDto.getPrice())
+                .waitingCnt(offerCntDto.getWaitingCnt())
+                .acceptCount(offerCntDto.getAcceptCount())
+                .refuseCount(offerCntDto.getRefuseCount())
                 .build();
     }
 }

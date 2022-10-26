@@ -18,4 +18,6 @@ public interface IOfferRepository extends JpaRepository<Offer, Long> {
             "where o.post.id in :postIds\n" +
             "group by o.post.id")
     List<Object> findByPostIdIn(@Param("postIds") List<Long> postIds);*/
+
+    List<Offer> findByPostId(Long postId);
 }
