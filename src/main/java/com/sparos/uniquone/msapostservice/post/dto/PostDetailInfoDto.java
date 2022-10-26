@@ -1,6 +1,7 @@
 package com.sparos.uniquone.msapostservice.post.dto;
 
 import com.sparos.uniquone.msapostservice.post.domain.PostType;
+import com.sparos.uniquone.msapostservice.post.domain.ProductSize;
 
 import java.util.List;
 
@@ -12,17 +13,16 @@ public class PostDetailInfoDto {
 
     private List<String> postTagList;
 
-    private String postCategoryName;
+    private Long postCategoryId;
 
     private PostType postType;
 
-    private String LookName;
+    private Long LookId;
 
     private String color;
 
-    private String size;
+    private ProductSize productSize;
 
     private String condition;
-
 
 }

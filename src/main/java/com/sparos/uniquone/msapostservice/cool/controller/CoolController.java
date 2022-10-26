@@ -16,7 +16,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/cool")
 @Log4j2
-@CrossOrigin(origins = "*")
 public class CoolController {
     private final ICoolService iCoolService;
     @PostMapping("")
