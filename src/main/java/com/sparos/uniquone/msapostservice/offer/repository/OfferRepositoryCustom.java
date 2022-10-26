@@ -26,7 +26,10 @@ public class OfferRepositoryCustom {
                 .select(Projections.fields(OfferCntDto.class,
                         offer.post.id.as("postId"),
                         offer.price.as("price"),
-                        offer.offerType.count().as("waitingCnt")))
+                        offer.waitingCnt.as("waitingCnt"),
+                        offer.acceptCount.as("acceptCount"),
+                        offer.refuseCount.as("refuseCount")))
+//                        offer.offerType.count().as("waitingCnt")))
                 .from(offer)
 //                .join(offer.post, post)
                 .where(offer.post.id.in(postIds))

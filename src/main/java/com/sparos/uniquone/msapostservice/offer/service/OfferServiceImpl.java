@@ -9,6 +9,7 @@ import com.sparos.uniquone.msapostservice.offer.dto.OfferInputDto;
 import com.sparos.uniquone.msapostservice.offer.repository.IOfferRepository;
 import com.sparos.uniquone.msapostservice.offer.repository.OfferRepositoryCustom;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
+import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.qna.domain.QnA;
 import com.sparos.uniquone.msapostservice.qna.domain.QnAUtils;
@@ -29,6 +30,7 @@ public class OfferServiceImpl implements IOfferService{
 
     private final IOfferRepository iOfferRepository;
     private final IPostRepository iPostRepository;
+    private final IPostImgRepository iPostImgRepository;
     private final ICornRepository iCornRepository;
     private final OfferRepositoryCustom offerRepositoryCustom;
 
@@ -62,21 +64,32 @@ public class OfferServiceImpl implements IOfferService{
         if (postIds.isEmpty())
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
-        List<OfferCntDto> offers = offerRepositoryCustom.findCntByPostIdIn(postIds);
-//        if (offers.isEmpty())
-//            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
+        List<OfferCntDto> offerCntDtos = offerRepositoryCustom.findCntByPostIdIn(postIds);
+        if (offerCntDtos.isEmpty())
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
-/*
-        List<Object> offers = iOfferRepository.findByPostIdIn(postIds);
+        jsonObject.put("data", offerCntDtos.stream().map(offer ->
+                OfferUtils.entityToOfferOutDto(offer, iPostImgRepository.findUrlByPostId(offer.getPostId())))
+        );
+
+        return jsonObject;
+    }
+
+    // 콘이 받은 오퍼 상세 조회
+    @Override
+    public JSONObject findCornOfferDetail(Long postId, HttpServletRequest request) {
+
+        JSONObject jsonObject = new JSONObject();
+        /*Long userId = JwtProvider.getUserPkId(request);
+
+        List<Offer> offers = iOfferRepository.findByPostId(postId);
         if (offers.isEmpty())
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
+
+        jsonObject.put("data", offers.stream().map(offer ->
+                OfferUtils.entityToOfferOutDto(offer, iPostImgRepository.findUrlByPostId(offer.getPostId())))
+        );
 */
-
-/*        jsonObject.put("data", offers.stream().map(offer ->
-                OfferUtils.entityToOfferOutDto(offer))
-        );*/
-        jsonObject.put("data", offers.toArray());
-
         return jsonObject;
     }
 }

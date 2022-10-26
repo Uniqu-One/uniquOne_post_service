@@ -35,6 +35,12 @@ public class OfferController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
 
+    // 콘이 받은 오퍼 상세 조회
+    @GetMapping("/corn/{postId}")
+    public ResponseEntity<SuccessResponse> findCornOfferDetail(@PathVariable Long postId, HttpServletRequest request) {
+        JSONObject jsonObject = iOfferService.findCornOfferDetail(postId, request);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
+    }
     // 회원이 보낸 오퍼 조회
     // 오퍼 확인
 

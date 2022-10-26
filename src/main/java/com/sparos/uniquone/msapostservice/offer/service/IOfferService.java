@@ -12,4 +12,7 @@ public interface IOfferService {
 
     // 콘이 받은 오퍼 조회
     JSONObject findCornOffer(HttpServletRequest request);
+
+    // 콘이 받은 오퍼 상세 조회
+    JSONObject findCornOfferDetail(Long postId, HttpServletRequest request);
 }
