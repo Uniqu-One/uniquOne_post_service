@@ -52,7 +52,7 @@ public class FollowServiceImpl implements IFollowService {
         List<FollowingInfoDto> followingInfoDtoList = followingList.stream().map(follow ->
         {
             FollowingInfoDto followingInfoDto = followRepositoryCustom.findByCornIdFollowingInfo(follow.getCorn().getId());
-            followingInfoDto.addUserName(iUserConnect.getUserNickName(follow.getCorn().getUserId()));
+            followingInfoDto.addUserName(iUserConnect.getUserNickName(follow.getCorn().getUserId()).getNickname());
             return followingInfoDto;
         }).collect(Collectors.toList());
         return followingInfoDtoList;
@@ -64,7 +64,7 @@ public class FollowServiceImpl implements IFollowService {
         List<FollowingInfoDto> followingInfoDtoList = followingList.stream().map(follow ->
         {
             FollowingInfoDto followingInfoDto = followRepositoryCustom.findByCornIdFollowingInfo(follow.getCorn().getId());
-            followingInfoDto.addUserName(iUserConnect.getUserNickName(follow.getCorn().getUserId()));
+            followingInfoDto.addUserName(iUserConnect.getUserNickName(follow.getCorn().getUserId()).getNickname());
             return followingInfoDto;
         }).collect(Collectors.toList());
         return followingInfoDtoList;
@@ -80,11 +80,11 @@ public class FollowServiceImpl implements IFollowService {
              return FollowerInfoDto.builder().cornTitle(corn.get().getTitle())
                      .cornImgUrl(corn.get().getImgUrl())
                      .cornId(corn.get().getId())
-                     .userName(iUserConnect.getUserNickName(follow.getUserId()))
+                     .userName(iUserConnect.getUserNickName(follow.getUserId()).getNickname())
                      .userId(follow.getUserId()).build();
             }else{
             return FollowerInfoDto.builder()
-                    .userName(iUserConnect.getUserNickName(follow.getUserId()))
+                    .userName(iUserConnect.getUserNickName(follow.getUserId()).getNickname())
                     .userId(follow.getUserId()).build();
             }
         }).collect(Collectors.toList());
@@ -100,11 +100,11 @@ public class FollowServiceImpl implements IFollowService {
                 return FollowerInfoDto.builder().cornTitle(corn.get().getTitle())
                         .cornImgUrl(corn.get().getImgUrl())
                         .cornId(corn.get().getId())
-                        .userName(iUserConnect.getUserNickName(follow.getUserId()))
+                        .userName(iUserConnect.getUserNickName(follow.getUserId()).getNickname())
                         .userId(follow.getUserId()).build();
             }else{
                 return FollowerInfoDto.builder()
-                        .userName(iUserConnect.getUserNickName(follow.getUserId()))
+                        .userName(iUserConnect.getUserNickName(follow.getUserId()).getNickname())
                         .userId(follow.getUserId()).build();
             }
         }).collect(Collectors.toList());

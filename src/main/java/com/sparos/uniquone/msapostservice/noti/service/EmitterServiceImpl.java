@@ -145,7 +145,7 @@ public class EmitterServiceImpl implements IEmitterService {
         switch (notification.getNotiType()){
             case COOL:
                 typeId = notification.getCool().getPost().getId();
-                nickName = iUserConnect.getUserNickName(notification.getCool().getUserId());
+                nickName = iUserConnect.getUserNickName(notification.getCool().getUserId()).getNickname();
                 userCornImg = iCornRepository.findImgUrlByUserId(notification.getCool().getUserId());
                 postImg = iPostImgRepository.findUrlByPostId(notification.getCool().getPost().getId());
                 break;
@@ -158,18 +158,18 @@ public class EmitterServiceImpl implements IEmitterService {
             case FOLLOW:
                 Corn corn = iCornRepository.findByUserId(notification.getUserId()).get();
                 typeId = corn.getId();
-                nickName = iUserConnect.getUserNickName(notification.getFollow().getUserId());
+                nickName = iUserConnect.getUserNickName(notification.getFollow().getUserId()).getNickname();
                 userCornImg = iCornRepository.findImgUrlByUserId(notification.getFollow().getUserId());
                 break;
             case OFFER:
                 typeId = notification.getOffer().getId();
-                nickName = iUserConnect.getUserNickName(notification.getOffer().getUserId());
+                nickName = iUserConnect.getUserNickName(notification.getOffer().getUserId()).getNickname();
                 userCornImg = iCornRepository.findImgUrlByUserId(notification.getOffer().getUserId());
                 postImg = iPostImgRepository.findUrlByPostId(notification.getOffer().getPost().getId());
                 break;
             case OFFER_CHECK:
                 typeId = notification.getOffer().getId();
-                nickName = iUserConnect.getUserNickName(notification.getOffer().getPost().getCorn().getUserId());
+                nickName = iUserConnect.getUserNickName(notification.getOffer().getPost().getCorn().getUserId()).getNickname();
                 userCornImg = iCornRepository.findImgUrlByUserId(notification.getOffer().getPost().getCorn().getUserId());
                 postImg = iPostImgRepository.findUrlByPostId(notification.getOffer().getPost().getId());
                 break;
