@@ -13,6 +13,7 @@ import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,6 +47,7 @@ public class FollowServiceImpl implements IFollowService {
 
     @Override
     public Object getFollowing(Long userId) {
+
         List<Follow> followingList = iFollowRepository.findByUserId(userId);
         List<FollowingInfoDto> followingInfoDtoList = followingList.stream().map(follow ->
         {

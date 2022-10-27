@@ -4,7 +4,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "uniquone-user-service")
+import javax.servlet.http.HttpServletRequest;
+
+@FeignClient(name = "uniquone-gateway-service", url = "http://gateway-server:8000/feignUser")
 public interface IUserConnect {
 
     @GetMapping("/get/nickName/{userId}")
