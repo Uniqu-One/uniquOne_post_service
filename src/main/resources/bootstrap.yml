@@ -4,5 +4,5 @@ spring:
       uri: ${UNI_CONFIG_URI}
       name: ${UNI_CONFIG_POST}
   profiles:
-    active: ${UNI_CONFIG_POST}
+    active: ${UNI_CONFIG_ACTIVE}
 #    active: park
