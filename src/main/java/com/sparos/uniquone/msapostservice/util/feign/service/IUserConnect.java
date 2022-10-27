@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "uniquone-user-service", url = "http://gateway-server:8000")
 public interface IUserConnect {
 
-    @GetMapping("/get/nickName/{userId}")
+    @GetMapping("/users/get/nickName/{userId}")
     String getUserNickName(@PathVariable("userId") Long userId);
 
 }
