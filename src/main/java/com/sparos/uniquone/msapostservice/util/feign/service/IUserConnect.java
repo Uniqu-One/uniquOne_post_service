@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 
-@FeignClient(name = "uniquone-user-service", url = "http://gateway-server:8000")
+@FeignClient(name = "uniquone-user-service", url = "http://uniquone-gateway-service:8000")
 public interface IUserConnect {
 
     @GetMapping("/feignUser/get/nickName/{userId}")
