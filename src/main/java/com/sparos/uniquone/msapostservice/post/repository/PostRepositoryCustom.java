@@ -41,13 +41,13 @@ public class PostRepositoryCustom {
                 .where(post.corn.id.eq(cornId), post.postType.in(postTypeList), postImg.idx.eq(1))
                 .orderBy(orderByFieldList(Lists.transform(postTypeList, Functions.toStringFunction())), post.regDate.desc())
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .limit(pageable.getPageSize()+1)
                 .fetch();
-//                boolean hasNext = false;
-//
-//        if (postListInfoDtoList.size() > pageable.getPageSize()-1){
-//            hasNext = true;
-//        }
+                boolean hasNext = false;
+                if(postListInfoDtoList.size() > pageable.getPageSize()){
+                    hasNext = true;
+                    postListInfoDtoList.remove(pageable.getPageSize());
+                }
         return postListInfoDtoList;
     }
 

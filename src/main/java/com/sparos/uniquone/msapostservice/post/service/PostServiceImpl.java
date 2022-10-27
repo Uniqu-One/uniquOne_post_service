@@ -192,6 +192,7 @@ public class PostServiceImpl implements IPostService {
 //        }
         return postSlicePageDto;
     }
+
     @Override
     public Object getMyPostProductList(Long userId, Pageable pageable) {
         Long cornId = iCornRepository.findByUserId(userId).orElseThrow().getId();
@@ -200,8 +201,9 @@ public class PostServiceImpl implements IPostService {
         postTypeList.add(DISCONTINUED);
         postTypeList.add(SOLD_OUT);
         List<PostListInfoDto> postListInfoDtoList = postRepositoryCustom.PostProductListInfo(postTypeList, cornId, pageable);
+        Boolean isLast = postListInfoDtoList.size()<pageable.getPageSize();
+        if (isLast) postListInfoDtoList.remove(pageable.getPageSize());
         Boolean isFirst = pageable.getPageNumber() == 0;
-        Boolean isLast = postListInfoDtoList.size() < pageable.getPageSize() - 1;
         return PostSlicePageDto.builder()
                 .content(Collections.singletonList(postListInfoDtoList))
                 .pageNumber(pageable.getPageNumber())
@@ -218,7 +220,8 @@ public class PostServiceImpl implements IPostService {
         postTypeList.add(SOLD_OUT);
         List<PostListInfoDto> postListInfoDtoList = postRepositoryCustom.PostProductListInfo(postTypeList, cornId, pageable);
         Boolean isFirst = pageable.getPageNumber() == 0;
-        Boolean isLast = postListInfoDtoList.size() < pageable.getPageSize() - 1;
+        Boolean isLast = postListInfoDtoList.size()<pageable.getPageSize();
+        if (isLast) postListInfoDtoList.remove(pageable.getPageSize());
         return PostSlicePageDto.builder()
                 .content(Collections.singletonList(postListInfoDtoList))
                 .pageNumber(pageable.getPageNumber())
@@ -259,6 +262,7 @@ public class PostServiceImpl implements IPostService {
 //                .postSaleListInfoDtoList(postSaleListInfoDtoList)
 //                .postSoldOutListInfoDtoList(postSoldOutListInfoDtoList).build();
     }
+
     @Override
     public Object getMyPostStyleList(Long userId, Pageable pageable) {
         Long cornId = iCornRepository.findByUserId(userId).orElseThrow().getId();
