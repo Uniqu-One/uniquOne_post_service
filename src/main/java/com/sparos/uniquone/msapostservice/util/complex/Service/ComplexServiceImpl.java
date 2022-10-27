@@ -8,6 +8,7 @@ import com.sparos.uniquone.msapostservice.follow.repository.IFollowRepository;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostImg;
 import com.sparos.uniquone.msapostservice.post.dto.PostChatResponseDto;
+import com.sparos.uniquone.msapostservice.post.dto.PostSlicePageDto;
 import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.util.complex.dto.MainFollowContentsDto;
@@ -17,6 +18,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -89,6 +91,12 @@ public class ComplexServiceImpl implements IComplexService {
             mainFollowContentsDto.addPostImgUrlList(iPostImgRepository.findUrlByPostIdList(mainFollowContentsDto.getPostId()));
             return mainFollowContentsDto;
         }).collect(Collectors.toList());
+        PostSlicePageDto postSlicePageDto = PostSlicePageDto.builder()
+                .content(Collections.singletonList(mainFollowContentsDtoList))
+                .pageNumber(pageable.getPageNumber())
+                .pageFirst(pageable.getPageSize()==0)
+                .pageLast(mainFollowContentsDtoList.size()<pageable.getPageSize())
+                .build();
         return mainFollowContentsDtoList;
     }
 }
