@@ -175,7 +175,7 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize() + 1)
                     //오더 조건.
-
+                    .orderBy(setSort(pageable))
                     .fetch();
 
             totalSearchCount = queryFactory
@@ -225,7 +225,7 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 //정렬 처리.
-
+                .orderBy(setSort(pageable))
                 .fetch();
 
         //hasNext
@@ -268,7 +268,7 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 //정렬 처리.
-
+                .orderBy(setSort(pageable))
                 .fetch();
 
         //hasNext
@@ -305,6 +305,8 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 //오더 조건.
+                .orderBy(corn.title.asc())
+                .orderBy(corn.userNickName.asc())
                 .fetch();
 
         //hasNext
