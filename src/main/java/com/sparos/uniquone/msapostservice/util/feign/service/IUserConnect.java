@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "uniquone-user-service")
 public interface IUserConnect {
 
-    @GetMapping("/post/nickName/{userId}")
+    @GetMapping("/postService/userInfo/{userId}")
 //    @GetMapping("/chat/userInfo/{userId}")
     UserResponseDto getUserNickName(@PathVariable("userId") Long userId);
 
