@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 
-@FeignClient(name = "uniquone-user-service", url = "http://user-service/feignUser")
+@FeignClient(name = "uniquone-gateway-service", url = "http://gateway-server")
 public interface IUserConnect {
 
-    @GetMapping("/get/nickName/{userId}")
+    @GetMapping("/feignUser/get/nickName/{userId}")
     String getUserNickName(@PathVariable("userId") Long userId);
 
 }
