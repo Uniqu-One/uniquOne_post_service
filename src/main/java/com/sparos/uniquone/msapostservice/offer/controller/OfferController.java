@@ -1,10 +1,8 @@
 package com.sparos.uniquone.msapostservice.offer.controller;
 
-import com.sparos.uniquone.msapostservice.offer.domain.OfferType;
 import com.sparos.uniquone.msapostservice.offer.dto.OfferCheckedInPutDto;
 import com.sparos.uniquone.msapostservice.offer.dto.OfferInputDto;
 import com.sparos.uniquone.msapostservice.offer.service.IOfferService;
-import com.sparos.uniquone.msapostservice.qna.dto.QuestionInputDto;
 import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
 import com.sparos.uniquone.msapostservice.util.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 @RequestMapping("/offer")
 @RequiredArgsConstructor

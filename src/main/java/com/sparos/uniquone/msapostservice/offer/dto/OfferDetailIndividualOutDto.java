@@ -20,5 +20,6 @@ public class OfferDetailIndividualOutDto {
     private String offerCheckDate;
     private Long offerPrice;
     private OfferType offerType;
+    private String chatRoomId;
 
 }
