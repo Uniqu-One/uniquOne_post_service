@@ -131,7 +131,6 @@ public class OfferServiceImpl implements IOfferService{
     public JSONObject offerChecked(OfferCheckedInPutDto offerCheckedInPutDto, HttpServletRequest request) {
 
         JSONObject jsonObject = new JSONObject();
-        Long userId = JwtProvider.getUserPkId(request);
 
         Offer offer = iOfferRepository.findById(offerCheckedInPutDto.getOfferId())
               .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
