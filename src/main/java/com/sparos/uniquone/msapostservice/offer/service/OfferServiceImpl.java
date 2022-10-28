@@ -136,6 +136,15 @@ public class OfferServiceImpl implements IOfferService{
               .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
         offer.modOfferType(offerCheckedInPutDto.getOfferType());
+
+
+        // 오퍼타입 수락일 경우 채팅방 생성 -> 채팅 noti 타입으로 save -> 채팅룸 id 리턴
+
+
+
+
+
+
         iEmitterService.send(offer.getUserId(), offer, NotiType.OFFER_CHECK);
 
         jsonObject.put("data", iOfferRepository.save(offer));

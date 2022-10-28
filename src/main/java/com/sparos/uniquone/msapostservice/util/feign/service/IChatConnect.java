@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 @FeignClient(name = "uniquone-chat-service" )
 public interface IChatConnect {
 
-    @PostMapping("/chat/room")
-    ResponseEntity<SuccessResponse> createRoom(@RequestBody ChatRoomDto chatRoomDto, HttpServletRequest request);
+    @PostMapping("/offer/chat")
+    void offerChat(@RequestBody ChatRoomDto chatRoomDto, HttpServletRequest request);
 
 }
