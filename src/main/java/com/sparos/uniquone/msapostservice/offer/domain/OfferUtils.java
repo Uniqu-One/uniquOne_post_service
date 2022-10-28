@@ -55,6 +55,7 @@ public class OfferUtils {
     }
 
     public static OfferDetailOutDto dtoToOfferDetailOutDto(OfferCntDto offerCntDto, String postImgUrl, List<OfferDetailIndividualOutDto> offerDetailIndividualOutDto) {
+
         return OfferDetailOutDto.builder()
                 .postId(offerCntDto.getPostId())
                 .postTitle(offerCntDto.getPostTitle())

@@ -42,6 +42,7 @@ public class OfferRepositoryCustom {
         return Optional.ofNullable(jpaQueryFactory
                 .select(Projections.fields(OfferCntDto.class,
                         offer.post.id.as("postId"),
+                        offer.post.title.as("postTitle"),
                         offer.price.as("price"),
                         offer.waitingCnt.as("waitingCnt"),
                         offer.acceptCount.as("acceptCount"),
