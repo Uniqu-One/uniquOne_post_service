@@ -26,6 +26,7 @@ public class OfferUtils {
     public static OfferOutDto entityToOfferOutDto(OfferCntDto offerCntDto, String postImgUrl) {
         return OfferOutDto.builder()
                 .postId(offerCntDto.getPostId())
+                .postTitle(offerCntDto.getPostTitle())
                 .postImg(postImgUrl)
                 .price(offerCntDto.getPrice())
                 .waitingCnt(offerCntDto.getWaitingCnt())
@@ -35,22 +36,28 @@ public class OfferUtils {
     }
 
     public static OfferDetailIndividualOutDto entityToOfferDetailIndividualOutDto(Offer offer, String cornImgUrl, Long userId, String userNickName) {
+
+        String offerCheckDate = "";
+
+        if (!offer.getOfferType().equals(OfferType.WAITING))
+            offerCheckDate = offer.getCheckDate().format(DateTimeFormatter.ofPattern("yy.MM.dd"));
+
         return OfferDetailIndividualOutDto.builder()
                 .offerId(offer.getId())
                 .cornImg(cornImgUrl)
                 .userId(userId)
                 .userNickName(userNickName)
-                .offerRegDate("등록일")
-                .offerCheckDate("확인일")
+                .offerRegDate(offer.getRegDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
+                .offerCheckDate(offerCheckDate)
                 .offerPrice(offer.getPrice())
                 .offerType(offer.getOfferType())
                 .build();
     }
 
-
     public static OfferDetailOutDto dtoToOfferDetailOutDto(OfferCntDto offerCntDto, String postImgUrl, List<OfferDetailIndividualOutDto> offerDetailIndividualOutDto) {
         return OfferDetailOutDto.builder()
                 .postId(offerCntDto.getPostId())
+                .postTitle(offerCntDto.getPostTitle())
                 .postImg(postImgUrl)
                 .postPrice(offerCntDto.getPrice())
                 .waitingCnt(offerCntDto.getWaitingCnt())
@@ -61,13 +68,20 @@ public class OfferUtils {
     }
 
     public static OfferMyOutDto entityToOfferMyOutDto(Offer offer, String postImgUrl) {
+
+        String offerCheckDate = "";
+
+        if (!offer.getOfferType().equals(OfferType.WAITING))
+            offerCheckDate = offer.getCheckDate().format(DateTimeFormatter.ofPattern("yy.MM.dd"));
+
         return OfferMyOutDto.builder()
                 .postId(offer.getPost().getId())
+                .postTitle(offer.getPost().getTitle())
                 .postImg(postImgUrl)
                 .postPrice(offer.getPrice())
                 .postPrice(offer.getWaitingCnt())
-                .offerRegDate("등록일")
-                .offerCheckDate("확인일")
+                .offerRegDate(offer.getRegDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
+                .offerCheckDate(offerCheckDate)
                 .offerPrice(offer.getPrice())
                 .offerType(offer.getOfferType())
                 .build();

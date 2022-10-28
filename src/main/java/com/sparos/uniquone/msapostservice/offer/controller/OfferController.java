@@ -30,7 +30,6 @@ public class OfferController {
         return ResponseEntity.status(HttpStatus.CREATED).body(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
 
-
     // 콘이 받은 오퍼 조회
     @GetMapping("/corn")
     public ResponseEntity<SuccessResponse> findCornOffer(HttpServletRequest request) {

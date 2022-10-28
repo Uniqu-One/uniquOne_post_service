@@ -40,7 +40,7 @@ public class QnAUtils {
                 .isAnswer(isAnswer)
                 .answer(isAnswer==true? qna.getAnswer() : null)
                 .aRegDate(isAnswer == true? qna.getARegDate().format(DateTimeFormatter.ofPattern("yyyy년M월dd일 hh:mm")) : null)
-                .adminImg("https://uniquoneimg.s3.ap-northeast-2.amazonaws.com/img/KakaoTalk_20221017_114329237.png")
+                .adminImg("https://uniquoneimg.s3.ap-northeast-2.amazonaws.com/img/KakaoTalk_20221017_114329237.png") // 어드민 기본 이미지
                 .build();
     }
 

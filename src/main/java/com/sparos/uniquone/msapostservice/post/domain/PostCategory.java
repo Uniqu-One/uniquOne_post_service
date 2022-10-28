@@ -20,4 +20,7 @@ public class PostCategory {
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     private String name;
 
+    @Column(nullable = false)
+    private Double eco;
+
 }

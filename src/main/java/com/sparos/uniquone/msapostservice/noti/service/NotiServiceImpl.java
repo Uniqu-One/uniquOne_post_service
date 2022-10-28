@@ -75,7 +75,7 @@ public class NotiServiceImpl implements INotiService {
         switch (notification.getNotiType()){
             case COOL:
                 typeId = notification.getCool().getPost().getId();
-                nickName = iUserConnect.getUserNickName(notification.getCool().getUserId());
+                nickName = iUserConnect.getUserNickName(notification.getCool().getUserId()).getNickname();
                 userCornImg = iCornRepository.findImgUrlByUserId(notification.getCool().getUserId());
                 postImg = iPostImgRepository.findUrlByPostId(notification.getCool().getPost().getId());
                 break;
@@ -88,7 +88,7 @@ public class NotiServiceImpl implements INotiService {
             case FOLLOW:
                 Corn corn = iCornRepository.findByUserId(notification.getUserId()).get();
                 typeId = corn.getId();
-                nickName = iUserConnect.getUserNickName(notification.getFollow().getUserId());
+                nickName = iUserConnect.getUserNickName(notification.getFollow().getUserId()).getNickname();
                 userCornImg = iCornRepository.findImgUrlByUserId(notification.getFollow().getUserId());
                 break;
             case QNA:
