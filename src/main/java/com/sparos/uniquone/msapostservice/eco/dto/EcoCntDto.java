@@ -8,6 +8,7 @@ import org.hibernate.annotations.Formula;
 
 import javax.persistence.Basic;
 import javax.persistence.FetchType;
+import java.time.LocalDate;
 
 @Builder
 @Getter
@@ -15,7 +16,7 @@ import javax.persistence.FetchType;
 @NoArgsConstructor
 public class EcoCntDto {
 
-    private String tradeRegDate;
+    private LocalDate tradeRegDate;
 
     private Long outerCnt;
     private Long shirtCnt;

@@ -1,6 +1,5 @@
 package com.sparos.uniquone.msapostservice.offer.dto;
 
-import com.sparos.uniquone.msapostservice.offer.domain.Offer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +14,7 @@ import java.util.List;
 public class OfferDetailOutDto {
 
     private Long postId;
+    private String postTitle;
     private String postImg;
     private Long postPrice;
     private Long waitingCnt;

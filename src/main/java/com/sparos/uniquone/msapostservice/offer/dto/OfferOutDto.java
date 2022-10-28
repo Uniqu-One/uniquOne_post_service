@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class OfferOutDto {
 
     private Long postId;
+    private String postTitle;
     private String postImg;
     private Long price;
     private Long waitingCnt;

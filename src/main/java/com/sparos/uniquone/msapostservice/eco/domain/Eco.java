@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @EntityListeners(value ={AuditingEntityListener.class})
@@ -33,15 +34,15 @@ public class Eco {
     @Column(nullable = false)
     private Double distance;
 
-    @CreatedDate
-    @Column(name = "reg_date", updatable = false)
-    private LocalDateTime regDate;
+    @Column(name = "reg_date")
+    private LocalDate regDate;
 
     @Builder
-    public Eco(Double water, Double carbon, Double distance) {
+    public Eco(Double water, Double carbon, Double distance, LocalDate regDate) {
         this.water = water;
         this.carbon = carbon;
         this.distance = distance;
+        this.regDate = regDate;
     }
 
 }
