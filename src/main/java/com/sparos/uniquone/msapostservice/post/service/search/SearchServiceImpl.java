@@ -6,7 +6,11 @@ import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpHeaders;
@@ -18,18 +22,20 @@ import javax.servlet.http.HttpServletRequest;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SearchServiceImpl implements SearchService {
 
     private final IPostRepository postRepository;
 
     @Override
     public boolean isUser(HttpServletRequest request) {
-        if(StringUtils.hasText(request.getHeader(HttpHeaders.AUTHORIZATION))){
-            if(JwtProvider.isJwtValid(request))
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if(StringUtils.hasText(token)){
+            if(JwtProvider.validateToken(token))
                 return true;
-
             throw new UniquOneServiceException(ExceptionCode.INVALID_TOKEN, HttpStatus.OK);
         }
+
         return false;
     }
 

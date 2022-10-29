@@ -1,11 +1,12 @@
 package com.sparos.uniquone.msapostservice.util.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
+import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,55 +51,41 @@ public class JwtProvider {
         return Jwts.parserBuilder().setSigningKey(getKey(key)).build().parseClaimsJws(token)
                 .getBody();
     }
-//    public static boolean verifyJwt(HttpServletRequest request){
-//        String token = getTokenFromRequestHeader(request);
-//        boolean isValid = true;
-//        String subject = null;
-//        try{
-//             subject = extractClaims(token).getSubject();
-//        }catch (Exception ex){
-//            isValid = false;
-//        }
-//        if(subject == null || subject.isEmpty())
-//            isValid = false;
-//
-//        return isValid;
-//    }
 
-    //서브젝트 비어있는지 유무로 판단함. 조금 더 보안할필요는 있을듯함.
-    public static boolean isJwtValid(String token){
+    //토큰검증 얘로 쓸거임.
+    public static boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(getKey(key)).build().parseClaimsJws(token);
+            return true;
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            throw new UniquOneServiceException(ExceptionCode.INVALID_TOKEN, HttpStatus.OK);
+        } catch (ExpiredJwtException e) {
+            throw new UniquOneServiceException(ExceptionCode.Expired_TOKEN, HttpStatus.OK);
+        } catch (UnsupportedJwtException e) {
+            throw new UniquOneServiceException(ExceptionCode.UNSUPPORTED_TOKEN, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            throw new UniquOneServiceException(ExceptionCode.EMPTY_PAYLOAD_TOKEN, HttpStatus.OK);
+        }
+    }
+
+    public static boolean isJwtValid(HttpServletRequest request) {
+        String token = getTokenFromRequestHeader(request);
+
+        //유효시간 테스트
+        checkValidTokenTime(token);
+
         boolean returnValue = true;
 
         String subject = null;
 
-        try{
+        try {
             subject = extractClaims(token).getSubject();
 
-        }catch (Exception ex){
-            returnValue =false;
-        }
-
-        if(subject == null || subject.isEmpty()){
+        } catch (Exception ex) {
             returnValue = false;
         }
 
-        return returnValue;
-    }
-    public static boolean isJwtValid(HttpServletRequest request){
-        String token = getTokenFromRequestHeader(request);
-
-        boolean returnValue = true;
-
-        String subject = null;
-
-        try{
-            subject = extractClaims(token).getSubject();
-
-        }catch (Exception ex){
-            returnValue =false;
-        }
-
-        if(subject == null || subject.isEmpty()){
+        if (subject == null || subject.isEmpty()) {
             returnValue = false;
         }
 
@@ -106,7 +93,7 @@ public class JwtProvider {
     }
 
     //토큰 유효 시간 검증.
-    public static boolean verifyToken(String token) {
+    public static boolean checkValidTokenTime(String token) throws RuntimeException {
         try {
             Date expiredDate = extractClaims(token).getExpiration();
             return expiredDate.before(new Date());
@@ -114,11 +101,13 @@ public class JwtProvider {
             return false;
         }
     }
+
     //데이터 타입 확인해보기.
     public static Long getUserPkId(String token) {
         return extractClaims(token).get("id", Long.class);
     }
-    public static Long getUserPkId(HttpServletRequest request){
+
+    public static Long getUserPkId(HttpServletRequest request) {
         String token = getTokenFromRequestHeader(request);
         return getUserPkId(token);
     }
@@ -126,6 +115,7 @@ public class JwtProvider {
     public static String getUserNickName(String token) {
         return extractClaims(token).get("nickName", String.class);
     }
+
     public static String getUserNickName(HttpServletRequest request) {
         String token = request.getHeader(tokenNameOfRequestHeader);
         return getUserNickName(token);
@@ -178,8 +168,8 @@ public class JwtProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public static String getTokenFromRequestHeader(HttpServletRequest request){
+    public static String getTokenFromRequestHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader(tokenNameOfRequestHeader);
-        return bearerToken.replace("Bearer ","");
+        return bearerToken.replace("Bearer ", "");
     }
 }

@@ -220,7 +220,7 @@ public class CommentServiceImpl implements CommentService {
     public ResponseEntity<?> getUserIdInfo(HttpServletRequest request) {
         //헤더 가 없으면 익셉션 발생하는지 확인해야됨
         String token = JwtProvider.getTokenFromRequestHeader(request);
-        if (!JwtProvider.isJwtValid(token)) {
+        if (!JwtProvider.validateToken(token)) {
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.OK);
         }
         CommentUserInfoResponseDto responseDto = new CommentUserInfoResponseDto();
