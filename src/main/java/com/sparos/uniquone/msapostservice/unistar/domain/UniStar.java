@@ -25,7 +25,7 @@ public class UniStar extends BaseTimeEntity {
     private Post post;
 
     @Setter
-    @Column(nullable = false, columnDefinition = "VARCHAR(5) DEFAULT 1")
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 1")
     private Integer level;
 
 }
