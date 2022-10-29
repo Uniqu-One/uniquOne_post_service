@@ -202,7 +202,7 @@ public class PostServiceImpl implements IPostService {
         postTypeList.add(SOLD_OUT);
         List<PostListInfoDto> postListInfoDtoList = postRepositoryCustom.PostProductListInfo(postTypeList, cornId, pageable);
         Boolean isLast = postListInfoDtoList.size()<pageable.getPageSize();
-        if (isLast) postListInfoDtoList.remove(pageable.getPageSize());
+        if (!isLast) postListInfoDtoList.remove(pageable.getPageSize()+1);
         Boolean isFirst = pageable.getPageNumber() == 0;
         return PostSlicePageDto.builder()
                 .content(Collections.singletonList(postListInfoDtoList))
@@ -221,7 +221,7 @@ public class PostServiceImpl implements IPostService {
         List<PostListInfoDto> postListInfoDtoList = postRepositoryCustom.PostProductListInfo(postTypeList, cornId, pageable);
         Boolean isFirst = pageable.getPageNumber() == 0;
         Boolean isLast = postListInfoDtoList.size()<pageable.getPageSize();
-        if (isLast) postListInfoDtoList.remove(pageable.getPageSize());
+        if (!isLast) postListInfoDtoList.remove(pageable.getPageSize()+1);
         return PostSlicePageDto.builder()
                 .content(Collections.singletonList(postListInfoDtoList))
                 .pageNumber(pageable.getPageNumber())

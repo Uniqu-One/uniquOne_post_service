@@ -86,6 +86,8 @@ public class ComplexServiceImpl implements IComplexService {
         List<Follow> followList = iFollowRepository.findByUserId(userId);
         List<Long> followCornIdList = followList.stream().map(follow -> follow.getCorn().getId()).collect(Collectors.toList());
         List<MainFollowContentsDto> mainFollowContentsDtoList = complexRepositoryCustom.findByCornIdMainFollowContentsList(followCornIdList,pageable);
+        Boolean isLast = mainFollowContentsDtoList.size()<pageable.getPageSize();
+        if (!isLast) mainFollowContentsDtoList.remove(pageable.getPageSize()+1);
         mainFollowContentsDtoList.stream().map(mainFollowContentsDto -> {
             mainFollowContentsDto.addIsCool(iCoolRepository.existsByUserIdAndPostId(userId, mainFollowContentsDto.getPostId()));
             mainFollowContentsDto.addPostImgUrlList(iPostImgRepository.findUrlByPostIdList(mainFollowContentsDto.getPostId()));
@@ -95,7 +97,7 @@ public class ComplexServiceImpl implements IComplexService {
                 .content(Collections.singletonList(mainFollowContentsDtoList))
                 .pageNumber(pageable.getPageNumber())
                 .pageFirst(pageable.getPageSize()==0)
-                .pageLast(mainFollowContentsDtoList.size()<pageable.getPageSize())
+                .pageLast(isLast)
                 .build();
         return mainFollowContentsDtoList;
     }
