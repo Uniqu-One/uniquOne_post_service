@@ -7,14 +7,11 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparos.uniquone.msapostservice.post.domain.PostType;
-import com.sparos.uniquone.msapostservice.post.domain.QPostAndLook;
 import com.sparos.uniquone.msapostservice.post.dto.PostDetailInfoDto;
 import com.sparos.uniquone.msapostservice.post.dto.PostListInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -43,11 +40,6 @@ public class PostRepositoryCustom {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1)
                 .fetch();
-                boolean hasNext = false;
-                if(postListInfoDtoList.size() > pageable.getPageSize()){
-                    hasNext = true;
-                    postListInfoDtoList.remove(pageable.getPageSize());
-                }
         return postListInfoDtoList;
     }
 
