@@ -2,17 +2,18 @@ package com.sparos.uniquone.msapostservice.offer.domain;
 
 import com.sparos.uniquone.msapostservice.offer.dto.*;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
-import com.sparos.uniquone.msapostservice.qna.domain.QnA;
-import com.sparos.uniquone.msapostservice.qna.dto.QnADetailOutDto;
-import com.sparos.uniquone.msapostservice.qna.dto.QnAOutDto;
-import com.sparos.uniquone.msapostservice.qna.dto.QuestionInputDto;
+import com.sparos.uniquone.msapostservice.util.feign.service.IChatConnect;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
+import lombok.RequiredArgsConstructor;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class OfferUtils {
+
+    private final IChatConnect iChatConnect;
 
     public static Offer offerInputDtoToEntity(OfferInputDto offerInputDto, Post post, HttpServletRequest request) {
         return Offer.builder()
@@ -35,8 +36,10 @@ public class OfferUtils {
                 .build();
     }
 
-    public static OfferDetailIndividualOutDto entityToOfferDetailIndividualOutDto(Offer offer, String cornImgUrl, Long userId, String userNickName) {
+    public static OfferDetailIndividualOutDto entityToOfferDetailIndividualOutDto(Offer offer, String cornImgUrl, Long userId, String userNickName, String chatRoomId) {
 
+        System.err.println("chatRoomId=========================================================");
+        System.err.println(chatRoomId);
         String offerCheckDate = "";
 
         if (!offer.getOfferType().equals(OfferType.WAITING))
@@ -51,6 +54,7 @@ public class OfferUtils {
                 .offerCheckDate(offerCheckDate)
                 .offerPrice(offer.getPrice())
                 .offerType(offer.getOfferType())
+                .chatRoomId(chatRoomId)
                 .build();
     }
 

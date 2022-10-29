@@ -7,17 +7,15 @@ import com.sparos.uniquone.msapostservice.noti.service.IEmitterService;
 import com.sparos.uniquone.msapostservice.offer.domain.Offer;
 import com.sparos.uniquone.msapostservice.offer.domain.OfferType;
 import com.sparos.uniquone.msapostservice.offer.domain.OfferUtils;
-import com.sparos.uniquone.msapostservice.offer.dto.OfferCheckedInPutDto;
-import com.sparos.uniquone.msapostservice.offer.dto.OfferCntDto;
-import com.sparos.uniquone.msapostservice.offer.dto.OfferDetailIndividualOutDto;
-import com.sparos.uniquone.msapostservice.offer.dto.OfferInputDto;
+import com.sparos.uniquone.msapostservice.offer.dto.*;
 import com.sparos.uniquone.msapostservice.offer.repository.IOfferRepository;
 import com.sparos.uniquone.msapostservice.offer.repository.OfferRepositoryCustom;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
-import com.sparos.uniquone.msapostservice.qna.domain.QnA;
-import com.sparos.uniquone.msapostservice.qna.domain.QnAUtils;
+import com.sparos.uniquone.msapostservice.util.feign.dto.ChatRoomDto;
+import com.sparos.uniquone.msapostservice.util.feign.dto.ChatRoomType;
+import com.sparos.uniquone.msapostservice.util.feign.service.IChatConnect;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
@@ -27,7 +25,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +40,7 @@ public class OfferServiceImpl implements IOfferService{
     private final ICornRepository iCornRepository;
     private final OfferRepositoryCustom offerRepositoryCustom;
     private final IEmitterService iEmitterService;
+    private final IChatConnect iChatConnect;
 
     // 오퍼 보내기
     @Override
@@ -97,9 +98,17 @@ public class OfferServiceImpl implements IOfferService{
         if (offers.isEmpty())
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
-        List<OfferDetailIndividualOutDto> offerDetailIndividualOutDto = offers.stream().map(offer ->
-                OfferUtils.entityToOfferDetailIndividualOutDto(offer, iCornRepository.findImgUrlByUserId(userId), userId, userNickName))
-                        .collect(Collectors.toList());
+        List<OfferDetailIndividualOutDto> offerDetailIndividualOutDto = offers.stream().map(offer -> {
+                    String chatRoomId = "";
+                    if (offer.getOfferType().equals(OfferType.ACCEPT)){
+                        chatRoomId = iChatConnect.offerChat(offer.getPost().getId(), userId, offer.getUserId());
+                    }
+
+                    return OfferUtils.entityToOfferDetailIndividualOutDto(
+                            offer,
+                            iCornRepository.findImgUrlByUserId(userId), userId, userNickName,
+                            chatRoomId);
+                }).collect(Collectors.toList());
 
         OfferCntDto offerCntDto = offerRepositoryCustom.findCntByPostId(postId)
                 .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
@@ -131,23 +140,26 @@ public class OfferServiceImpl implements IOfferService{
     public JSONObject offerChecked(OfferCheckedInPutDto offerCheckedInPutDto, HttpServletRequest request) {
 
         JSONObject jsonObject = new JSONObject();
+        Map<String, String> chatRoomIdMap = new HashMap<>();
 
         Offer offer = iOfferRepository.findById(offerCheckedInPutDto.getOfferId())
               .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
         offer.modOfferType(offerCheckedInPutDto.getOfferType());
 
-
         // 오퍼타입 수락일 경우 채팅방 생성 -> 채팅 noti 타입으로 save -> 채팅룸 id 리턴
-
-
-
-
-
+        if (offer.getOfferType().equals(OfferType.ACCEPT)) {
+            ChatRoomDto chatRoomDto = ChatRoomDto.builder()
+                    .receiverId(offer.getUserId())
+                    .postId(offer.getPost().getId())
+                    .chatType(ChatRoomType.SELLER)
+                    .build();
+            iChatConnect.offerChat(chatRoomDto, JwtProvider.getTokenFromRequestHeader(request));
+        }
 
         iEmitterService.send(offer.getUserId(), offer, NotiType.OFFER_CHECK);
 
-        jsonObject.put("data", iOfferRepository.save(offer));
+        jsonObject.put("data", offer);
 
         return jsonObject;
     }

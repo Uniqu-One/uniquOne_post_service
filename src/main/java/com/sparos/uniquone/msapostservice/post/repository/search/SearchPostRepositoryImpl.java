@@ -124,8 +124,6 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
 //            result.remove(pageable.getPageSize());
 //            hasNext = true;
 //        }
-
-        //TODO 제대로 동작하는지 체크해봐야됨.
         hasNext = getPageHasNext(result, result.size(), pageable.getPageSize());
 
 

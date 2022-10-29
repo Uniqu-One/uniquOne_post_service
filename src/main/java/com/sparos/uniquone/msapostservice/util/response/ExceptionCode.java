@@ -1,7 +1,6 @@
 package com.sparos.uniquone.msapostservice.util.response;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ExceptionCode {
@@ -14,9 +13,17 @@ public enum ExceptionCode {
     INVALID_USERID("F004","유저 정보가 일치 하지 않습니다."),
 
     KEYWORD_EMPTY("F005","키워드를 입력 해 주세요"),
+    INVALID_TOKEN("F006" ,"올바르지 않은 토큰 입니다."),
 
-    INVALID_TOKEN("F005" ,"올바르지 않은 토큰 입니다."),
+    Expired_TOKEN("F007", "토큰 유효시간이 지났습니다."),
 
+    UNSUPPORTED_TOKEN("F008", "지원하지 않는 토큰 입니다."),
+
+    EMPTY_PAYLOAD_TOKEN("F009", "토큰 내용이 비어 있습니다."),
+
+    EXISTS_UNISTAR("F010","해당 유니스타가 이미 존재합니다."),
+
+    NOTFOUND_POST_USER_UNISTAR("F011","해당 포스트에 유저의 유니스타가 존재 하지 않습니다.")
     ;
 
 
