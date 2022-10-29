@@ -1,17 +1,18 @@
 package com.sparos.uniquone.msapostservice.unistar.domain;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicInsert
-public class Unistart extends BaseTimeEntity {
+@Getter
+public class UniStar extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +24,8 @@ public class Unistart extends BaseTimeEntity {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(5) DEFAULT '원스타'")
-    private String level;
+    @Setter
+    @Column(nullable = false, columnDefinition = "VARCHAR(5) DEFAULT 1")
+    private Integer level;
 
 }
