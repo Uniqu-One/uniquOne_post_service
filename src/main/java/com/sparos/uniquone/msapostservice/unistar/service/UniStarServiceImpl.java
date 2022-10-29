@@ -90,6 +90,9 @@ public class UniStarServiceImpl implements IUniStarService {
                 }
         );
 
+        //삭제
+        uniStarRepository.delete(uniStar);
+
         return "success remove UniStar";
     }
 }
