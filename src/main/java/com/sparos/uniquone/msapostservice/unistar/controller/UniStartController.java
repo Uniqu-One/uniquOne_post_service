@@ -25,7 +25,7 @@ public class UniStartController {
     }
 
     @PatchMapping("/{postId}")
-    public ResponseEntity<SuccessResponse> modifyUniStar(@PathVariable Long postId, UniStarRequestDto requestDto, HttpServletRequest request) {
+    public ResponseEntity<SuccessResponse> modifyUniStar(@PathVariable Long postId, @RequestBody UniStarRequestDto requestDto, HttpServletRequest request) {
         return ResponseEntity.ok(
                 SuccessResponse.of(SuccessCode.SUCCESS_CODE,
                         uniStarService.modifyUniStar(postId,requestDto,request)));

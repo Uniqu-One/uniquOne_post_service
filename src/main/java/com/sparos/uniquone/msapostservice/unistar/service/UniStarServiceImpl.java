@@ -10,6 +10,7 @@ import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UniStarServiceImpl implements IUniStarService {
 
     private final IPostRepository postRepository;
@@ -64,9 +66,13 @@ public class UniStarServiceImpl implements IUniStarService {
                 }
         );
         //유니스타 수정
-        uniStar.setLevel(uniStarRequestDto.getLevel());
+        Integer level = uniStarRequestDto.getLevel();
+        if(level >= 3)
+            level = 3;
 
-        return new UniStarResponseDto(postId,userPkId, uniStarRequestDto.getLevel());
+        uniStar.setLevel(level);
+
+        return new UniStarResponseDto(postId,userPkId, level);
     }
 
     @Override
