@@ -133,6 +133,11 @@ public class JwtProvider {
     public static String getUserRole(String token) {
         return extractClaims(token).get("role", String.class);
     }
+    public static String getUserRole(HttpServletRequest request) {
+        String token = getTokenFromRequestHeader(request);
+        log.info("role = {} ", extractClaims(token).get("role", String.class));
+        return extractClaims(token).get("role", String.class);
+    }
 
 //    public static Long getUserPkId(HttpServletRequest request){
 //        String token = request.getHeader(env.getProperty("token.name"));
