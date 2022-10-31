@@ -88,6 +88,7 @@ public class CommentServiceImpl implements CommentService {
         if (parent != null) {
             commentResponseDto = CommentResponseDto.builder()
                     .commentId(comment.getId())
+                    .userId(userPkId)
                     .writerNick(comment.getUserNickName())
                     .content(comment.getContent())
                     .depth(comment.getDepth())
@@ -98,6 +99,7 @@ public class CommentServiceImpl implements CommentService {
         } else {
             commentResponseDto = CommentResponseDto.builder()
                     .commentId(comment.getId())
+                    .userId(userPkId)
                     .writerNick(comment.getUserNickName())
                     .content(comment.getContent())
                     .depth(0)
