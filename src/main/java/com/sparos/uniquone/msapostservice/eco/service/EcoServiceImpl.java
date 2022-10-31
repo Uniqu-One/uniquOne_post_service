@@ -29,6 +29,7 @@ public class EcoServiceImpl implements IEcoService{
     @Scheduled(cron = "0 0 0 * * *")
     @Override
     public void run() {
+        System.err.println("스케쥴러");
         // 거래에서 오늘 날짜에 맞는 리스트를 카테고리 별 카운트를 가져온다
         // 카테고리 별 탄소배출량 계산한다
         // 에코테이블에 넣는다 (일단 워터든 뭐든 똑같이 넣음음)
@@ -66,7 +67,6 @@ public class EcoServiceImpl implements IEcoService{
                         .carbon(ecoCalculation)
                         .distance(ecoCalculation)
                 .build());
-
     }
 
     // 어제 탄소 절감 조회
@@ -93,8 +93,7 @@ public class EcoServiceImpl implements IEcoService{
         return jsonObject;
     }
 
-
-    // 카운트 카테고리 별 에코 계산 총 합
+    // 카운트 카테고리 별 에코 계산 총 합 테스트
     @Override
     public JSONObject test1() {
 

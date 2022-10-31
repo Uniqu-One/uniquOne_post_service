@@ -19,7 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +38,7 @@ public class NotiServiceImpl implements INotiService {
 
         JSONObject jsonObject = new JSONObject();
 
-        Pageable pageable = PageRequest.of(pageNum - 1, 5, Sort.by(Sort.Direction.DESC, "regDate"));
+        Pageable pageable = PageRequest.of(pageNum - 1, 30, Sort.by(Sort.Direction.DESC, "regDate"));
         List<Noti> notis = iNotiRepository.findByUserId(JwtProvider.getUserPkId(request), pageable);
 
         if (notis.isEmpty())
@@ -110,4 +112,17 @@ public class NotiServiceImpl implements INotiService {
                 .build();
     }
 
+    // 확인 안한 알림 갯수
+    @Override
+    public JSONObject notiNonCheckedCnt(HttpServletRequest request) {
+
+        JSONObject jsonObject = new JSONObject();
+        Map<String, Long> countMap = new HashMap<>();
+
+        countMap.put("count", iNotiRepository.countByUserId(JwtProvider.getUserPkId(request)));
+
+        jsonObject.put("data", countMap);
+
+        return jsonObject;
+    }
 }

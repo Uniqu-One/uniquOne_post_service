@@ -25,7 +25,9 @@ public enum ExceptionCode {
 
     NOTFOUND_POST_USER_UNISTAR("F011","해당 포스트에 유저의 유니스타가 존재 하지 않습니다."),
 
-    NOTFOUND_ADMIN_BOARD("F012","게시판이 존재 하지 않습니다.")
+    NOTFOUND_ADMIN_BOARD("F012","게시판이 존재 하지 않습니다."),
+
+    NOTFOUND_UNISTAR("F013","유니스타가 존재 하지 않습니다.")
     ;
 
 
