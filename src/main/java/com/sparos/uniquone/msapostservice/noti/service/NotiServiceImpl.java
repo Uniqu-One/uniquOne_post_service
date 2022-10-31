@@ -70,32 +70,25 @@ public class NotiServiceImpl implements INotiService {
     private NotiOutDto entityToNotiOutDto(Noti notification) {
 
         Long typeId = 0l;
-        String nickName = null;
-        String userCornImg = null;
-        String postImg = null;
 
-        switch (notification.getNotiType()){
+        switch (notification.getNotiType()) {
             case COOL:
                 typeId = notification.getCool().getPost().getId();
-                nickName = iUserConnect.getUserNickName(notification.getCool().getUserId()).getNickname();
-                userCornImg = iCornRepository.findImgUrlByUserId(notification.getCool().getUserId());
-                postImg = iPostImgRepository.findUrlByPostId(notification.getCool().getPost().getId());
                 break;
             case COMMENT:
                 typeId = notification.getComment().getPost().getId();
-                nickName = notification.getComment().getUserNickName();
-                userCornImg = iCornRepository.findImgUrlByUserId(notification.getComment().getUserId());
-                postImg = iPostImgRepository.findUrlByPostId(notification.getComment().getPost().getId());
                 break;
             case FOLLOW:
                 Corn corn = iCornRepository.findByUserId(notification.getUserId()).get();
                 typeId = corn.getId();
-                nickName = iUserConnect.getUserNickName(notification.getFollow().getUserId()).getNickname();
-                userCornImg = iCornRepository.findImgUrlByUserId(notification.getFollow().getUserId());
+                break;
+            case OFFER:
+            case OFFER_ACCEPT:
+            case OFFER_REFUSE:
+                typeId = notification.getOffer().getId();
                 break;
             case QNA:
                 typeId = notification.getQna().getId();
-                nickName = "";
                 break;
         }
 
@@ -103,12 +96,12 @@ public class NotiServiceImpl implements INotiService {
                 .notiType(notification.getNotiType())
                 .notiId(notification.getId())
                 .typeId(typeId)
-                .nickName(nickName)
+                .nickName(notification.getNickName())
+                .userCornImg(notification.getUserCornImg())
                 .dsc(notification.getDsc())
                 .isCheck(notification.getIsCheck())
                 .regDate(notification.getRegDate())
-                .postImg(postImg)
-                .userCornImg(userCornImg)
+                .postImg(notification.getPostImg())
                 .build();
     }
 
