@@ -5,12 +5,14 @@ import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.follow.domain.Follow;
 import com.sparos.uniquone.msapostservice.follow.repository.IFollowRepository;
+import com.sparos.uniquone.msapostservice.noti.service.IEmitterService;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostImg;
 import com.sparos.uniquone.msapostservice.post.dto.PostChatResponseDto;
 import com.sparos.uniquone.msapostservice.post.dto.PostSlicePageDto;
 import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
+import com.sparos.uniquone.msapostservice.util.complex.dto.ChatPushDto;
 import com.sparos.uniquone.msapostservice.util.complex.dto.MainFollowContentsDto;
 import com.sparos.uniquone.msapostservice.util.complex.repository.ComplexRepositoryCustom;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +34,9 @@ public class ComplexServiceImpl implements IComplexService {
     private final IPostImgRepository iPostImgRepository;
     private final ICornRepository iCornRepository;
     private final IFollowRepository iFollowRepository;
-
-    private final ComplexRepositoryCustom complexRepositoryCustom;
-
     private final ICoolRepository iCoolRepository;
+    private final IEmitterService iEmitterService;
+    private final ComplexRepositoryCustom complexRepositoryCustom;
 
     // 채팅 - 게시물 정보 요청
     @Override
@@ -100,5 +101,10 @@ public class ComplexServiceImpl implements IComplexService {
                 .pageLast(isLast)
                 .build();
         return mainFollowContentsDtoList;
+    }
+
+    @Override
+    public void chatPush(ChatPushDto chatPushDto) {
+        iEmitterService.send(chatPushDto.getReceiverId(), chatPushDto.getChat(), chatPushDto.getNotiType());
     }
 }

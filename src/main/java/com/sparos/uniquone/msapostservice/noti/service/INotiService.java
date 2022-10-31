@@ -12,5 +12,8 @@ public interface INotiService {
     // 알림 확인
     JSONObject notiChecked(Long notiId, HttpServletRequest request);
 
+    // 확인 안한 알림 갯수
+    JSONObject notiNonCheckedCnt(HttpServletRequest request);
+
 }
 

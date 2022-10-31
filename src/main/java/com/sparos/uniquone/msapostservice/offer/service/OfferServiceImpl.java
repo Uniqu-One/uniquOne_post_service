@@ -155,9 +155,11 @@ public class OfferServiceImpl implements IOfferService{
                     .chatType(ChatRoomType.SELLER)
                     .build();
             iChatConnect.offerChat(chatRoomDto, JwtProvider.getTokenFromRequestHeader(request));
-        }
+            iEmitterService.send(offer.getUserId(), offer, NotiType.OFFER_ACCEPT);
+        } else {
 
-        iEmitterService.send(offer.getUserId(), offer, NotiType.OFFER_CHECK);
+            iEmitterService.send(offer.getUserId(), offer, NotiType.OFFER_REFUSE);
+        }
 
         jsonObject.put("data", offer);
 
