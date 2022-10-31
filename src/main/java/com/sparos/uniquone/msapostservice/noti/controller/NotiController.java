@@ -42,7 +42,7 @@ public class NotiController {
     }
 
 
-    // 알림 확인
+    // 비확인 알림 카운팅
     @GetMapping(value = "/nonCnt")
     public ResponseEntity<SuccessResponse> notiNonCheckedCnt(HttpServletRequest request) {
         JSONObject jsonObject = iNotiService.notiNonCheckedCnt(request);

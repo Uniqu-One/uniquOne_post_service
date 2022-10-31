@@ -105,6 +105,6 @@ public class ComplexServiceImpl implements IComplexService {
 
     @Override
     public void chatPush(ChatPushDto chatPushDto) {
-        iEmitterService.send(chatPushDto.getReceiverId(), chatPushDto.getChat(), chatPushDto.getNotiType());
+        iEmitterService.sendChatPush(chatPushDto.getReceiverId(), chatPushDto.getPostId(), chatPushDto.getChat());
     }
 }
