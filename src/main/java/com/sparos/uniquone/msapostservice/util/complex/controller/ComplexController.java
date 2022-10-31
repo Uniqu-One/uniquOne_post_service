@@ -2,6 +2,7 @@ package com.sparos.uniquone.msapostservice.util.complex.controller;
 
 import com.sparos.uniquone.msapostservice.post.dto.PostChatResponseDto;
 import com.sparos.uniquone.msapostservice.util.complex.Service.IComplexService;
+import com.sparos.uniquone.msapostservice.util.complex.dto.ChatPushDto;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
 import com.sparos.uniquone.msapostservice.util.response.SuccessResponse;
@@ -37,5 +38,10 @@ public class ComplexController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iComplexService.getMainFollowContent(userPkId,pageable)));
     }
 
+    // 채팅 - 알림 푸시
+    @GetMapping("/chat/sendPush")
+    public void chatPush(@RequestBody ChatPushDto chatPushDto){
+        iComplexService.chatPush(chatPushDto);
+    }
 
 }

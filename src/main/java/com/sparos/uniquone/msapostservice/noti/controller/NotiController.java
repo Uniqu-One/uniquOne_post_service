@@ -23,9 +23,8 @@ public class NotiController {
 
     // 알림 구독
     @GetMapping(value = "/subscribe/{id}", produces = "text/event-stream")
-    public SseEmitter subscribe(@PathVariable Long id,
-                                @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
-        return iEmitterService.subscribe(id, lastEventId);
+    public SseEmitter subscribe(@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId, @PathVariable("id") Long userId) {
+        return iEmitterService.subscribe(userId, lastEventId);
     }
 
     // 알림 내역 조회
@@ -39,6 +38,14 @@ public class NotiController {
     @PatchMapping(value = "")
     public ResponseEntity<SuccessResponse> notiChecked(@RequestBody Map<String, Long> notiId, HttpServletRequest request) {
         JSONObject jsonObject = iNotiService.notiChecked(notiId.get("notiId"), request);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
+    }
+
+
+    // 알림 확인
+    @GetMapping(value = "/nonCnt")
+    public ResponseEntity<SuccessResponse> notiNonCheckedCnt(HttpServletRequest request) {
+        JSONObject jsonObject = iNotiService.notiNonCheckedCnt(request);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
 }

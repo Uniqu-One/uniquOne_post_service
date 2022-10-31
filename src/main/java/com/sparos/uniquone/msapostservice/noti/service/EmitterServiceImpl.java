@@ -15,6 +15,7 @@ import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.qna.domain.QnA;
 import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -22,14 +23,14 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmitterServiceImpl implements IEmitterService {
 
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60 * 24;
 
     private final EmitterRepositoryImpl emitterRepository;
-    private final ApplicationEventPublisher eventPublisher;
 
     private final INotiRepository iNotiRepository;
     private final ICornRepository iCornRepository;
@@ -92,8 +93,10 @@ public class EmitterServiceImpl implements IEmitterService {
                     .name("sse")
                     .data(data));
         } catch (IOException exception) {
-            emitterRepository.deleteById(id);
-            throw new RuntimeException("연결 오류!");
+            log.error(String.valueOf(exception));
+            log.error(exception.getMessage());
+//            emitterRepository.deleteById(id);
+//            throw new RuntimeException("연결 오류!");
         }
     }
 
@@ -122,13 +125,17 @@ public class EmitterServiceImpl implements IEmitterService {
                 noti.setOffer((Offer) object);
                 noti.setDsc("님이 오퍼를 보냈습니다.");
                 break;
-            case OFFER_CHECK:
+            case OFFER_ACCEPT:
                 noti.setOffer((Offer) object);
-                noti.setDsc("님이 오퍼를 확인했습니다.");
+                noti.setDsc("님이 오퍼를 수락했습니다.");
+                break;
+            case OFFER_REFUSE:
+                noti.setOffer((Offer) object);
+                noti.setDsc("님이 오퍼를 거절했습니다.");
                 break;
             case QNA:
                 noti.setQna((QnA) object);
-                noti.setDsc(" 문의글에 답글이 작성되었습니다. : " + ((QnA) object).getAnswer());
+                noti.setDsc("문의글에 답글이 작성되었습니다. : " + ((QnA) object).getAnswer());
                 break;
         }
 
@@ -167,7 +174,8 @@ public class EmitterServiceImpl implements IEmitterService {
                 userCornImg = iCornRepository.findImgUrlByUserId(notification.getOffer().getUserId());
                 postImg = iPostImgRepository.findUrlByPostId(notification.getOffer().getPost().getId());
                 break;
-            case OFFER_CHECK:
+            case OFFER_ACCEPT:
+            case OFFER_REFUSE:
                 typeId = notification.getOffer().getId();
                 nickName = iUserConnect.getUserNickName(notification.getOffer().getPost().getCorn().getUserId()).getNickname();
                 userCornImg = iCornRepository.findImgUrlByUserId(notification.getOffer().getPost().getCorn().getUserId());

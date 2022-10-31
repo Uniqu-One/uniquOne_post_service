@@ -35,10 +35,10 @@ public class Eco {
     private Double distance;
 
     @Column(name = "reg_date")
-    private LocalDate regDate;
+    private String regDate;
 
     @Builder
-    public Eco(Double water, Double carbon, Double distance, LocalDate regDate) {
+    public Eco(Double water, Double carbon, Double distance, String regDate) {
         this.water = water;
         this.carbon = carbon;
         this.distance = distance;
