@@ -39,7 +39,7 @@ public class ComplexController {
     }
 
     // 채팅 - 알림 푸시
-    @GetMapping("/chat/sendPush")
+    @PostMapping("/chat/sendPush")
     public void chatPush(@RequestBody ChatPushDto chatPushDto){
         iComplexService.chatPush(chatPushDto);
     }
