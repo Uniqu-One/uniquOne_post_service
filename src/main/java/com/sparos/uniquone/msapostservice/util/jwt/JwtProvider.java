@@ -48,8 +48,18 @@ public class JwtProvider {
 
     //claims에 넣었던거 받아오기.
     private static Claims extractClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(getKey(key)).build().parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parserBuilder().setSigningKey(getKey(key)).build().parseClaimsJws(token)
+                    .getBody();
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            throw new UniquOneServiceException(ExceptionCode.INVALID_TOKEN, HttpStatus.OK);
+        } catch (ExpiredJwtException e) {
+            throw new UniquOneServiceException(ExceptionCode.Expired_TOKEN, HttpStatus.OK);
+        } catch (UnsupportedJwtException e) {
+            throw new UniquOneServiceException(ExceptionCode.UNSUPPORTED_TOKEN, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            throw new UniquOneServiceException(ExceptionCode.EMPTY_PAYLOAD_TOKEN, HttpStatus.OK);
+        }
     }
 
     //토큰검증 얘로 쓸거임.
@@ -133,6 +143,7 @@ public class JwtProvider {
     public static String getUserRole(String token) {
         return extractClaims(token).get("role", String.class);
     }
+
     public static String getUserRole(HttpServletRequest request) {
         String token = getTokenFromRequestHeader(request);
         log.info("role = {} ", extractClaims(token).get("role", String.class));

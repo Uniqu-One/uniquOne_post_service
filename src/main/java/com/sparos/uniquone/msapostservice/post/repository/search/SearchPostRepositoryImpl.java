@@ -590,9 +590,7 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
     }
 
     public BooleanExpression searchHasTagEq(String keyword) {
-
         return keyword != null ? postTag.dsc.eq(keyword) : null;
-
     }
 
     public BooleanExpression searchPostTypeListEq(PostType type) {
