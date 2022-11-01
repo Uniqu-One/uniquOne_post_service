@@ -6,14 +6,21 @@ import com.sparos.uniquone.msapostservice.look.repository.ILookRepository;
 import com.sparos.uniquone.msapostservice.post.domain.*;
 import com.sparos.uniquone.msapostservice.post.dto.*;
 import com.sparos.uniquone.msapostservice.post.repository.*;
+import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
+import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
+import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import com.sparos.uniquone.msapostservice.util.s3.AwsS3UploaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -357,8 +364,24 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public PostRecommendListResponseDto getPostCoolListOfNonUser(Pageable pageable) {
+    public PostRecommendListResponseDto getPostCoolListOfNonUser(HttpServletRequest request, Pageable pageable) {
+        if(isUser(request)){
+            Long userPkId = JwtProvider.getUserPkId(request);
+          return  postRepositoryCustom.getPostCoolListOfUser(userPkId, pageable);
+        }
+
         return postRepositoryCustom.getPostCoolListOfNonUser(pageable);
+    }
+
+    private boolean isUser(HttpServletRequest request) {
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if(StringUtils.hasText(token)){
+            if(JwtProvider.validateToken(token))
+                return true;
+            throw new UniquOneServiceException(ExceptionCode.INVALID_TOKEN, HttpStatus.OK);
+        }
+
+        return false;
     }
 
 }
