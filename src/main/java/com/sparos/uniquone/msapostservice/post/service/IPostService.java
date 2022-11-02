@@ -1,13 +1,11 @@
 package com.sparos.uniquone.msapostservice.post.service;
 
-import com.sparos.uniquone.msapostservice.post.domain.Post;
-import com.sparos.uniquone.msapostservice.post.dto.PostChatResponseDto;
 import com.sparos.uniquone.msapostservice.post.dto.PostInputDto;
 import com.sparos.uniquone.msapostservice.post.dto.PostRecommendListResponseDto;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 
@@ -34,6 +32,6 @@ public interface IPostService {
     Object getModPostInfo(Long userId, Long postId);
 
     Object getPostDetailInfo(Long postId);
-    PostRecommendListResponseDto getPostCoolListOfNonUser(Pageable pageable);
+    PostRecommendListResponseDto getPostCoolListOfNonUser(HttpServletRequest request, Pageable pageable);
 
 }

@@ -38,8 +38,6 @@ public class OfferUtils {
 
     public static OfferDetailIndividualOutDto entityToOfferDetailIndividualOutDto(Offer offer, String cornImgUrl, Long userId, String userNickName, String chatRoomId) {
 
-        System.err.println("chatRoomId=========================================================");
-        System.err.println(chatRoomId);
         String offerCheckDate = "";
 
         if (!offer.getOfferType().equals(OfferType.WAITING))
