@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface ICornRepository extends JpaRepository<Corn, Long> {
     Optional<Corn> findByUserId(Long userId);
 
+    Optional<Corn> findByUserNickName(String userNickName);
+
     Boolean existsByUserId(Long userId);
 
     Boolean existsByTitle(String title);

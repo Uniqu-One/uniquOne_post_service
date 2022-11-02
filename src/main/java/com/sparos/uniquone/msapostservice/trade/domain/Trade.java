@@ -88,11 +88,12 @@ public class Trade {
     private Long suitCnt;
 
     @Builder
-    public Trade(Long id, Long sellerId, Long buyerId, Post post, Boolean isReview, LocalDateTime regDate) {
+    public Trade(Long id, Long sellerId, Long buyerId, Post post, PostCategory postCategory, Boolean isReview, LocalDateTime regDate) {
         this.id = id;
         this.sellerId = sellerId;
         this.buyerId = buyerId;
         this.post = post;
+        this.postCategory = postCategory;
         this.isReview = isReview;
         this.regDate = regDate;
     }

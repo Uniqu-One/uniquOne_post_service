@@ -14,6 +14,6 @@ public interface IEmitterService {
     void send(Long userId, Object object, NotiType notiType);
 
     // 채팅 알림 전송
-    ChatNotiDto sendChatPush(Long userId, Long postId, Chat object);
+    ChatNotiDto sendChatPush(Long userId, Long postId, Chat chat);
 
 }

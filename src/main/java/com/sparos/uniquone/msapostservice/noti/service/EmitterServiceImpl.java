@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Slf4j
@@ -141,7 +142,7 @@ public class EmitterServiceImpl implements IEmitterService {
         switch (notiType){
             case COOL:
                 noti.setCool((Cool) object);
-                noti.setNickname(iUserConnect.getUserNickName(userId).getNickname());
+                noti.setNickname(iUserConnect.getUserNickName(((Cool) object).getUserId()).getNickname());
                 noti.setUserCornImg(iCornRepository.findImgUrlByUserId(userId));
                 noti.setPostImg(iPostImgRepository.findUrlByPostId(((Cool) object).getPost().getId()));
                 noti.setDsc("님이 회원님의 포스트를 좋아합니다.");
@@ -216,6 +217,9 @@ public class EmitterServiceImpl implements IEmitterService {
                 break;
         }
 
+        String date = notification.getRegDate().format(DateTimeFormatter.ofPattern("yy년 MM월 dd일"));
+        String time = notification.getRegDate().format(DateTimeFormatter.ofPattern("a hh:mm"));
+
         return NotiOutDto.builder()
                 .notiType(notification.getNotiType())
                 .notiId(notification.getId())
@@ -224,7 +228,8 @@ public class EmitterServiceImpl implements IEmitterService {
                 .userCornImg(notification.getUserCornImg())
                 .dsc(notification.getDsc())
                 .isCheck(notification.getIsCheck())
-                .regDate(notification.getRegDate())
+                .date(date)
+                .regTime(time)
                 .postImg(notification.getPostImg())
                 .build();
     }

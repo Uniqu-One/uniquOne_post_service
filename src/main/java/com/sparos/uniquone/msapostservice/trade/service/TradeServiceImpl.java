@@ -2,6 +2,7 @@ package com.sparos.uniquone.msapostservice.trade.service;
 
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostType;
+import com.sparos.uniquone.msapostservice.post.repository.IPostCategoryRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.trade.domain.Trade;
@@ -44,6 +45,7 @@ public class TradeServiceImpl implements ITradeService {
                         .sellerId(JwtProvider.getUserPkId(request))
                         .buyerId(tradeInputDto.getBuyerId())
                         .post(post)
+                        .postCategory(post.getPostCategory())
                         .isReview(false)
                         .build());
 

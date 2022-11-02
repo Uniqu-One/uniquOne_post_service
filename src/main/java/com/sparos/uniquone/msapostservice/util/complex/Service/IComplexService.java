@@ -14,4 +14,6 @@ public interface IComplexService {
 
     void chatPush(ChatPushDto chatPushDto);
 
+    Long getUserIdByCorn(Long postId);
+
 }
