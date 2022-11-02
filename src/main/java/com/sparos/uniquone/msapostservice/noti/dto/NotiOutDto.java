@@ -22,6 +22,8 @@ public class NotiOutDto {
 
     private Long typeId;
 
+    private Boolean isFollow;
+
     private String dsc;
 
     private String userCornImg;
@@ -30,7 +32,9 @@ public class NotiOutDto {
 
     private Boolean isCheck;
 
-    private LocalDateTime regDate;
+    private String date;
+
+    private String regTime;;
 
     public void setTypeId(Long typeId) {
         this.typeId = typeId;

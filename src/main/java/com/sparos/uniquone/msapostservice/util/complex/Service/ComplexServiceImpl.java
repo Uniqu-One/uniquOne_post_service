@@ -68,7 +68,6 @@ public class ComplexServiceImpl implements IComplexService {
     // 채팅 - 콘에 해당하는 포스트 존재 확인 API
     @Override
     public Boolean chatExistPost(Long postId, Long userId) {
-
         Optional<Corn> corn = iCornRepository.findByUserId(userId);
         if (!corn.isPresent()) {
             return false;
@@ -106,5 +105,12 @@ public class ComplexServiceImpl implements IComplexService {
     @Override
     public void chatPush(ChatPushDto chatPushDto) {
         iEmitterService.sendChatPush(chatPushDto.getReceiverId(), chatPushDto.getPostId(), chatPushDto.getChat());
+    }
+
+    @Override
+    public Long getUserIdByCorn(Long postId) {
+        Post post = iPostRepository.findById(postId).get();
+        Corn corn = iCornRepository.findById(post.getCorn().getId()).get();
+        return corn.getUserId();
     }
 }

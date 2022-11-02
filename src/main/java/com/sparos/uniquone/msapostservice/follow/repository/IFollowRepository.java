@@ -17,4 +17,5 @@ public interface IFollowRepository extends JpaRepository<Follow, Long> {
     List<Follow> findByUserId(Long userId);
     List<Follow> findByCornId(Long cornId);
     List<Follow> findByCorn(Corn corn);
+    Optional<Follow> findByUserIdAndCornId(Long userId, Long cornId);
 }

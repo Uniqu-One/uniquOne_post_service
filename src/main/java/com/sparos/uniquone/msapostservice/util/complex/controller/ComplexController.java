@@ -44,4 +44,8 @@ public class ComplexController {
         iComplexService.chatPush(chatPushDto);
     }
 
+    @GetMapping("/chat/{postId}")
+    public Long getUserIdByCorn(@PathVariable("postId") Long postId){
+        return iComplexService.getUserIdByCorn(postId);
+    }
 }
