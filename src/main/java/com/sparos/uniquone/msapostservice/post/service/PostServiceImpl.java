@@ -44,47 +44,51 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Object addPost(PostInputDto postInputDto, List<MultipartFile> multipartFileList, Long userId) throws IOException {
-        Optional<Corn> corn = iCornRepository.findByUserId(userId);
-        Post post = iPostRepository.save(Post.builder()
-                .title(postInputDto.getTitle())
-                .corn(corn.get())
-                .dsc(postInputDto.getDsc())
-                .postType(postInputDto.getPostType())
-                .postCategory(iPostCategoryRepository.findByName(postInputDto.getPostCategoryName()).get())
-                .conditions(postInputDto.getConditions())
-                .color(postInputDto.getColor())
-                .price(postInputDto.getPrice())
-                .productSize(postInputDto.getProductSize())
-                .build());
-        String[] postTagList = postInputDto.getPostTagLine().split("#");
-        for (String postDsc : postTagList) {
-            if (!postDsc.isEmpty() && !postDsc.equals(" ") && !post.equals(null))
-                iPostTagRepository.save(PostTag.builder()
-                        .post(post)
-                        .dsc(postDsc)
-                        .build());
-        }
-
-        String[] lookList = postInputDto.getLookLine().split(",");
-        for (String lookName : lookList) {
-            iPostAndLookRepository.save(PostAndLook.builder()
-                    .post(post)
-                    .look(iLookRepository.findByName(lookName).get())
+        if (!(multipartFileList.size()==1&&multipartFileList.get(0).isEmpty())) {
+            Optional<Corn> corn = iCornRepository.findByUserId(userId);
+            Post post = iPostRepository.save(Post.builder()
+                    .title(postInputDto.getTitle())
+                    .corn(corn.get())
+                    .dsc(postInputDto.getDsc())
+                    .postType(postInputDto.getPostType())
+                    .postCategory(iPostCategoryRepository.findByName(postInputDto.getPostCategoryName()).get())
+                    .conditions(postInputDto.getConditions())
+                    .color(postInputDto.getColor())
+                    .price(postInputDto.getPrice())
+                    .productSize(postInputDto.getProductSize())
                     .build());
-        }
+            String[] postTagList = postInputDto.getPostTagLine().split("#");
+            for (String postDsc : postTagList) {
+                if (!postDsc.isEmpty() && !postDsc.equals(" ") && !post.equals(null))
+                    iPostTagRepository.save(PostTag.builder()
+                            .post(post)
+                            .dsc(postDsc)
+                            .build());
+            }
 
-        Integer idx = 1;
-        for (MultipartFile multipartFile : multipartFileList) {
-            if (!multipartFile.isEmpty())
-                iPostImgRepository.save(PostImg.builder()
+            String[] lookList = postInputDto.getLookLine().split(",");
+            for (String lookName : lookList) {
+                iPostAndLookRepository.save(PostAndLook.builder()
                         .post(post)
-                        .url(awsS3UploaderService.upload(multipartFile, "uniquoneimg", "img"))
-                        .idx(idx)
+                        .look(iLookRepository.findByName(lookName).get())
                         .build());
-            idx++;
-        }
+            }
 
-        return "등록 완료되었습니다.";
+            Integer idx = 1;
+            for (MultipartFile multipartFile : multipartFileList) {
+                System.out.println(multipartFile);
+                if (!multipartFile.isEmpty())
+                    iPostImgRepository.save(PostImg.builder()
+                            .post(post)
+                            .url(awsS3UploaderService.upload(multipartFile, "uniquoneimg", "img"))
+                            .idx(idx)
+                            .build());
+                idx++;
+            }
+
+            return "등록 완료되었습니다.";
+        }
+        return "사진파일이 없습니다.";
     }
 
     @Override
@@ -365,9 +369,9 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public PostRecommendListResponseDto getPostCoolListOfNonUser(HttpServletRequest request, Pageable pageable) {
-        if(isUser(request)){
+        if (isUser(request)) {
             Long userPkId = JwtProvider.getUserPkId(request);
-          return  postRepositoryCustom.getPostCoolListOfUser(userPkId, pageable);
+            return postRepositoryCustom.getPostCoolListOfUser(userPkId, pageable);
         }
 
         return postRepositoryCustom.getPostCoolListOfNonUser(pageable);
@@ -375,8 +379,8 @@ public class PostServiceImpl implements IPostService {
 
     private boolean isUser(HttpServletRequest request) {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if(StringUtils.hasText(token)){
-            if(JwtProvider.validateToken(token))
+        if (StringUtils.hasText(token)) {
+            if (JwtProvider.validateToken(token))
                 return true;
             throw new UniquOneServiceException(ExceptionCode.INVALID_TOKEN, HttpStatus.OK);
         }
