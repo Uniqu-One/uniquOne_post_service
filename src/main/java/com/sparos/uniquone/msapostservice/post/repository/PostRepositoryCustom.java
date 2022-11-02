@@ -8,11 +8,12 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparos.uniquone.msapostservice.cool.domain.QCool;
+import com.sparos.uniquone.msapostservice.corn.domain.QCorn;
+import com.sparos.uniquone.msapostservice.follow.domain.QFollow;
+import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostType;
-import com.sparos.uniquone.msapostservice.post.dto.PostDetailInfoDto;
-import com.sparos.uniquone.msapostservice.post.dto.PostListInfoDto;
-import com.sparos.uniquone.msapostservice.post.dto.PostRecommendListResponseDto;
-import com.sparos.uniquone.msapostservice.post.dto.PostRecommendResponseDto;
+import com.sparos.uniquone.msapostservice.post.dto.*;
+import com.sparos.uniquone.msapostservice.unistar.domain.QUniStar;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
@@ -20,10 +21,15 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.types.Projections.list;
 import static com.sparos.uniquone.msapostservice.cool.domain.QCool.cool;
+import static com.sparos.uniquone.msapostservice.corn.domain.QCorn.corn;
+import static com.sparos.uniquone.msapostservice.follow.domain.QFollow.follow;
 import static com.sparos.uniquone.msapostservice.post.domain.QPost.post;
 import static com.sparos.uniquone.msapostservice.post.domain.QPostAndLook.postAndLook;
 import static com.sparos.uniquone.msapostservice.post.domain.QPostImg.postImg;
+import static com.sparos.uniquone.msapostservice.unistar.domain.QUniStar.uniStar;
 
 @RequiredArgsConstructor
 @Repository
@@ -75,15 +81,21 @@ public class PostRepositoryCustom {
     public PostRecommendListResponseDto getPostCoolListOfUser(Long userId, Pageable pageable) {
 
         List<PostRecommendResponseDto> result = jpaQueryFactory.select(
-                        Projections.constructor(
-                                PostRecommendResponseDto.class
+                        Projections.constructor(PostRecommendResponseDto.class
                                 , post.id.as("postId")
-                                , postImg.url.as("imgUrl")
+                                , postImg.url.as("postImgUrl")
+                                , corn.imgUrl.as("cornImgUrl")
+                                , corn.userNickName.as("userNickName")
                                 , cool.userId.eq(userId).as("isCool")
+                                , follow.userId.eq(userId).as("isFollow")
+                                , uniStar.level.as("uniStar")
                         )
                 ).from(post)
                 .leftJoin(postImg).on(post.eq(postImg.post))
+                .leftJoin(corn).on(post.corn.eq(corn))
                 .leftJoin(cool).on(post.eq(cool.post).and(cool.userId.eq(userId)))
+                .leftJoin(follow).on(corn.eq(follow.corn).and(follow.userId.eq(userId)))
+                .leftJoin(uniStar).on(post.eq(uniStar.post).and(uniStar.userId.eq(userId)))
                 .where(
                         postImg.idx.eq(1)
                 )
@@ -94,12 +106,12 @@ public class PostRepositoryCustom {
                 ).fetch();
 
         boolean hasNext = false;
-        if(result.size() > pageable.getPageSize()){
+        if (result.size() > pageable.getPageSize()) {
             hasNext = true;
             result.remove(pageable.getPageSize());
         }
 
-        return new PostRecommendListResponseDto(result,hasNext);
+        return new PostRecommendListResponseDto(result, hasNext);
     }
 
     //추천순 포스트 리스트 비회원
@@ -109,10 +121,13 @@ public class PostRepositoryCustom {
                         Projections.constructor(
                                 PostRecommendResponseDto.class
                                 , post.id.as("postId")
-                                , postImg.url.as("imgUrl")
+                                , postImg.url.as("postImgUrl")
+                                , corn.imgUrl.as("cornImgUrl")
+                                , corn.userNickName.as("userNickName")
                         )
                 ).from(post)
                 .leftJoin(postImg).on(post.eq(postImg.post))
+                .leftJoin(corn).on(post.corn.eq(corn))
                 .where(
                         postImg.idx.eq(1)
                 )
@@ -122,13 +137,14 @@ public class PostRepositoryCustom {
                         , new OrderSpecifier<>(Order.DESC, post.modDate)
                 ).fetch();
 
+
         boolean hasNext = false;
-        if(result.size() > pageable.getPageSize()){
+        if (result.size() > pageable.getPageSize()) {
             hasNext = true;
             result.remove(pageable.getPageSize());
         }
 
-        return new PostRecommendListResponseDto(result,hasNext);
+        return new PostRecommendListResponseDto(result, hasNext);
     }
 
 }
