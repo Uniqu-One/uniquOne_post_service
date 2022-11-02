@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatRoomDto {
 
-    private Long receiverId;
-
     private Long postId;
 
     private ChatRoomType chatType;
