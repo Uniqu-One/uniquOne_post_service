@@ -15,6 +15,8 @@ public interface ICornService {
 
     CornInfoDto getMyCornInfo(Long userId);
 
+    CornInfoDto userGetOtherCornInfo(Long cornId,Long userId);
+
     CornInfoDto getOtherCornInfo(Long cornId);
 
     CornInfoDto getCornInfo(Long userId, Long cornId);
