@@ -63,8 +63,9 @@ public class JwtProvider {
     }
 
     //토큰검증 얘로 쓸거임.
-    public static boolean validateToken(String token) {
+    public static boolean validateToken(String barerToken) {
         try {
+            String token = barerToken.replace("Bearer ", "");
             Jwts.parserBuilder().setSigningKey(getKey(key)).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
@@ -146,7 +147,7 @@ public class JwtProvider {
 
     public static String getUserRole(HttpServletRequest request) {
         String token = getTokenFromRequestHeader(request);
-        log.info("role = {} ", extractClaims(token).get("role", String.class));
+//        log.info("role = {} ", extractClaims(token).get("role", String.class));
         return extractClaims(token).get("role", String.class);
     }
 

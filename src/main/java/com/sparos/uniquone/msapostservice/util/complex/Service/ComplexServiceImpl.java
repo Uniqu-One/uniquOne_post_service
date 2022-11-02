@@ -106,7 +106,7 @@ public class ComplexServiceImpl implements IComplexService {
     public void chatPush(ChatPushDto chatPushDto) {
         iEmitterService.sendChatPush(chatPushDto.getReceiverId(), chatPushDto.getPostId(), chatPushDto.getChat());
     }
-
+    
     @Override
     public Long getUserIdByCorn(Long postId) {
         Post post = iPostRepository.findById(postId).get();

@@ -116,6 +116,7 @@ public class NotiServiceImpl implements INotiService {
                 .isCheck(notification.getIsCheck())
                 .date(date)
                 .regTime(time)
+                .regDate(notification.getRegDate())
                 .postImg(notification.getPostImg())
                 .build();
     }

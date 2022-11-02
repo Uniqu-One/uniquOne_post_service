@@ -86,4 +86,10 @@ public class PostController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.getPostDetailInfo(postId)));
     }
 
+    //추천순 상품.
+    @GetMapping("/cool")
+    public ResponseEntity<SuccessResponse> getPostCoolList(HttpServletRequest request, Pageable pageable){
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iPostService.getPostCoolListOfNonUser(request, pageable)));
+    }
+
 }
