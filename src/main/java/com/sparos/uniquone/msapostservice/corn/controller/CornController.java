@@ -8,11 +8,16 @@ import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.corn.service.ICornService;
 import com.sparos.uniquone.msapostservice.util.generate.GenerateRandomConNick;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
+import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
 import com.sparos.uniquone.msapostservice.util.response.SuccessResponse;
+import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,8 +57,16 @@ public class CornController {
     }
 
     @GetMapping("/{cornId}")
-    public ResponseEntity<SuccessResponse> otherCornGetInfo(@PathVariable("cornId") Long cornId) {
+    public ResponseEntity<SuccessResponse> otherCornGetInfo(@PathVariable("cornId") Long cornId, HttpServletRequest httpServletRequest) {
+        String token = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
+        if(StringUtils.hasText(token)){
+            if(JwtProvider.validateToken(token));
+            Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
+            return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.userGetOtherCornInfo(cornId,userPkId)));
+
+        }
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iCornService.getOtherCornInfo(cornId)));
+
     }
 
     @GetMapping("/cornInfomodify")

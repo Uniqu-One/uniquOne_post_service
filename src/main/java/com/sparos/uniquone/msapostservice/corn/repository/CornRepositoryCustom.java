@@ -6,6 +6,7 @@ import com.sparos.uniquone.msapostservice.corn.dto.ReviewStarPostEAInfoOutputDto
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import static com.sparos.uniquone.msapostservice.post.domain.QPost.post;
 import static com.sparos.uniquone.msapostservice.review.domain.QReview.review;
 
 @RequiredArgsConstructor
@@ -18,8 +19,9 @@ public class CornRepositoryCustom {
                 .select(Projections.constructor(ReviewStarPostEAInfoOutputDto.class,
                         review.star.avg().as("reviewStar"),
                         review.count().as("reviewEA"),
-                        review.post.count().as("postEA")
-                )).from(review)
-                .where(review.post.corn.id.eq(cornId)).fetchOne();
+                        post.count().as("postEA")
+                )).from(post)
+                .leftJoin(review).on(review.post.eq(post))
+                .where(post.corn.id.eq(cornId)).groupBy(post.corn.id).fetchOne();
     }
 }

@@ -4,6 +4,7 @@ import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.dto.*;
 import com.sparos.uniquone.msapostservice.corn.repository.CornRepositoryCustom;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
+import com.sparos.uniquone.msapostservice.follow.domain.Follow;
 import com.sparos.uniquone.msapostservice.follow.repository.IFollowRepository;
 import com.sparos.uniquone.msapostservice.util.generate.GenerateRandomConNick;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -74,12 +76,14 @@ public class CornServiceImpl implements ICornService {
                 .followerEA(iFollowRepository.countByCorn(corn.get()).get())
                 .followingEA(iFollowRepository.countByUserId(userId).get())
                 .url(corn.get().getUrl())
-                .dsc(corn.get().getDsc()).build();
+                .dsc(corn.get().getDsc())
+                .build();
     }
 
     @Override
-    public CornInfoDto getOtherCornInfo(Long cornId) {
+    public CornInfoDto userGetOtherCornInfo(Long cornId, Long userId) {
         Corn corn = iCornRepository.findById(cornId).orElseThrow();
+        List<Follow> follower = iFollowRepository.findByCornId(cornId);
         ReviewStarPostEAInfoOutputDto reviewStarPostEAInfoOutputDto = cornRepositoryCustom.findByCornIdPostReview(cornId);
         return CornInfoDto.builder()
                 .imgUrl(corn.getImgUrl())
@@ -87,10 +91,28 @@ public class CornServiceImpl implements ICornService {
                 .reviewStar(reviewStarPostEAInfoOutputDto.getReviewStar())
                 .reviewEA(reviewStarPostEAInfoOutputDto.getReviewEA())
                 .postEA(reviewStarPostEAInfoOutputDto.getPostEA())
-                .followerEA(iFollowRepository.countByCorn(corn).get())
+                .followerEA(follower.stream().count())
                 .followingEA(iFollowRepository.countByUserId(corn.getUserId()).get())
                 .url(corn.getUrl())
-                .dsc(corn.getDsc()).build();
+                .dsc(corn.getDsc())
+                .isFollow(follower.stream().anyMatch(follow -> follow.getUserId().equals(userId))).build();
+    }
+    @Override
+    public CornInfoDto getOtherCornInfo(Long cornId) {
+        Corn corn = iCornRepository.findById(cornId).orElseThrow();
+        List<Follow> follower = iFollowRepository.findByCornId(cornId);
+        ReviewStarPostEAInfoOutputDto reviewStarPostEAInfoOutputDto = cornRepositoryCustom.findByCornIdPostReview(cornId);
+        return CornInfoDto.builder()
+                .imgUrl(corn.getImgUrl())
+                .title(corn.getTitle())
+                .reviewStar(reviewStarPostEAInfoOutputDto.getReviewStar())
+                .reviewEA(reviewStarPostEAInfoOutputDto.getReviewEA())
+                .postEA(reviewStarPostEAInfoOutputDto.getPostEA())
+                .followerEA(follower.stream().count())
+                .followingEA(iFollowRepository.countByUserId(corn.getUserId()).get())
+                .url(corn.getUrl())
+                .dsc(corn.getDsc())
+                .build();
     }
 
     @Override

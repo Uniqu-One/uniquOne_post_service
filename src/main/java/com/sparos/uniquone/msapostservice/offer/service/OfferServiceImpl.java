@@ -150,7 +150,6 @@ public class OfferServiceImpl implements IOfferService{
         // 오퍼타입 수락일 경우 채팅방 생성 -> 채팅 noti 타입으로 save -> 채팅룸 id 리턴
         if (offer.getOfferType().equals(OfferType.ACCEPT)) {
             ChatRoomDto chatRoomDto = ChatRoomDto.builder()
-                    .receiverId(offer.getUserId())
                     .postId(offer.getPost().getId())
                     .chatType(ChatRoomType.SELLER)
                     .build();
