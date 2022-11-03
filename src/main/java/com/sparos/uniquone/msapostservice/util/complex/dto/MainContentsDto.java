@@ -17,12 +17,13 @@ public class MainContentsDto {
     private String cornTitle;
     private String cornImgUrl;
     private LocalDateTime regDate;
-    private List<String> postImgUrlList;
+    private String postImgUrl;
+    private Integer uniStart;
 
     public void addIsCool(Boolean isCool){
         this.isCool=isCool;
     }
-    public void addPostImgUrlList(List<String> postImgUrlList){
-        this.postImgUrlList=postImgUrlList;
+    public void addPostImgUrl(String postImgUrl){
+        this.postImgUrl=postImgUrl;
     }
 }
