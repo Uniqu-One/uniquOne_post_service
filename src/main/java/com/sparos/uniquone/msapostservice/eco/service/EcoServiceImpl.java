@@ -72,7 +72,7 @@ public class EcoServiceImpl implements IEcoService{
     @Override
     public JSONObject findYesterdayEco() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("data", iEcoRepository.findByRegDate(LocalDate.now().minusDays(1)));
+        jsonObject.put("data", iEcoRepository.findByRegDate(LocalDate.now().minusDays(1).toString()));
         return jsonObject;
     }
 
