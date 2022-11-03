@@ -13,7 +13,7 @@ import com.sparos.uniquone.msapostservice.post.dto.PostSlicePageDto;
 import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.util.complex.dto.ChatPushDto;
-import com.sparos.uniquone.msapostservice.util.complex.dto.MainFollowContentsDto;
+import com.sparos.uniquone.msapostservice.util.complex.dto.MainContentsDto;
 import com.sparos.uniquone.msapostservice.util.complex.repository.ComplexRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -85,21 +85,41 @@ public class ComplexServiceImpl implements IComplexService {
     public Object getMainFollowContent(Long userId, Pageable pageable) {
         List<Follow> followList = iFollowRepository.findByUserId(userId);
         List<Long> followCornIdList = followList.stream().map(follow -> follow.getCorn().getId()).collect(Collectors.toList());
-        List<MainFollowContentsDto> mainFollowContentsDtoList = complexRepositoryCustom.findByCornIdMainFollowContentsList(followCornIdList,pageable);
-        Boolean isLast = mainFollowContentsDtoList.size()<pageable.getPageSize();
-        if (!isLast) mainFollowContentsDtoList.remove(pageable.getPageSize()+1);
-        mainFollowContentsDtoList.stream().map(mainFollowContentsDto -> {
-            mainFollowContentsDto.addIsCool(iCoolRepository.existsByUserIdAndPostId(userId, mainFollowContentsDto.getPostId()));
-            mainFollowContentsDto.addPostImgUrlList(iPostImgRepository.findUrlByPostIdList(mainFollowContentsDto.getPostId()));
-            return mainFollowContentsDto;
+        List<MainContentsDto> mainContentsDtoList = complexRepositoryCustom.findByCornIdMainFollowContentsList(followCornIdList,pageable);
+        Boolean isLast = !(mainContentsDtoList.size()>pageable.getPageSize());
+        if (!isLast) mainContentsDtoList.remove(pageable.getPageSize());
+        mainContentsDtoList.stream().map(MainContentsDto -> {
+            MainContentsDto.addIsCool(iCoolRepository.existsByUserIdAndPostId(userId, MainContentsDto.getPostId()));
+            MainContentsDto.addPostImgUrlList(iPostImgRepository.findUrlByPostIdList(MainContentsDto.getPostId()));
+            return MainContentsDto;
         }).collect(Collectors.toList());
         PostSlicePageDto postSlicePageDto = PostSlicePageDto.builder()
-                .content(Collections.singletonList(mainFollowContentsDtoList))
+                .content(Collections.singletonList(mainContentsDtoList))
                 .pageNumber(pageable.getPageNumber())
                 .pageFirst(pageable.getPageSize()==0)
                 .pageLast(isLast)
                 .build();
-        return mainFollowContentsDtoList;
+        return postSlicePageDto;
+    }
+
+    @Override
+    public Object getMainRecommendContent(Long userId, Pageable pageable) {
+        List<Long> styleIdList = complexRepositoryCustom.findByUserIdCoolStyle(userId);
+        List<MainContentsDto>  mainContentsDtoList = complexRepositoryCustom.findByStyleIdListMainContentsList(styleIdList,pageable);
+        Boolean isLast = !(mainContentsDtoList.size()>pageable.getPageSize());
+        if (!isLast) mainContentsDtoList.remove(pageable.getPageSize());
+        mainContentsDtoList.stream().map(MainContentsDto -> {
+            MainContentsDto.addIsCool(iCoolRepository.existsByUserIdAndPostId(userId, MainContentsDto.getPostId()));
+            MainContentsDto.addPostImgUrlList(iPostImgRepository.findUrlByPostIdList(MainContentsDto.getPostId()));
+            return MainContentsDto;
+        }).collect(Collectors.toList());
+        PostSlicePageDto postSlicePageDto = PostSlicePageDto.builder()
+                .content(Collections.singletonList(mainContentsDtoList))
+                .pageNumber(pageable.getPageNumber())
+                .pageFirst(pageable.getPageSize()==0)
+                .pageLast(isLast)
+                .build();
+        return postSlicePageDto;
     }
 
     @Override

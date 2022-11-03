@@ -8,7 +8,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
-public class MainFollowContentsDto {
+public class MainContentsDto {
     private Long postId;
     private Long userId;
     private Long cornId;

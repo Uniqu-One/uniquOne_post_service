@@ -16,4 +16,6 @@ public interface IComplexService {
 
     Long getUserIdByCorn(Long postId);
 
+    Object getMainRecommendContent(Long userId, Pageable pageable);
+
 }
