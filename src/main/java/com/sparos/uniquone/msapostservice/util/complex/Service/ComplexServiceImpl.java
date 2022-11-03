@@ -13,6 +13,7 @@ import com.sparos.uniquone.msapostservice.post.dto.PostSlicePageDto;
 import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.util.complex.dto.ChatPushDto;
+import com.sparos.uniquone.msapostservice.util.complex.dto.CornInfoDto;
 import com.sparos.uniquone.msapostservice.util.complex.dto.MainContentsDto;
 import com.sparos.uniquone.msapostservice.util.complex.repository.ComplexRepositoryCustom;
 import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
@@ -21,7 +22,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -122,6 +122,13 @@ public class ComplexServiceImpl implements IComplexService {
                 .pageLast(isLast)
                 .build();
         return postSlicePageDto;
+    }
+
+    @Override
+    public Object getPostDetailPageCronInfo(Long cornId) {
+        CornInfoDto cornInfoDto = complexRepositoryCustom.findByCornIdCornInfo(cornId);
+        cornInfoDto.addUserNickName(iUserConnect.getNickName(cornInfoDto.getUserId()));
+        return cornInfoDto;
     }
 
     @Override

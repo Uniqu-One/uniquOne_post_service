@@ -2,7 +2,7 @@ package com.sparos.uniquone.msapostservice.util.complex.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparos.uniquone.msapostservice.look.domain.Look;
+import com.sparos.uniquone.msapostservice.util.complex.dto.CornInfoDto;
 import com.sparos.uniquone.msapostservice.util.complex.dto.MainContentsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 
 import static com.sparos.uniquone.msapostservice.cool.domain.QCool.cool;
 import static com.sparos.uniquone.msapostservice.corn.domain.QCorn.corn;
-import static com.sparos.uniquone.msapostservice.look.domain.QLook.look;
 import static com.sparos.uniquone.msapostservice.post.domain.QPost.post;
 import static com.sparos.uniquone.msapostservice.post.domain.QPostAndLook.postAndLook;
+import static com.sparos.uniquone.msapostservice.review.domain.QReview.review;
 import static com.sparos.uniquone.msapostservice.unistar.domain.QUniStar.uniStar;
 
 @RequiredArgsConstructor
@@ -94,5 +94,22 @@ public class ComplexRepositoryCustom {
                 .where(cool.userId.eq(userId)).groupBy(postAndLook.look.id).orderBy(postAndLook.look.id.count().desc())
                 .fetch().stream().limit(3).collect(Collectors.toList());
         return userCoolStyle;
+    }
+
+    public CornInfoDto findByCornIdCornInfo(Long cornId){
+        CornInfoDto cornInfoDto = (CornInfoDto) jpaQueryFactory
+                .select(Projections.fields(CornInfoDto.class,
+                        corn.userId.as("userId"),
+                        corn.id.as("cornId"),
+                        corn.imgUrl.as("cornImgUrl"),
+                        corn.title.as("cornTitle"),
+                        corn.dsc.as("cornDsc"),
+                        review.count().as("reviewEA"),
+                        post.count().as("postEA")))
+                .from(corn)
+                .leftJoin(post).on(post.corn.id.eq(cornId))
+                .leftJoin(review).on(review.post.eq(post))
+                .where(corn.id.eq(cornId)).groupBy(corn).fetchOne();
+        return cornInfoDto;
     }
 }

@@ -18,4 +18,6 @@ public interface IComplexService {
 
     Object getMainRecommendContent(Long userId, Pageable pageable);
 
+    Object getPostDetailPageCronInfo(Long cornId);
+
 }
