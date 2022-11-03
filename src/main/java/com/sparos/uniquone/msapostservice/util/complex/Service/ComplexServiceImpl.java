@@ -15,6 +15,7 @@ import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.util.complex.dto.ChatPushDto;
 import com.sparos.uniquone.msapostservice.util.complex.dto.MainContentsDto;
 import com.sparos.uniquone.msapostservice.util.complex.repository.ComplexRepositoryCustom;
+import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +38,8 @@ public class ComplexServiceImpl implements IComplexService {
     private final ICoolRepository iCoolRepository;
     private final IEmitterService iEmitterService;
     private final ComplexRepositoryCustom complexRepositoryCustom;
+
+    private final IUserConnect iUserConnect;
 
     // 채팅 - 게시물 정보 요청
     @Override
@@ -110,6 +113,7 @@ public class ComplexServiceImpl implements IComplexService {
         mainContentsDtoList.stream().map(MainContentsDto -> {
             MainContentsDto.addIsCool(iCoolRepository.existsByUserIdAndPostId(userId, MainContentsDto.getPostId()));
             MainContentsDto.addPostImgUrl(iPostImgRepository.findOneByPostIdAndIdx(MainContentsDto.getPostId(),1).getUrl());
+            MainContentsDto.addUserNickName(iUserConnect.getNickName(MainContentsDto.getUserId()));
             return MainContentsDto;
         }).collect(Collectors.toList());
         PostSlicePageDto postSlicePageDto = PostSlicePageDto.builder()
