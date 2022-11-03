@@ -38,6 +38,12 @@ public class ComplexController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iComplexService.getMainFollowContent(userPkId,pageable)));
     }
 
+    @GetMapping("/main/search/contents/recommend")
+    public ResponseEntity<SuccessResponse> getRecommendMain(HttpServletRequest httpServletRequest,@PageableDefault(size = 10) Pageable pageable){
+        Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iComplexService.getMainRecommendContent(userPkId,pageable)));
+    }
+
     // 채팅 - 알림 푸시
     @PostMapping("/chat/sendPush")
     public void chatPush(@RequestBody ChatPushDto chatPushDto){
