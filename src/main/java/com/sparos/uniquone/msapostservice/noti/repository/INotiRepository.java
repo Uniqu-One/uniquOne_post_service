@@ -19,7 +19,7 @@ public interface INotiRepository extends JpaRepository<Noti, Long> {
 
     List<Noti> findByUserId(Long userId);
 
-    Long countByUserId(Long userId);
+    Long countByUserIdAndIsCheck(Long userId, Boolean isCheck);
 
     @Transactional
     @Modifying
