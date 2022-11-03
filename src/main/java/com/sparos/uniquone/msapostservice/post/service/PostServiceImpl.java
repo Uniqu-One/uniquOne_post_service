@@ -354,7 +354,9 @@ public class PostServiceImpl implements IPostService {
         List<String> postTagDscList = postTagList.stream().map(postTag -> "#" + postTag.getDsc()).collect(Collectors.toList());
         List<PostAndLook> postAndLookList = iPostAndLookRepository.findByPostId(postId);
         List<Long> postAndLookIdList = postAndLookList.stream().map(postAndLook -> postAndLook.getLook().getId()).collect(Collectors.toList());
+        List<String> postImgUrlList = iPostImgRepository.findUrlByPostIdList(postId);
         PostDetailInfoDto postDetailInfoDto = PostDetailInfoDto.builder()
+                .imgUrlList(postImgUrlList)
                 .title(post.getTitle())
                 .dsc(post.getDsc())
                 .postTagList(postTagDscList)

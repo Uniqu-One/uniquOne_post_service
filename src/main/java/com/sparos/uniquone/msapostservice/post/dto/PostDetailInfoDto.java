@@ -11,6 +11,8 @@ import java.util.List;
 @Builder
 public class PostDetailInfoDto {
 
+    private List<String> imgUrlList;
+
     private String title;
 
     private String dsc;
