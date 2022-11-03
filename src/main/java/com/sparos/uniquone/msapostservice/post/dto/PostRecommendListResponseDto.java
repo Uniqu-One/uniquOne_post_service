@@ -8,12 +8,12 @@ import java.util.List;
 @Data
 public class PostRecommendListResponseDto {
 
-    private List<PostRecommendResponseDto> result = new ArrayList<>();
-    boolean hasNext;
+    private List<PostRecommendResponseDto> content = new ArrayList<>();
+    boolean isLast;
 
-    public PostRecommendListResponseDto(List<PostRecommendResponseDto> result, boolean hasNext) {
-        this.result = result;
-        this.hasNext = hasNext;
+    public PostRecommendListResponseDto(List<PostRecommendResponseDto> content, boolean hasNext) {
+        this.content = content;
+        this.isLast = !hasNext;
     }
 
 }

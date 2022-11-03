@@ -16,13 +16,14 @@ import static com.sparos.uniquone.msapostservice.corn.domain.QCorn.corn;
 import static com.sparos.uniquone.msapostservice.look.domain.QLook.look;
 import static com.sparos.uniquone.msapostservice.post.domain.QPost.post;
 import static com.sparos.uniquone.msapostservice.post.domain.QPostAndLook.postAndLook;
+import static com.sparos.uniquone.msapostservice.unistar.domain.QUniStar.uniStar;
 
 @RequiredArgsConstructor
 @Repository
 public class ComplexRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<MainContentsDto> findByCornIdMainFollowContentsList(List<Long> cornIdList, Pageable pageable){
+    public List<MainContentsDto> findByCornIdMainFollowContentsList(List<Long> cornIdList,Long userId, Pageable pageable){
         List<MainContentsDto> MainContentsDtoList;
         MainContentsDtoList = (List<MainContentsDto>) jpaQueryFactory
                 .select(Projections.fields(MainContentsDto.class,
@@ -31,16 +32,19 @@ public class ComplexRepositoryCustom {
                         corn.userId.as("userId"),
                         corn.title.as("cornTitle"),
                         corn.imgUrl.as("cornImgUrl"),
-                        post.regDate.as("regDate")))
+                        post.regDate.as("regDate"),
+                        uniStar.level.as("uniStar")))
                 .from(corn)
-                .innerJoin(post).on(post.corn.eq(corn))
+                .leftJoin(post).on(post.corn.eq(corn))
+                .leftJoin(uniStar).on(uniStar.post.eq(post).and(uniStar.userId.eq(userId)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1)
-                .where(corn.id.in(cornIdList)).orderBy(post.regDate.asc()).fetch();
+                .where(corn.id.in(cornIdList))
+                .orderBy(post.regDate.asc()).fetch();
         return MainContentsDtoList;
     }
 
-    public List<MainContentsDto> findByStyleIdListMainContentsList(List<Long> lookIdList, Pageable pageable){
+    public List<MainContentsDto> findByStyleIdListMainContentsList(List<Long> lookIdList,Long userId ,Pageable pageable){
         List<MainContentsDto> MainContentsDtoList;
         MainContentsDtoList = (List<MainContentsDto>) jpaQueryFactory
                 .select(Projections.fields(MainContentsDto.class,
@@ -49,13 +53,35 @@ public class ComplexRepositoryCustom {
                         corn.userId.as("userId"),
                         corn.title.as("cornTitle"),
                         corn.imgUrl.as("cornImgUrl"),
-                        post.regDate.as("regDate")))
+                        post.regDate.as("regDate"),
+                        uniStar.level.as("uniStar")))
                 .from(postAndLook)
                 .innerJoin(post).on(post.eq(postAndLook.post))
-                .innerJoin(corn).on(corn.eq(post.corn))
+                .leftJoin(uniStar).on(uniStar.post.eq(post).and(uniStar.userId.eq(userId)))
+                .leftJoin(corn).on(corn.eq(post.corn))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1)
                 .where(postAndLook.look.id.in(lookIdList)).groupBy(post).orderBy(post.regDate.asc()).fetch();
+        return MainContentsDtoList;
+    }
+
+    public List<MainContentsDto> findCoolDESCListMainContentsList(Long userId,Pageable pageable){
+        List<MainContentsDto> MainContentsDtoList;
+        MainContentsDtoList = (List<MainContentsDto>) jpaQueryFactory
+                .select(Projections.fields(MainContentsDto.class,
+                        post.id.as("postId"),
+                        corn.id.as("cornId"),
+                        corn.userId.as("userId"),
+                        corn.title.as("cornTitle"),
+                        corn.imgUrl.as("cornImgUrl"),
+                        post.regDate.as("regDate"),
+                        uniStar.level.as("uniStar")))
+                .from(post)
+                .leftJoin(corn).on(corn.eq(post.corn))
+                .leftJoin(uniStar).on(uniStar.post.eq(post).and(uniStar.userId.eq(userId)))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize()+1)
+                .orderBy(post.regDate.asc()).fetch();
         return MainContentsDtoList;
     }
 
