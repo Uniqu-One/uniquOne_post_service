@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/unistar")
-public class UniStartController {
+public class UniStarController {
 
     private final IUniStarService uniStarService;
 

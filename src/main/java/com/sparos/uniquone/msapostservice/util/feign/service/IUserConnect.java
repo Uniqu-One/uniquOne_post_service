@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "uniquone-user-service" )
 public interface IUserConnect {
 
-//    @GetMapping("/test/userInfo/{userId}")
+    @GetMapping("/nickname/userInfo/{userId}")
+    String getNickName(@PathVariable("userId") Long userId);
+
     @GetMapping("/chat/userInfo/{userId}")
     UserResponseDto getUserNickName(@PathVariable("userId") Long userId);
 
