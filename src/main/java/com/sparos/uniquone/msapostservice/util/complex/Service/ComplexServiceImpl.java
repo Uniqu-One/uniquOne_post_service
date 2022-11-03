@@ -47,14 +47,13 @@ public class ComplexServiceImpl implements IComplexService {
         Optional<Corn> corn = iCornRepository.findByUserId(otherUserId);
         String imageUrl = null;
 
-        if (!corn.isPresent()) {
-            imageUrl = "https://uniquoneimg.s3.ap-northeast-2.amazonaws.com/img/KakaoTalk_20221014_140108315.png";
-        } else {
+        if (corn.isPresent()) {
             imageUrl = corn.get().getImgUrl();
         }
 
-        PostChatResponseDto chatResponseDto = PostChatResponseDto.builder()
+        return PostChatResponseDto.builder()
                 .postId(post.getId())
+                .postTitle(post.getTitle())
                 .postDsc(post.getDsc())
                 .postPrice(post.getPrice())
                 .postType(post.getPostType())
@@ -62,7 +61,6 @@ public class ComplexServiceImpl implements IComplexService {
                 .postImg(postImg.getUrl())
                 .cornImg(imageUrl)
                 .build();
-        return chatResponseDto;
     }
 
     // 채팅 - 콘에 해당하는 포스트 존재 확인 API

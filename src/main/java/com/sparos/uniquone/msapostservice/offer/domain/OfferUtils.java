@@ -24,12 +24,12 @@ public class OfferUtils {
                 .build();
     }
 
-    public static OfferOutDto entityToOfferOutDto(OfferCntDto offerCntDto, String postImgUrl) {
+    public static OfferOutDto entityToOfferOutDto(OfferCntDto offerCntDto, Integer price, String postImgUrl) {
         return OfferOutDto.builder()
                 .postId(offerCntDto.getPostId())
                 .postTitle(offerCntDto.getPostTitle())
                 .postImg(postImgUrl)
-                .price(offerCntDto.getPrice())
+                .price(price)
                 .waitingCnt(offerCntDto.getWaitingCnt())
                 .acceptCount(offerCntDto.getAcceptCount())
                 .refuseCount(offerCntDto.getRefuseCount())
