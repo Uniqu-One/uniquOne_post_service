@@ -9,11 +9,11 @@ import java.util.List;
 public class PostRecommendListResponseDto {
 
     private List<PostRecommendResponseDto> content = new ArrayList<>();
-    boolean isLast;
+    boolean pageLast;
 
     public PostRecommendListResponseDto(List<PostRecommendResponseDto> content, boolean hasNext) {
         this.content = content;
-        this.isLast = !hasNext;
+        this.pageLast = !hasNext;
     }
 
 }
