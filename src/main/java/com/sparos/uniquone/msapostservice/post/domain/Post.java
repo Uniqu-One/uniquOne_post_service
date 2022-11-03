@@ -44,6 +44,7 @@ public class Post extends BaseTimeEntity {
 
     private Integer price;
 
+    @Enumerated(EnumType.STRING)
     private ProductSize productSize;
 
     private String color;
