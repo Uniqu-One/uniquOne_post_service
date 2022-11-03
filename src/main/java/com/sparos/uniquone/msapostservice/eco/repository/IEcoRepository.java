@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface IEcoRepository extends JpaRepository<Eco, Long> {
 
-    Optional<Eco> findByRegDate(LocalDate regDate);
+    Optional<Eco> findByRegDate(String regDate);
 
 }
