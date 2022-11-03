@@ -6,7 +6,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparos.uniquone.msapostservice.admin.domain.AdminBoard;
 import com.sparos.uniquone.msapostservice.admin.domain.BoardType;
-import com.sparos.uniquone.msapostservice.admin.domain.QAdminBoard;
 import com.sparos.uniquone.msapostservice.admin.dto.response.AdminBoardResponseDto;
 import com.sparos.uniquone.msapostservice.admin.dto.response.AdminBoardResponseListDto;
 import org.springframework.data.domain.Pageable;
