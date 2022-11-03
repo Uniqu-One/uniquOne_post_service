@@ -32,7 +32,7 @@ public class ThisWeekController {
 
     }
 
-    @GetMapping("/list")
+    @GetMapping("")
     public ResponseEntity<SuccessResponse> getThisWeekUniqueOne(){
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, support.getUniqueOneInfo()));
     }
