@@ -54,4 +54,9 @@ public class ComplexController {
     public Long getUserIdByCorn(@PathVariable("postId") Long postId){
         return iComplexService.getUserIdByCorn(postId);
     }
+
+    @GetMapping("/posts/detail/cornInfo/{cornId}")
+    public ResponseEntity<SuccessResponse> getPostDetailPateCornInfo(@PathVariable("cornId")Long cornId){
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iComplexService.getPostDetailPageCronInfo(cornId)));
+    }
 }
