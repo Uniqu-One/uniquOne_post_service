@@ -166,7 +166,7 @@ public class PostServiceImpl implements IPostService {
 
         PostSlicePageDto postSlicePageDto = PostSlicePageDto.builder()
                 //todo Collections.singleton 공부
-                .content(Collections.singletonList(postListInfoDtoList))
+                .content(postListInfoDtoList)
                 .pageNumber(postList.getPageable().getPageNumber())
                 .pageFirst(postList.isFirst())
                 .pageLast(postList.isLast()).build();
@@ -187,7 +187,7 @@ public class PostServiceImpl implements IPostService {
 
         PostSlicePageDto postSlicePageDto = PostSlicePageDto.builder()
                 //todo Collections.singleton 공부
-                .content(Collections.singletonList(postListInfoDtoList))
+                .content(postListInfoDtoList)
                 .pageNumber(postList.getPageable().getPageNumber())
                 .pageFirst(postList.isFirst())
                 .pageLast(postList.isLast()).build();
@@ -216,7 +216,7 @@ public class PostServiceImpl implements IPostService {
         if (!isLast) postListInfoDtoList.remove(pageable.getPageSize() );
         Boolean isFirst = pageable.getPageNumber() == 0;
         return PostSlicePageDto.builder()
-                .content(Collections.singletonList(postListInfoDtoList))
+                .content(postListInfoDtoList)
                 .pageNumber(pageable.getPageNumber())
                 .pageFirst(isFirst)
                 .pageLast(isLast)
@@ -234,7 +234,7 @@ public class PostServiceImpl implements IPostService {
         Boolean isLast = postListInfoDtoList.size() < pageable.getPageSize();
         if (!isLast) postListInfoDtoList.remove(pageable.getPageSize() + 1);
         return PostSlicePageDto.builder()
-                .content(Collections.singletonList(postListInfoDtoList))
+                .content(postListInfoDtoList)
                 .pageNumber(pageable.getPageNumber())
                 .pageFirst(isFirst)
                 .pageLast(isLast)
@@ -285,7 +285,7 @@ public class PostServiceImpl implements IPostService {
                 .reg_date(post.getRegDate())
                 .build()).collect(Collectors.toList());
         PostSlicePageDto postSlicePageDto = PostSlicePageDto.builder()
-                .content(Collections.singletonList(postListInfoDtoList))
+                .content(postListInfoDtoList)
                 .pageNumber(postList.getNumber())
                 .pageFirst(postList.isFirst())
                 .pageLast(postList.isLast())
@@ -312,7 +312,7 @@ public class PostServiceImpl implements IPostService {
 //                    .build());
 //        }
         PostSlicePageDto postSlicePageDto = PostSlicePageDto.builder()
-                .content(Collections.singletonList(postListInfoDtoList))
+                .content(postListInfoDtoList)
                 .pageNumber(postList.getNumber())
                 .pageFirst(postList.isFirst())
                 .pageLast(postList.isLast())
