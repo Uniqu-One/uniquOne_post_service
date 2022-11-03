@@ -32,7 +32,7 @@ public class ThisWeekUniqueOneServiceImpl implements ThisWeekUniqueOneService{
                 throw new UniquOneServiceException(ExceptionCode.NOTFOUND_CORN, HttpStatus.OK);
             });
 
-            ThisWeekUniqueOne thisWeekUniqueOne = ThisWeekUniqueOne.builder().id(corId).build();
+            ThisWeekUniqueOne thisWeekUniqueOne = ThisWeekUniqueOne.builder().cornId(corId).build();
 
             thisWeekUniqueOneRepository.save(thisWeekUniqueOne);
         });
