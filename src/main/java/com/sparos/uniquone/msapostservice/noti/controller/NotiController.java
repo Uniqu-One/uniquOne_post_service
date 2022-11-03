@@ -34,13 +34,13 @@ public class NotiController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
 
+    // 미사용
     // 알림 확인
     @PatchMapping(value = "")
-    public ResponseEntity<SuccessResponse> notiChecked(@RequestBody Map<String, Long> notiId, HttpServletRequest request) {
-        JSONObject jsonObject = iNotiService.notiChecked(notiId.get("notiId"), request);
+    public ResponseEntity<SuccessResponse> notiChecked(HttpServletRequest request) {
+        JSONObject jsonObject = iNotiService.notiChecked(request);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
-
 
     // 비확인 알림 카운팅
     @GetMapping(value = "/nonCnt")

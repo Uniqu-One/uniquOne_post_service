@@ -5,10 +5,9 @@ import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.follow.domain.Follow;
 import com.sparos.uniquone.msapostservice.follow.repository.IFollowRepository;
 import com.sparos.uniquone.msapostservice.noti.domain.Noti;
+import com.sparos.uniquone.msapostservice.noti.domain.NotiUtils;
 import com.sparos.uniquone.msapostservice.noti.dto.NotiOutDto;
 import com.sparos.uniquone.msapostservice.noti.repository.INotiRepository;
-import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
-import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
@@ -21,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,31 +38,42 @@ public class NotiServiceImpl implements INotiService {
     public JSONObject findMyNoti(int pageNum, HttpServletRequest request) {
 
         JSONObject jsonObject = new JSONObject();
+        Long userId = JwtProvider.getUserPkId(request);
 
         Pageable pageable = PageRequest.of(pageNum - 1, 30, Sort.by(Sort.Direction.DESC, "regDate"));
-        List<Noti> notis = iNotiRepository.findByUserId(JwtProvider.getUserPkId(request), pageable);
+        List<Noti> notis = iNotiRepository.findByUserId(userId, pageable);
 
         if (notis.isEmpty())
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
-        jsonObject.put("data", notis.stream().map(noti ->
-                entityToNotiOutDto(noti))
-        );
+//        List<NotiOutDto> notiOutDto = new ArrayList<>();
+
+/*        for (Noti noti : notis){
+            notiOutDto.add(entityToNotiOutDto(noti));
+        }
+        jsonObject.put("data", notiOutDto.toArray());*/
+
+        iNotiRepository.updateIsCheckByUserId(userId);
+        jsonObject.put("data", notis.stream().map(noti -> entityToNotiOutDto(noti)));
 
         return jsonObject;
     }
 
+    // 미사용
     // 알림 확인
     @Override
-    public JSONObject notiChecked(Long notiId, HttpServletRequest request) {
+    public JSONObject notiChecked(HttpServletRequest request) {
         JSONObject jsonObject = new JSONObject();
         Long userId = JwtProvider.getUserPkId(request);
-        Noti noti = iNotiRepository.findByIdAndUserId(notiId, userId)
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+        List<Noti> noti = iNotiRepository.findByUserId(userId);
 
-        noti.modCheck(true);
+        if (noti.isEmpty())
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
-        noti = iNotiRepository.save(noti);
+        noti.stream().map(n -> {
+            n.modCheck(true);
+            return iNotiRepository.save(n);
+        });
 
         jsonObject.put("data", noti);
         return jsonObject;
@@ -102,8 +111,6 @@ public class NotiServiceImpl implements INotiService {
                 typeId = notification.getQna().getId();
                 break;
         }
-        String date = notification.getRegDate().format(DateTimeFormatter.ofPattern("yy년 MM월 dd일"));
-        String time = notification.getRegDate().format(DateTimeFormatter.ofPattern("a hh:mm"));
 
         return NotiOutDto.builder()
                 .notiType(notification.getNotiType())
@@ -114,8 +121,7 @@ public class NotiServiceImpl implements INotiService {
                 .userCornImg(notification.getUserCornImg())
                 .dsc(notification.getDsc())
                 .isCheck(notification.getIsCheck())
-                .date(date)
-                .regTime(time)
+                .regDate(NotiUtils.converter(notification.getRegDate()))
                 .postImg(notification.getPostImg())
                 .build();
     }
@@ -127,10 +133,13 @@ public class NotiServiceImpl implements INotiService {
         JSONObject jsonObject = new JSONObject();
         Map<String, Long> countMap = new HashMap<>();
 
-        countMap.put("count", iNotiRepository.countByUserId(JwtProvider.getUserPkId(request)));
+        countMap.put("count", iNotiRepository.countByUserIdAndIsCheck(JwtProvider.getUserPkId(request), false));
 
         jsonObject.put("data", countMap);
 
         return jsonObject;
     }
+
+
+
 }

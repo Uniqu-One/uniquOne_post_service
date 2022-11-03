@@ -16,7 +16,7 @@ public class OfferDetailOutDto {
     private Long postId;
     private String postTitle;
     private String postImg;
-    private Long postPrice;
+    private Integer postPrice;
     private Long waitingCnt;
     private Long acceptCount;
     private Long refuseCount;

@@ -7,6 +7,7 @@ import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.follow.domain.Follow;
 import com.sparos.uniquone.msapostservice.noti.domain.Noti;
 import com.sparos.uniquone.msapostservice.noti.domain.NotiType;
+import com.sparos.uniquone.msapostservice.noti.domain.NotiUtils;
 import com.sparos.uniquone.msapostservice.noti.dto.ChatNotiDto;
 import com.sparos.uniquone.msapostservice.noti.dto.NotiOutDto;
 import com.sparos.uniquone.msapostservice.noti.repository.EmitterRepositoryImpl;
@@ -217,9 +218,6 @@ public class EmitterServiceImpl implements IEmitterService {
                 break;
         }
 
-        String date = notification.getRegDate().format(DateTimeFormatter.ofPattern("yy년 MM월 dd일"));
-        String time = notification.getRegDate().format(DateTimeFormatter.ofPattern("a hh:mm"));
-
         return NotiOutDto.builder()
                 .notiType(notification.getNotiType())
                 .notiId(notification.getId())
@@ -228,8 +226,7 @@ public class EmitterServiceImpl implements IEmitterService {
                 .userCornImg(notification.getUserCornImg())
                 .dsc(notification.getDsc())
                 .isCheck(notification.getIsCheck())
-                .date(date)
-                .regTime(time)
+                .regDate(NotiUtils.converter(notification.getRegDate()))
                 .postImg(notification.getPostImg())
                 .build();
     }
