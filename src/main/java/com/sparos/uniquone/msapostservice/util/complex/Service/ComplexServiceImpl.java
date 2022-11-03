@@ -94,6 +94,7 @@ public class ComplexServiceImpl implements IComplexService {
         mainContentsDtoList.stream().map(MainContentsDto -> {
             MainContentsDto.addIsCool(iCoolRepository.existsByUserIdAndPostId(userId, MainContentsDto.getPostId()));
             MainContentsDto.addPostImgUrl(iPostImgRepository.findOneByPostIdAndIdx(MainContentsDto.getPostId(),1).getUrl());
+            MainContentsDto.addUserNickName(iUserConnect.getNickName(MainContentsDto.getUserId()));
             return MainContentsDto;
         }).collect(Collectors.toList());
         return PostSlicePageDto.builder()
