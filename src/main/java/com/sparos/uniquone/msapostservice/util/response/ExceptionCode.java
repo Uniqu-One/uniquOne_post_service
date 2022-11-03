@@ -27,7 +27,10 @@ public enum ExceptionCode {
 
     NOTFOUND_ADMIN_BOARD("F012","게시판이 존재 하지 않습니다."),
 
-    NOTFOUND_UNISTAR("F013","유니스타가 존재 하지 않습니다.")
+    NOTFOUND_UNISTAR("F013","유니스타가 존재 하지 않습니다."),
+
+    NOTFOUND_CORN("F014","콘이 존재 하지 않습니다.")
+
     ;
 
 
