@@ -113,7 +113,7 @@ public class OfferServiceImpl implements IOfferService{
         OfferCntDto offerCntDto = offerRepositoryCustom.findCntByPostId(postId)
                 .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
-        jsonObject.put("data", OfferUtils.dtoToOfferDetailOutDto(offerCntDto, iPostImgRepository.findUrlByPostId(postId), offerDetailIndividualOutDto));
+        jsonObject.put("data", OfferUtils.dtoToOfferDetailOutDto(offerCntDto, iPostRepository.findPriceById(postId), iPostImgRepository.findUrlByPostId(postId), offerDetailIndividualOutDto));
 
         return jsonObject;
     }
