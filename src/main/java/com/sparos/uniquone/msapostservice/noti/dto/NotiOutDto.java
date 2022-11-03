@@ -32,9 +32,7 @@ public class NotiOutDto {
 
     private Boolean isCheck;
 
-    private String date;
-
-    private String regTime;;
+    private String regDate;
 
     public void setTypeId(Long typeId) {
         this.typeId = typeId;

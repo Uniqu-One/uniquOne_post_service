@@ -18,6 +18,9 @@ public interface IPostRepository extends JpaRepository<Post, Long>, SearchPostRe
     @Query("select p.id from Post p where p.corn.id =:cornId")
     List<Long> findIdByCornId(@Param("cornId") Long cornId);
 
+    @Query("select p.price from Post p where p.id =:postId")
+    Integer findPriceById(@Param("postId") Long postId);
+
     List<Post> findByCornIdAndPostType(Long cornId, PostType postType);
 
     List<Post> findByCornId(Long cornId);

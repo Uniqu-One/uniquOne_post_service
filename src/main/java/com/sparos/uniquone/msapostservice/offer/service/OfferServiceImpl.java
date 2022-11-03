@@ -80,7 +80,7 @@ public class OfferServiceImpl implements IOfferService{
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         jsonObject.put("data", offerCntDtos.stream().map(offer ->
-                OfferUtils.entityToOfferOutDto(offer, iPostImgRepository.findUrlByPostId(offer.getPostId())))
+                OfferUtils.entityToOfferOutDto(offer, iPostRepository.findPriceById(offer.getPostId()), iPostImgRepository.findUrlByPostId(offer.getPostId())))
         );
 
         return jsonObject;

@@ -1,6 +1,7 @@
 package com.sparos.uniquone.msapostservice.noti.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.sparos.uniquone.msapostservice.comment.domain.Comment;
 import com.sparos.uniquone.msapostservice.cool.domain.Cool;
 import com.sparos.uniquone.msapostservice.follow.domain.Follow;
