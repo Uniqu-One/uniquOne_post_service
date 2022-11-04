@@ -3,6 +3,7 @@ package com.sparos.uniquone.msapostservice.post.service;
 import com.sparos.uniquone.msapostservice.cool.repository.ICoolRepository;
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
+import com.sparos.uniquone.msapostservice.follow.repository.IFollowRepository;
 import com.sparos.uniquone.msapostservice.look.repository.ILookRepository;
 import com.sparos.uniquone.msapostservice.post.domain.*;
 import com.sparos.uniquone.msapostservice.post.dto.*;
@@ -49,6 +50,8 @@ public class PostServiceImpl implements IPostService {
     private final ICoolRepository iCoolRepository;
 
     private final IUniStarRepository iUniStarRepository;
+
+    private final IFollowRepository iFollowRepository;
 
     @Override
     public Object addPost(PostInputDto postInputDto, List<MultipartFile> multipartFileList, Long userId) throws IOException {
@@ -406,6 +409,9 @@ public class PostServiceImpl implements IPostService {
                 .cornImgUrl(corn.getImgUrl())
                 .userNickName(corn.getUserNickName())
                 .uniStar(uniStar != null ? uniStar.getLevel():null)
+                .isFollow(iFollowRepository.existsByUserIdAndCornId(userId,corn.getId()))
+                .cornId(corn.getId())
+                .price(post.getPrice())
                 .build();
         return postDetailInfoDto;
     }

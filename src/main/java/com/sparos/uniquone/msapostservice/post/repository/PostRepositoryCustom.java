@@ -69,7 +69,8 @@ public class PostRepositoryCustom {
                         postAndLook.look.id.as("LookId"),
                         post.color,
                         post.productSize,
-                        post.conditions))
+                        post.conditions,
+                        post.price))
                 .from(post)
                 .join(postAndLook.post, post)
                 .where(post.id.eq(postId)).fetch();
