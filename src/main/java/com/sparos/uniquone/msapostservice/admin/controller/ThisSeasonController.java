@@ -6,6 +6,7 @@ import com.sparos.uniquone.msapostservice.admin.type.SeasonType;
 import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
 import com.sparos.uniquone.msapostservice.util.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class ThisSeasonController {
 
 
     @GetMapping("/{season}")
-    public ResponseEntity<SuccessResponse> getSeasonPostList(@PathVariable String season){
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,thisSeasonPostService.getSeasonPostList(season)));
+    public ResponseEntity<SuccessResponse> getSeasonPostList(@PathVariable String season, Pageable pageable){
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,thisSeasonPostService.getSeasonPostList(season, pageable)));
     }
 }
