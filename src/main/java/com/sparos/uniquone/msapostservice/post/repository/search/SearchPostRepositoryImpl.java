@@ -519,7 +519,7 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
         });
 
         return postAndLook.look.id.eq(
-                JPAExpressions.select(subPostAndLook.look.id.max())
+                    JPAExpressions.select(subPostAndLook.look.id.max())
                         .from(subPostAndLook)
                         .where(
                                 booleanBuilder

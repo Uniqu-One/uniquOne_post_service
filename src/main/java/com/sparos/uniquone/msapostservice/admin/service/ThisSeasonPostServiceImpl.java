@@ -11,6 +11,7 @@ import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +53,7 @@ public class ThisSeasonPostServiceImpl implements ThisSeasonPostService {
     }
 
     @Override
-    public List<ThisSeasonPostResponseDto> getSeasonPostList(String seasonType) {
-        return thisSeasonPostSupport.getSeasonPostList(SeasonType.valueOf(seasonType));
+    public List<ThisSeasonPostResponseDto> getSeasonPostList(String seasonType, Pageable pageable) {
+        return thisSeasonPostSupport.getSeasonPostList(SeasonType.valueOf(seasonType), pageable);
     }
 }
