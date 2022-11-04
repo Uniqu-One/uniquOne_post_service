@@ -34,4 +34,5 @@ public interface IPostService {
     Object getPostDetailInfo(Long postId);
     PostRecommendListResponseDto getPostCoolListOfNonUser(HttpServletRequest request, Pageable pageable);
 
+    Object getUserPostDetailInfo(Long userId,Long postId);
 }
