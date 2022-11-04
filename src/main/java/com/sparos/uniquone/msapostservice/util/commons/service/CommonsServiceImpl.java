@@ -4,10 +4,7 @@ import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.util.commons.dto.response.CommonsUserResponseDto;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
-import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
-import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +20,8 @@ public class CommonsServiceImpl implements CommonsService {
     public CommonsUserResponseDto getCommonsUserInfoByToken(HttpServletRequest request) {
         //토큰 검증
         Long userPkId = JwtProvider.getUserPkId(request);
-        //콘 찾기
 
+        //콘 찾기
         Optional<Corn> oCorn = cornRepository.findByUserId(userPkId);
 
         if(oCorn.isPresent()){

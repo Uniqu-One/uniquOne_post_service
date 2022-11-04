@@ -2,6 +2,7 @@ package com.sparos.uniquone.msapostservice.admin.service;
 
 import com.sparos.uniquone.msapostservice.admin.domain.ThisWeekUniqueOne;
 import com.sparos.uniquone.msapostservice.admin.dto.request.ThisWeekUniqueOneRequestDto;
+import com.sparos.uniquone.msapostservice.admin.dto.response.ThisSeasonPostResponseDto;
 import com.sparos.uniquone.msapostservice.admin.repository.ThisWeekUniqueOneRepository;
 import com.sparos.uniquone.msapostservice.admin.repository.ThisWeekUniqueOneSupport;
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
