@@ -56,7 +56,6 @@ public class EmitterServiceImpl implements IEmitterService {
         emitter.onCompletion(() -> emitterRepository.deleteById(id));
         emitter.onTimeout(() -> emitterRepository.deleteById(id));
 
-        // 3
         // 503 에러를 방지하기 위한 더미 이벤트 전송
         sendToClient(emitter, id, "EventStream Created. [userId=" + userId + "]");
 
