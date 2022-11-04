@@ -33,6 +33,7 @@ public class ThisWeekUniqueOneSupport extends QuerydslRepositorySupport {
     public List<ThisWeekUniqueOneResponseDto> getUniqueOneInfo() {
 
         QPost subPost = new QPost("subPost");
+        QPostImg subPostImg = new QPostImg("subPostImg");
 
         return queryFactory.select(
                         Projections.constructor(ThisWeekUniqueOneResponseDto.class
@@ -43,10 +44,11 @@ public class ThisWeekUniqueOneSupport extends QuerydslRepositorySupport {
                         )
                 ).from(thisWeekUniqueOne)
                 .leftJoin(corn).on(thisWeekUniqueOne.cornId.eq(corn.id))
-//                .leftJoin(post).on(post.corn.id.eq(corn.id))
                 .leftJoin(post).on(post.id.eq(JPAExpressions.select(subPost.id.max())
                         .from(subPost)
                         .where(corn.id.eq(subPost.corn.id))))
+//                .leftJoin(post).on(corn.id.eq(new SQLSubQuery)
+                .leftJoin(postImg).on(postImg.post.id.eq(post.id))
                 .leftJoin(postImg).on(postImg.post.id.eq(post.id))
                 .limit(5)
                 .where(

@@ -6,5 +6,4 @@ public interface ThisWeekUniqueOneService {
 
     String createThisWeekUniqueOne(ThisWeekUniqueOneRequestDto requestDto);
 
-
 }

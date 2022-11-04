@@ -36,20 +36,12 @@ public class CommentRepositorySupport extends QuerydslRepositorySupport {
     }
 
     public List<CommentListResponseDto> findAllByPost2(Post post) {
-//        return queryFactory.selectFrom(comment)
-//                .leftJoin(comment.parent)
-//                .fetchJoin()
-//                .where(comment.post.id.eq(post.getId()))
-//                .orderBy(comment.parent.id.asc().nullsFirst(), comment.regDate.asc())
-//                .fetch();
-        //**헷갈리면 봐라 LEFT JOIN -> [ A left join B on (a.id = b.id) ]
-        //A(왼쪽) 테이블과 B(오른쪽) 테이블을 조인을 걸건데,
-        // B테이블에 A테이블과 맵핑되는 값이 있건 없건 A의 값은 반드시 모두 나오게 됩니다.
         return queryFactory.select(Projections.constructor(CommentListResponseDto.class
                                 , comment
                                 , corn.imgUrl.as("cornImgUrl")
                         )
                 )
+                .from(comment)
                 .leftJoin(comment.parent)
                 .fetchJoin()
                 .leftJoin(corn).on(corn.userId.eq(comment.userId))
