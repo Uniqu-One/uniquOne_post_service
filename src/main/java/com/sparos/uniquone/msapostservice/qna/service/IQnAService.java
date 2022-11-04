@@ -20,6 +20,9 @@ public interface IQnAService {
     // 모든 문의 내역 조회
     JSONObject findAllQnA();
 
+    // 문의 상세 조회
+    JSONObject findDetailQnA(Long qnaId);
+
     // 답변 등록
     JSONObject createAnswer(AnswerInputDto answerInputDto);
 

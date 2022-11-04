@@ -27,6 +27,13 @@ public class AdminQnAController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
 
+    // 문의 상세 조회
+    @GetMapping("/{qnaId}")
+    public ResponseEntity<SuccessResponse> findDetailQnA(@PathVariable Long qnaId) {
+        JSONObject jsonObject = iQnAService.findDetailQnA(qnaId);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
+    }
+
     // 문의 답변 등록
     @PatchMapping("")
     public ResponseEntity<SuccessResponse> createAnswer(@RequestBody AnswerInputDto answerInputDto) {
