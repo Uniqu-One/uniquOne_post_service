@@ -67,6 +67,7 @@ public class CornServiceImpl implements ICornService {
     public CornInfoDto getMyCornInfo(Long userId) {
         Corn corn = iCornRepository.findByUserId(userId).orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
         ReviewStarPostEAInfoOutputDto reviewStarPostEAInfoOutputDto = cornRepositoryCustom.findByCornIdPostReview(corn.getId());
+        if(reviewStarPostEAInfoOutputDto!=null){
         return CornInfoDto.builder()
                 .imgUrl(corn.getImgUrl())
                 .title(corn.getTitle())
@@ -78,6 +79,17 @@ public class CornServiceImpl implements ICornService {
                 .url(corn.getUrl())
                 .dsc(corn.getDsc())
                 .build();
+        }else {
+            return CornInfoDto.builder()
+                    .imgUrl(corn.getImgUrl())
+                    .title(corn.getTitle())
+                    .followerEA(iFollowRepository.countByCorn(corn).get())
+                    .followingEA(iFollowRepository.countByUserId(userId).get())
+                    .url(corn.getUrl())
+                    .dsc(corn.getDsc())
+                    .build();
+        }
+
     }
 
     @Override
