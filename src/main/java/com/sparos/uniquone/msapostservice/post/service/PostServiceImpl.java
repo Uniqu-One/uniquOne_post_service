@@ -7,6 +7,7 @@ import com.sparos.uniquone.msapostservice.look.repository.ILookRepository;
 import com.sparos.uniquone.msapostservice.post.domain.*;
 import com.sparos.uniquone.msapostservice.post.dto.*;
 import com.sparos.uniquone.msapostservice.post.repository.*;
+import com.sparos.uniquone.msapostservice.unistar.domain.UniStar;
 import com.sparos.uniquone.msapostservice.unistar.repository.IUniStarRepository;
 import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
@@ -382,7 +383,6 @@ public class PostServiceImpl implements IPostService {
     @Override
     public Object getUserPostDetailInfo(Long userId,Long postId) {
         Post post = iPostRepository.findById(postId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_POST_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
-        log.error(iUniStarRepository.findByPostAndUserId(post,userId).get());
         Corn corn = post.getCorn();
         List<String> colorList = List.of(post.getColor().split(","));
         List<PostTag> postTagList = iPostTagRepository.findByPostId(postId);
@@ -390,6 +390,7 @@ public class PostServiceImpl implements IPostService {
         List<PostAndLook> postAndLookList = iPostAndLookRepository.findByPostId(postId);
         List<Long> postAndLookIdList = postAndLookList.stream().map(postAndLook -> postAndLook.getLook().getId()).collect(Collectors.toList());
         List<String> postImgUrlList = iPostImgRepository.findUrlByPostIdList(postId);
+        UniStar uniStar =iUniStarRepository.findByPostAndUserId(post,userId).orElse(null);
         PostDetailInfoDto postDetailInfoDto = PostDetailInfoDto.builder()
                 .imgUrlList(postImgUrlList)
                 .title(post.getTitle())
@@ -404,7 +405,7 @@ public class PostServiceImpl implements IPostService {
                 .isCool(iCoolRepository.existsByUserIdAndPostId(userId,postId))
                 .cornImgUrl(corn.getImgUrl())
                 .userNickName(corn.getUserNickName())
-                .uniStar(iUniStarRepository.findByPostAndUserId(post,userId).orElse(null).getLevel())
+                .uniStar(uniStar != null ? uniStar.getLevel():null)
                 .build();
         return postDetailInfoDto;
     }

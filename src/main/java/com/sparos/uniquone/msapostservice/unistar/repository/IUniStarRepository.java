@@ -11,4 +11,6 @@ public interface IUniStarRepository extends JpaRepository<UniStar, Long> {
     boolean existsByPostAndUserId(Post post, Long userPkId);
 
     Optional<UniStar> findByPostAndUserId(Post post, Long userPkId);
+
+    UniStar findByUserIdAndPost(Long userPkId,Post post);
 }
