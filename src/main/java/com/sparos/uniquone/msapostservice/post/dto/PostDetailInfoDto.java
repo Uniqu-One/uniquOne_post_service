@@ -39,4 +39,10 @@ public class PostDetailInfoDto {
 
     private Integer uniStar;
 
+    private Boolean isFollow;
+
+    private Long cornId;
+
+    private Integer price;
+
 }
