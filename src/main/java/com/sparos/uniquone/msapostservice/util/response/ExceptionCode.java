@@ -29,8 +29,8 @@ public enum ExceptionCode {
 
     NOTFOUND_UNISTAR("F013","유니스타가 존재 하지 않습니다."),
 
-    NOTFOUND_CORN("F014","콘이 존재 하지 않습니다.")
-
+    NOTFOUND_CORN("F014","콘이 존재 하지 않습니다."),
+    NOTFOUND_POST("F015","포스트가 존재 하지 않습니다.")
     ;
 
 
