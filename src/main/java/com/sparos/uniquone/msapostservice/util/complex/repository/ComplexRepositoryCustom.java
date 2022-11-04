@@ -32,6 +32,7 @@ public class ComplexRepositoryCustom {
                         corn.userId.as("userId"),
                         corn.title.as("cornTitle"),
                         corn.imgUrl.as("cornImgUrl"),
+                        corn.userNickName.as("userNickName"),
                         post.regDate.as("regDate"),
                         uniStar.level.as("uniStar")))
                 .from(corn)
@@ -53,6 +54,7 @@ public class ComplexRepositoryCustom {
                         corn.userId.as("userId"),
                         corn.title.as("cornTitle"),
                         corn.imgUrl.as("cornImgUrl"),
+                        corn.userNickName.as("userNickName"),
                         post.regDate.as("regDate"),
                         uniStar.level.as("uniStar")))
                 .from(postAndLook)

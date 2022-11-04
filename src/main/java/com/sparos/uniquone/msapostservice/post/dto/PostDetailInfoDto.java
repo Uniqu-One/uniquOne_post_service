@@ -31,4 +31,12 @@ public class PostDetailInfoDto {
 
     private String condition;
 
+    private Boolean isCool;
+
+    private String cornImgUrl;
+
+    private String userNickName;
+
+    private Integer uniStar;
+
 }
