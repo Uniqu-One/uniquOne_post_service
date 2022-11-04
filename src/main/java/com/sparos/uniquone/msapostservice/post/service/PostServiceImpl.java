@@ -1,11 +1,14 @@
 package com.sparos.uniquone.msapostservice.post.service;
 
+import com.sparos.uniquone.msapostservice.cool.repository.ICoolRepository;
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.look.repository.ILookRepository;
 import com.sparos.uniquone.msapostservice.post.domain.*;
 import com.sparos.uniquone.msapostservice.post.dto.*;
 import com.sparos.uniquone.msapostservice.post.repository.*;
+import com.sparos.uniquone.msapostservice.unistar.repository.IUniStarRepository;
+import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
@@ -42,16 +45,20 @@ public class PostServiceImpl implements IPostService {
     private final AwsS3UploaderService awsS3UploaderService;
     private final PostRepositoryCustom postRepositoryCustom;
 
+    private final ICoolRepository iCoolRepository;
+
+    private final IUniStarRepository iUniStarRepository;
+
     @Override
     public Object addPost(PostInputDto postInputDto, List<MultipartFile> multipartFileList, Long userId) throws IOException {
         if (!(multipartFileList.size()==1&&multipartFileList.get(0).isEmpty())) {
-            Optional<Corn> corn = iCornRepository.findByUserId(userId);
+            Corn corn = iCornRepository.findByUserId(userId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
             Post post = iPostRepository.save(Post.builder()
                     .title(postInputDto.getTitle())
-                    .corn(corn.get())
+                    .corn(corn)
                     .dsc(postInputDto.getDsc())
                     .postType(postInputDto.getPostType())
-                    .postCategory(iPostCategoryRepository.findByName(postInputDto.getPostCategoryName()).get())
+                    .postCategory(iPostCategoryRepository.findByName(postInputDto.getPostCategoryName()).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_POST_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED)))
                     .conditions(postInputDto.getConditions())
                     .color(postInputDto.getColor())
                     .price(postInputDto.getPrice())
@@ -93,16 +100,15 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Object modifyPost(PostInputDto postInputDto, Long userId, Long postId) {
-        Optional<Post> post = iPostRepository.findById(postId);
-        Optional<Corn> corn = iCornRepository.findByUserId(userId);
-        if (post.isPresent() && post.get().getCorn().equals(corn.get())) {
-
-            post.get().modDsc(postInputDto.getDsc());
-            post.get().modPostType(postInputDto.getPostType());
-            post.get().modPostCategoryName(iPostCategoryRepository.findByName(postInputDto.getPostCategoryName()).get());
-            post.get().modConditions(postInputDto.getConditions());
-            post.get().modColor(postInputDto.getColor());
-            iPostRepository.save(post.get());
+        Post post = iPostRepository.findById(postId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_POST_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+        Corn corn = iCornRepository.findByUserId(userId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+        if (post.getCorn().equals(corn)) {
+            post.modDsc(postInputDto.getDsc());
+            post.modPostType(postInputDto.getPostType());
+            post.modPostCategoryName(iPostCategoryRepository.findByName(postInputDto.getPostCategoryName()).get());
+            post.modConditions(postInputDto.getConditions());
+            post.modColor(postInputDto.getColor());
+            iPostRepository.save(post);
 
             List<PostTag> postTagEntityList = iPostTagRepository.findByPostId(postId);
 
@@ -112,7 +118,7 @@ public class PostServiceImpl implements IPostService {
             for (String postDsc : postTagList) {
                 if (!postDsc.isEmpty() && !postDsc.equals(" ") && !post.equals(null))
                     iPostTagRepository.save(PostTag.builder()
-                            .post(post.get())
+                            .post(post)
                             .dsc(postDsc)
                             .build());
             }
@@ -124,7 +130,7 @@ public class PostServiceImpl implements IPostService {
             String[] lookList = postInputDto.getLookLine().split(",");
             for (String lookName : lookList) {
                 iPostAndLookRepository.save(PostAndLook.builder()
-                        .post(post.get())
+                        .post(post)
                         .look(iLookRepository.findByName(lookName).get())
                         .build());
             }
@@ -153,7 +159,7 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Object getMyPostAllList(Long userId, Pageable pageable) {
-        Long cornId = iCornRepository.findByUserId(userId).orElseThrow().getId();
+        Long cornId = iCornRepository.findByUserId(userId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED)).getId();
         Slice<Post> postList = iPostRepository.findByCornIdOrderByRegDateDesc(cornId, pageable);
         List<PostListInfoDto> postListInfoDtoList = postList.stream().map(post ->
                 PostListInfoDto.builder()
@@ -206,7 +212,7 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Object getMyPostProductList(Long userId, Pageable pageable) {
-        Long cornId = iCornRepository.findByUserId(userId).orElseThrow().getId();
+        Long cornId = iCornRepository.findByUserId(userId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED)).getId();
         List<PostType> postTypeList = new ArrayList<>();
         postTypeList.add(SALE);
         postTypeList.add(DISCONTINUED);
@@ -276,7 +282,7 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Object getMyPostStyleList(Long userId, Pageable pageable) {
-        Long cornId = iCornRepository.findByUserId(userId).orElseThrow().getId();
+        Long cornId = iCornRepository.findByUserId(userId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED)).getId();
         Slice<Post> postList = iPostRepository.findByCornIdAndPostTypeOrderByRegDateDesc(cornId, STYLE, pageable);
         List<PostListInfoDto> postListInfoDtoList = postList.stream().map(post -> PostListInfoDto.builder()
                 .postId(post.getId())
@@ -322,7 +328,7 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Object getModPostInfo(Long userId, Long postId) {
-        Post post = iPostRepository.findById(postId).orElseThrow();
+        Post post = iPostRepository.findById(postId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_POST_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
         List<String> colorList = List.of(post.getColor().split(","));
         List<PostTag> postTagList = iPostTagRepository.findByPostId(postId);
         List<String> postTagNameList = postTagList.stream().map(postTag -> "#" + postTag.getDsc()).collect(Collectors.toList());
@@ -348,7 +354,8 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Object getPostDetailInfo(Long postId) {
-        Post post = iPostRepository.findById(postId).orElseThrow();
+        Post post = iPostRepository.findById(postId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_POST_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+        Corn corn = post.getCorn();
         List<String> colorList = List.of(post.getColor().split(","));
         List<PostTag> postTagList = iPostTagRepository.findByPostId(postId);
         List<String> postTagDscList = postTagList.stream().map(postTag -> "#" + postTag.getDsc()).collect(Collectors.toList());
@@ -365,7 +372,40 @@ public class PostServiceImpl implements IPostService {
                 .LookId(postAndLookIdList)
                 .colorList(colorList)
                 .productSize(post.getProductSize())
-                .condition(post.getConditions()).build();
+                .condition(post.getConditions())
+                .cornImgUrl(corn.getImgUrl())
+                .userNickName(corn.getUserNickName())
+                .build();
+        return postDetailInfoDto;
+    }
+
+    @Override
+    public Object getUserPostDetailInfo(Long userId,Long postId) {
+        Post post = iPostRepository.findById(postId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_POST_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+        log.error(iUniStarRepository.findByPostAndUserId(post,userId).get());
+        Corn corn = post.getCorn();
+        List<String> colorList = List.of(post.getColor().split(","));
+        List<PostTag> postTagList = iPostTagRepository.findByPostId(postId);
+        List<String> postTagDscList = postTagList.stream().map(postTag -> "#" + postTag.getDsc()).collect(Collectors.toList());
+        List<PostAndLook> postAndLookList = iPostAndLookRepository.findByPostId(postId);
+        List<Long> postAndLookIdList = postAndLookList.stream().map(postAndLook -> postAndLook.getLook().getId()).collect(Collectors.toList());
+        List<String> postImgUrlList = iPostImgRepository.findUrlByPostIdList(postId);
+        PostDetailInfoDto postDetailInfoDto = PostDetailInfoDto.builder()
+                .imgUrlList(postImgUrlList)
+                .title(post.getTitle())
+                .dsc(post.getDsc())
+                .postTagList(postTagDscList)
+                .postCategoryId(post.getPostCategory().getId())
+                .postType(post.getPostType())
+                .LookId(postAndLookIdList)
+                .colorList(colorList)
+                .productSize(post.getProductSize())
+                .condition(post.getConditions())
+                .isCool(iCoolRepository.existsByUserIdAndPostId(userId,postId))
+                .cornImgUrl(corn.getImgUrl())
+                .userNickName(corn.getUserNickName())
+                .uniStar(iUniStarRepository.findByPostAndUserId(post,userId).orElse(null).getLevel())
+                .build();
         return postDetailInfoDto;
     }
 
