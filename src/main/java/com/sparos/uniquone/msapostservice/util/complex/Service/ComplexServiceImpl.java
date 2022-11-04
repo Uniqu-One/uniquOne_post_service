@@ -17,9 +17,12 @@ import com.sparos.uniquone.msapostservice.util.complex.dto.CornInfoDto;
 import com.sparos.uniquone.msapostservice.util.complex.dto.MainContentsDto;
 import com.sparos.uniquone.msapostservice.util.complex.repository.ComplexRepositoryCustom;
 import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
+import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
+import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,7 +48,7 @@ public class ComplexServiceImpl implements IComplexService {
     @Override
     public PostChatResponseDto chatPostInfo(Long postId, Long otherUserId) {
         // todo 존재 여부 확인
-        Post post = iPostRepository.findById(postId).orElseThrow();
+        Post post = iPostRepository.findById(postId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_POST_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
         PostImg postImg = iPostImgRepository.findOneByPostIdAndIdx(post.getId(), 1);
         Optional<Corn> corn = iCornRepository.findByUserId(otherUserId);
         String imageUrl = null;
@@ -92,7 +95,6 @@ public class ComplexServiceImpl implements IComplexService {
         mainContentsDtoList.stream().map(MainContentsDto -> {
             MainContentsDto.addIsCool(iCoolRepository.existsByUserIdAndPostId(userId, MainContentsDto.getPostId()));
             MainContentsDto.addPostImgUrl(iPostImgRepository.findOneByPostIdAndIdx(MainContentsDto.getPostId(),1).getUrl());
-            MainContentsDto.addUserNickName(iUserConnect.getNickName(MainContentsDto.getUserId()));
             return MainContentsDto;
         }).collect(Collectors.toList());
         return PostSlicePageDto.builder()
@@ -112,7 +114,6 @@ public class ComplexServiceImpl implements IComplexService {
         mainContentsDtoList.stream().map(MainContentsDto -> {
             MainContentsDto.addIsCool(iCoolRepository.existsByUserIdAndPostId(userId, MainContentsDto.getPostId()));
             MainContentsDto.addPostImgUrl(iPostImgRepository.findOneByPostIdAndIdx(MainContentsDto.getPostId(),1).getUrl());
-            MainContentsDto.addUserNickName(iUserConnect.getNickName(MainContentsDto.getUserId()));
             return MainContentsDto;
         }).collect(Collectors.toList());
         PostSlicePageDto postSlicePageDto = PostSlicePageDto.builder()
@@ -138,8 +139,8 @@ public class ComplexServiceImpl implements IComplexService {
     
     @Override
     public Long getUserIdByCorn(Long postId) {
-        Post post = iPostRepository.findById(postId).get();
-        Corn corn = iCornRepository.findById(post.getCorn().getId()).get();
+        Post post = iPostRepository.findById(postId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_POST_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+        Corn corn = iCornRepository.findById(post.getCorn().getId()).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
         return corn.getUserId();
     }
 }
