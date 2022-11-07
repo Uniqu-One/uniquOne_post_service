@@ -85,12 +85,12 @@ public class PostRepositoryCustom {
                         Projections.constructor(PostRecommendResponseDto.class
                                 , post.id.as("postId")
                                 , postImg.url.as("postImgUrl")
-                                , corn.id.as("cornId")
                                 , corn.imgUrl.as("cornImgUrl")
                                 , corn.userNickName.as("userNickName")
                                 , cool.userId.eq(userId).as("isCool")
                                 , follow.userId.eq(userId).as("isFollow")
                                 , uniStar.level.as("uniStar")
+                                , corn.id.as("cornId")
                         )
                 ).from(post)
                 .leftJoin(postImg).on(post.eq(postImg.post))
@@ -120,12 +120,13 @@ public class PostRepositoryCustom {
     public PostRecommendListResponseDto getPostCoolListOfNonUser(Pageable pageable) {
 
         List<PostRecommendResponseDto> result = jpaQueryFactory.select(
-                        Projections.constructor(
+                        Projections.fields(
                                 PostRecommendResponseDto.class
                                 , post.id.as("postId")
                                 , postImg.url.as("postImgUrl")
                                 , corn.imgUrl.as("cornImgUrl")
                                 , corn.userNickName.as("userNickName")
+                                , corn.id.as("cornId")
                         )
                 ).from(post)
                 .leftJoin(postImg).on(post.eq(postImg.post))
