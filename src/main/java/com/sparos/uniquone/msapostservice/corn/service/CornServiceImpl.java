@@ -236,10 +236,7 @@ public class CornServiceImpl implements ICornService {
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.OK);
         });
 
-        cornRepositoryCustom.getMyCornDashboard(userPkId, corn.getId());
-
-        return null;
-
+        return cornRepositoryCustom.getMyCornDashboard(userPkId, corn.getId());
     }
 
     @Override
