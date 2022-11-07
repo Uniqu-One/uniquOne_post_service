@@ -17,7 +17,7 @@ public class OfferMyOutDto {
     private Long postId;
     private String postTitle;
     private String postImg;
-    private Long postPrice;
+    private Integer postPrice;
     private String offerRegDate;
     private String offerCheckDate;
     private Long offerPrice;
