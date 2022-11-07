@@ -62,9 +62,9 @@ public class EcoServiceImpl implements IEcoService{
         }
         iEcoRepository.save(Eco.builder()
                         .regDate(ecoCntDto.getTradeRegDate())
-                        .water(ecoCalculation)
-                        .carbon(ecoCalculation)
-                        .distance(ecoCalculation)
+                        .water(ecoCalculation * 1.32)
+                        .carbon(ecoCalculation * 1.102)
+                        .distance(ecoCalculation * 0.3)
                 .build());
     }
 
