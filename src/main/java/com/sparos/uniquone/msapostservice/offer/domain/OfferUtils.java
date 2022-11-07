@@ -82,7 +82,6 @@ public class OfferUtils {
                 .postTitle(offer.getPost().getTitle())
                 .postImg(postImgUrl)
                 .postPrice(offer.getPrice())
-                .postPrice(offer.getWaitingCnt())
                 .offerRegDate(offer.getRegDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
                 .offerCheckDate(offerCheckDate)
                 .offerPrice(offer.getPrice())

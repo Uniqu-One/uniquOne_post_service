@@ -1,5 +1,6 @@
 package com.sparos.uniquone.msapostservice.trade.service;
 
+import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.domain.PostType;
 import com.sparos.uniquone.msapostservice.post.repository.IPostCategoryRepository;
@@ -9,6 +10,7 @@ import com.sparos.uniquone.msapostservice.trade.domain.Trade;
 import com.sparos.uniquone.msapostservice.trade.domain.TradeUtils;
 import com.sparos.uniquone.msapostservice.trade.dto.TradeInputDto;
 import com.sparos.uniquone.msapostservice.trade.repository.ITradeRepository;
+import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
@@ -27,6 +29,8 @@ public class TradeServiceImpl implements ITradeService {
     private final ITradeRepository iTradeRepository;
     private final IPostRepository iPostRepository;
     private final IPostImgRepository iPostImgRepository;
+    private final ICornRepository iCornRepository;
+    private final IUserConnect iUserConnect;
 
     // 거래 등록
     @Override
@@ -79,7 +83,7 @@ public class TradeServiceImpl implements ITradeService {
     }
 
 
-    // 판매 내역 조회
+    // 구매 내역 조회
     @Override
     public JSONObject findBuy(HttpServletRequest request) {
 
@@ -90,8 +94,10 @@ public class TradeServiceImpl implements ITradeService {
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         jsonObject.put("data", trades.stream().map(trade ->
-                TradeUtils.entityToTradeOutDto(
+                TradeUtils.entityToTradeBuyOutDto(
                         trade,
+                        iUserConnect.getNickName(trade.getPost().getId()),
+                        iCornRepository.findImgUrlByUserId(trade.getPost().getId()),
                         iPostRepository.findById(trade.getPost().getId())
                                 .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED)),
                         iPostImgRepository.findUrlByPostId(trade.getPost().getId())))
