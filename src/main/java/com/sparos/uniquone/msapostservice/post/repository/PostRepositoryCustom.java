@@ -128,7 +128,6 @@ public class PostRepositoryCustom {
                                 , post.id.as("postId")
                                 , postImg.url.as("postImgUrl")
                                 , corn.imgUrl.as("cornImgUrl")
-                                , corn.id.as("cornId")
                                 , corn.userNickName.as("userNickName")
                                 , corn.id.as("cornId")
                         )
