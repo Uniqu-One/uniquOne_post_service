@@ -120,7 +120,7 @@ public class PostRepositoryCustom {
     public PostRecommendListResponseDto getPostCoolListOfNonUser(Pageable pageable) {
 
         List<PostRecommendResponseDto> result = jpaQueryFactory.select(
-                        Projections.fields(
+                        Projections.constructor(
                                 PostRecommendResponseDto.class
                                 , post.id.as("postId")
                                 , postImg.url.as("postImgUrl")
