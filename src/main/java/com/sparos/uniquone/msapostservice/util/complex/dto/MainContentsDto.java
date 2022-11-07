@@ -29,4 +29,8 @@ public class MainContentsDto {
     }
 
     public void addUserNickName(String userNickName){this.userNickName=userNickName;}
+
+    public void addIsFollow(Boolean isFollow){
+        this.isFollow=isFollow;
+    }
 }

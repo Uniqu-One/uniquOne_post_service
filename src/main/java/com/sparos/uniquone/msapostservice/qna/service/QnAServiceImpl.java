@@ -101,7 +101,7 @@ public class QnAServiceImpl implements IQnAService {
         QnA qna = iQnARepository.findById(qnaId)
                 .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
-        jsonObject.put("data", qna);
+        jsonObject.put("data", QnAUtils.entityToQnAAdminOutDto(qna));
 
         return jsonObject;
     }
