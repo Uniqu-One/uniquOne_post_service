@@ -4,8 +4,15 @@ import lombok.Data;
 
 @Data
 public class CornMyDashboardResponseDto {
-    Integer countOfFollow;
-    Integer countOfCool;
-    Integer countOfUniStar;
-    Integer countOfOffer;
+    Long countOfFollow;
+    Long countOfCool;
+    Long countOfUniStar;
+    Long countOfOffer;
+
+    public CornMyDashboardResponseDto(Long countOfFollow, Long countOfCool, Long countOfUniStar, Long countOfOffer) {
+        this.countOfFollow = countOfFollow;
+        this.countOfCool = countOfCool;
+        this.countOfUniStar = countOfUniStar;
+        this.countOfOffer = countOfOffer;
+    }
 }
