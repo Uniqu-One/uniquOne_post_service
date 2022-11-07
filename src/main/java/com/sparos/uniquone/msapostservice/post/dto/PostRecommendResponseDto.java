@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class PostRecommendResponseDto {
     private Long postId;
     private String postImgUrl;
@@ -47,6 +45,16 @@ public class PostRecommendResponseDto {
         this.isCool = isCool;
         this.isFollow = isFollow;
         this.uniStar = uniStar;
+    }
+    public PostRecommendResponseDto(Long postId, String postImgUrl , String cornImgUrl, String userNickName, boolean isCool, boolean isFollow, Integer uniStar, Long cornId) {
+        this.postId = postId;
+        this.postImgUrl = postImgUrl;
+        this.cornImgUrl = cornImgUrl;
+        this.userNickName = userNickName;
+        this.isCool = isCool;
+        this.isFollow = isFollow;
+        this.uniStar = uniStar;
+        this.cornId = cornId;
     }
 
     public PostRecommendResponseDto(Long postId, String postImgUrl, Boolean isCool) {
