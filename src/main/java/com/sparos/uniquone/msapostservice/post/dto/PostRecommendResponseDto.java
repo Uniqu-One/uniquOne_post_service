@@ -15,6 +15,7 @@ public class PostRecommendResponseDto {
     private Boolean isFollow;
     private Integer uniStar;
 
+    private Long cornId;
     public PostRecommendResponseDto(Long postId, String postImgUrl) {
         this.postId = postId;
         this.postImgUrl = postImgUrl;
