@@ -8,6 +8,9 @@ public enum ExceptionCode {
     FAIL_CODE("F001","OK"),
 
     NO_SUCH_ELEMENT_EXCEPTION("F002","데이터를 찾을 수 없습니다."),
+
+    NO_SUCH_CORN_ELEMENT_EXCEPTION("F102","콘 데이터를 찾을 수 없습니다."),
+    NO_SUCH_POST_ELEMENT_EXCEPTION("F102","포스트 데이터를 찾을 수 없습니다."),
     POST_TYPE_NOT_TRADE("F003","게시물이 거래가 가능 한 상태가 아닙니다."),
 
     INVALID_USERID("F004","유저 정보가 일치 하지 않습니다."),

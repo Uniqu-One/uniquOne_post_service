@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NotiOutDto {
+public class ChatNotiDto {
 
     private NotiType notiType;
 
@@ -20,9 +20,7 @@ public class NotiOutDto {
 
     private Long notiId;
 
-    private Long typeId;
-
-    private Boolean isFollow;
+    private String chatRoomId;
 
     private String dsc;
 
@@ -30,15 +28,4 @@ public class NotiOutDto {
 
     private String postImg;
 
-    private Boolean isCheck;
-
-    private String regDate;
-
-    public void setTypeId(Long typeId) {
-        this.typeId = typeId;
-    }
-
-    public void setDsc(String dsc) {
-        this.dsc = dsc;
-    }
 }

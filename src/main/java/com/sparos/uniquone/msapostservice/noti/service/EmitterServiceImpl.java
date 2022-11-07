@@ -7,29 +7,34 @@ import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.follow.domain.Follow;
 import com.sparos.uniquone.msapostservice.noti.domain.Noti;
 import com.sparos.uniquone.msapostservice.noti.domain.NotiType;
+import com.sparos.uniquone.msapostservice.noti.domain.NotiUtils;
+import com.sparos.uniquone.msapostservice.noti.dto.ChatNotiDto;
 import com.sparos.uniquone.msapostservice.noti.dto.NotiOutDto;
 import com.sparos.uniquone.msapostservice.noti.repository.EmitterRepositoryImpl;
 import com.sparos.uniquone.msapostservice.noti.repository.INotiRepository;
 import com.sparos.uniquone.msapostservice.offer.domain.Offer;
 import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
 import com.sparos.uniquone.msapostservice.qna.domain.QnA;
+import com.sparos.uniquone.msapostservice.util.feign.dto.Chat;
 import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmitterServiceImpl implements IEmitterService {
 
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60 * 24;
 
     private final EmitterRepositoryImpl emitterRepository;
-    private final ApplicationEventPublisher eventPublisher;
 
     private final INotiRepository iNotiRepository;
     private final ICornRepository iCornRepository;
@@ -51,7 +56,6 @@ public class EmitterServiceImpl implements IEmitterService {
         emitter.onCompletion(() -> emitterRepository.deleteById(id));
         emitter.onTimeout(() -> emitterRepository.deleteById(id));
 
-        // 3
         // 503 에러를 방지하기 위한 더미 이벤트 전송
         sendToClient(emitter, id, "EventStream Created. [userId=" + userId + "]");
 
@@ -84,6 +88,34 @@ public class EmitterServiceImpl implements IEmitterService {
         );
     }
 
+    @Override
+    public ChatNotiDto sendChatPush(Long userId, Long postId, Chat chat) {
+
+        ChatNotiDto notification = ChatNotiDto.builder()
+                .notiType(NotiType.CHAT)
+                .nickName(iUserConnect.getUserNickName(chat.getSenderId()).getNickname())
+                .dsc("님이 채팅을 보냈습니다.")
+                .chatRoomId(chat.getChatRoomId())
+                .userCornImg(iCornRepository.findImgUrlByUserId(chat.getSenderId()))
+                .postImg(iPostImgRepository.findUrlByPostId(postId))
+                .build();
+
+        String id = String.valueOf(userId);
+
+        // 로그인 한 유저의 SseEmitter 모두 가져오기
+        Map<String, SseEmitter> sseEmitters = emitterRepository.findAllEmitterStartWithByUserId(id);
+        sseEmitters.forEach(
+                (key, emitter) -> {
+                    // 데이터 캐시 저장(유실된 데이터 처리하기 위함)
+                    emitterRepository.saveEventCache(key, notification);
+                    // 데이터 전송
+                    sendToClient(emitter, key, notification);
+                }
+        );
+
+        return notification;
+    }
+
     // 3
     private void sendToClient(SseEmitter emitter, String id, Object data) {
         try {
@@ -92,8 +124,10 @@ public class EmitterServiceImpl implements IEmitterService {
                     .name("sse")
                     .data(data));
         } catch (IOException exception) {
-            emitterRepository.deleteById(id);
-            throw new RuntimeException("연결 오류!");
+            log.error(String.valueOf(exception));
+            log.error(exception.getMessage());
+//            emitterRepository.deleteById(id);
+//            throw new RuntimeException("연결 오류!");
         }
     }
 
@@ -108,27 +142,50 @@ public class EmitterServiceImpl implements IEmitterService {
         switch (notiType){
             case COOL:
                 noti.setCool((Cool) object);
+                noti.setNickname(iUserConnect.getUserNickName(((Cool) object).getUserId()).getNickname());
+                noti.setUserCornImg(iCornRepository.findImgUrlByUserId(userId));
+                noti.setPostImg(iPostImgRepository.findUrlByPostId(((Cool) object).getPost().getId()));
                 noti.setDsc("님이 회원님의 포스트를 좋아합니다.");
                 break;
             case COMMENT:
                 noti.setComment((Comment) object);
+                noti.setNickname(((Comment) object).getUserNickName());
+                noti.setUserCornImg(iCornRepository.findImgUrlByUserId(((Comment) object).getUserId()));
+                noti.setPostImg(iPostImgRepository.findUrlByPostId(((Comment) object).getPost().getId()));
                 noti.setDsc("님이 댓글을 작성하였습니다. : " + ((Comment) object).getContent());
                 break;
             case FOLLOW:
                 noti.setFollow((Follow) object);
+                noti.setNickname(iUserConnect.getUserNickName(((Follow) object).getUserId()).getNickname());
+                noti.setUserCornImg(iCornRepository.findImgUrlByUserId(((Follow) object).getUserId()));
+//                noti.setPostImg(iPostImgRepository.findUrlByPostId(((Comment) object).getPost().getId()));
                 noti.setDsc("님이 회원님을 팔로우하기 시작했습니다.");
                 break;
             case OFFER:
                 noti.setOffer((Offer) object);
+                noti.setNickname(iUserConnect.getUserNickName(((Offer) object).getUserId()).getNickname());
+                noti.setUserCornImg(iCornRepository.findImgUrlByUserId(((Offer) object).getUserId()));
+                noti.setPostImg(iPostImgRepository.findUrlByPostId(((Offer) object).getPost().getId()));
                 noti.setDsc("님이 오퍼를 보냈습니다.");
                 break;
-            case OFFER_CHECK:
+            case OFFER_ACCEPT:
                 noti.setOffer((Offer) object);
-                noti.setDsc("님이 오퍼를 확인했습니다.");
+                noti.setNickname(iUserConnect.getUserNickName(((Offer) object).getPost().getCorn().getUserId()).getNickname());
+                noti.setUserCornImg(iCornRepository.findImgUrlByUserId(((Offer) object).getPost().getCorn().getUserId()));
+                noti.setPostImg(iPostImgRepository.findUrlByPostId(((Offer) object).getPost().getId()));
+                noti.setDsc("님이 오퍼를 수락했습니다.");
+                break;
+            case OFFER_REFUSE:
+                noti.setOffer((Offer) object);
+                noti.setNickname(iUserConnect.getUserNickName(((Offer) object).getPost().getCorn().getUserId()).getNickname());
+                noti.setUserCornImg(iCornRepository.findImgUrlByUserId(((Offer) object).getPost().getCorn().getUserId()));
+                noti.setPostImg(iPostImgRepository.findUrlByPostId(((Offer) object).getPost().getId()));
+                noti.setDsc("님이 오퍼를 거절했습니다.");
                 break;
             case QNA:
                 noti.setQna((QnA) object);
-                noti.setDsc(" 문의글에 답글이 작성되었습니다. : " + ((QnA) object).getAnswer());
+                noti.setNickname("ADMIN");
+                noti.setDsc("문의글에 답글이 작성되었습니다. : " + ((QnA) object).getAnswer());
                 break;
         }
 
@@ -138,44 +195,25 @@ public class EmitterServiceImpl implements IEmitterService {
     private NotiOutDto entityToNotiOutDto(Noti notification) {
 
         Long typeId = 0l;
-        String nickName = null;
-        String userCornImg = null;
-        String postImg = null;
 
         switch (notification.getNotiType()){
             case COOL:
                 typeId = notification.getCool().getPost().getId();
-                nickName = iUserConnect.getUserNickName(notification.getCool().getUserId()).getNickname();
-                userCornImg = iCornRepository.findImgUrlByUserId(notification.getCool().getUserId());
-                postImg = iPostImgRepository.findUrlByPostId(notification.getCool().getPost().getId());
                 break;
             case COMMENT:
                 typeId = notification.getComment().getPost().getId();
-                nickName = notification.getComment().getUserNickName();
-                userCornImg = iCornRepository.findImgUrlByUserId(notification.getComment().getUserId());
-                postImg = iPostImgRepository.findUrlByPostId(notification.getComment().getPost().getId());
                 break;
             case FOLLOW:
                 Corn corn = iCornRepository.findByUserId(notification.getUserId()).get();
                 typeId = corn.getId();
-                nickName = iUserConnect.getUserNickName(notification.getFollow().getUserId()).getNickname();
-                userCornImg = iCornRepository.findImgUrlByUserId(notification.getFollow().getUserId());
                 break;
             case OFFER:
+            case OFFER_ACCEPT:
+            case OFFER_REFUSE:
                 typeId = notification.getOffer().getId();
-                nickName = iUserConnect.getUserNickName(notification.getOffer().getUserId()).getNickname();
-                userCornImg = iCornRepository.findImgUrlByUserId(notification.getOffer().getUserId());
-                postImg = iPostImgRepository.findUrlByPostId(notification.getOffer().getPost().getId());
-                break;
-            case OFFER_CHECK:
-                typeId = notification.getOffer().getId();
-                nickName = iUserConnect.getUserNickName(notification.getOffer().getPost().getCorn().getUserId()).getNickname();
-                userCornImg = iCornRepository.findImgUrlByUserId(notification.getOffer().getPost().getCorn().getUserId());
-                postImg = iPostImgRepository.findUrlByPostId(notification.getOffer().getPost().getId());
                 break;
             case QNA:
                 typeId = notification.getQna().getId();
-                nickName = "";
                 break;
         }
 
@@ -183,12 +221,12 @@ public class EmitterServiceImpl implements IEmitterService {
                 .notiType(notification.getNotiType())
                 .notiId(notification.getId())
                 .typeId(typeId)
-                .nickName(nickName)
+                .nickName(notification.getNickName())
+                .userCornImg(notification.getUserCornImg())
                 .dsc(notification.getDsc())
                 .isCheck(notification.getIsCheck())
-                .regDate(notification.getRegDate())
-                .postImg(postImg)
-                .userCornImg(userCornImg)
+                .regDate(NotiUtils.converter(notification.getRegDate()))
+                .postImg(notification.getPostImg())
                 .build();
     }
 }

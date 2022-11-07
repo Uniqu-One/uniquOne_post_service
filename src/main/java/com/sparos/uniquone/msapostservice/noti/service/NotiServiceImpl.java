@@ -2,11 +2,12 @@ package com.sparos.uniquone.msapostservice.noti.service;
 
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
+import com.sparos.uniquone.msapostservice.follow.domain.Follow;
+import com.sparos.uniquone.msapostservice.follow.repository.IFollowRepository;
 import com.sparos.uniquone.msapostservice.noti.domain.Noti;
+import com.sparos.uniquone.msapostservice.noti.domain.NotiUtils;
 import com.sparos.uniquone.msapostservice.noti.dto.NotiOutDto;
 import com.sparos.uniquone.msapostservice.noti.repository.INotiRepository;
-import com.sparos.uniquone.msapostservice.post.repository.IPostImgRepository;
-import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
@@ -19,7 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,39 +31,49 @@ public class NotiServiceImpl implements INotiService {
 
     private final INotiRepository iNotiRepository;
     private final ICornRepository iCornRepository;
-    private final IPostImgRepository iPostImgRepository;
-    private final IUserConnect iUserConnect;
+    private final IFollowRepository iFollowRepository;
 
     // 알림 조회
     @Override
     public JSONObject findMyNoti(int pageNum, HttpServletRequest request) {
 
         JSONObject jsonObject = new JSONObject();
+        Long userId = JwtProvider.getUserPkId(request);
 
-        Pageable pageable = PageRequest.of(pageNum - 1, 5, Sort.by(Sort.Direction.DESC, "regDate"));
-        List<Noti> notis = iNotiRepository.findByUserId(JwtProvider.getUserPkId(request), pageable);
+        Pageable pageable = PageRequest.of(pageNum - 1, 30, Sort.by(Sort.Direction.DESC, "regDate"));
+        List<Noti> notis = iNotiRepository.findByUserId(userId, pageable);
 
         if (notis.isEmpty())
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
-        jsonObject.put("data", notis.stream().map(noti ->
-                entityToNotiOutDto(noti))
-        );
+//        List<NotiOutDto> notiOutDto = new ArrayList<>();
+
+/*        for (Noti noti : notis){
+            notiOutDto.add(entityToNotiOutDto(noti));
+        }
+        jsonObject.put("data", notiOutDto.toArray());*/
+
+        iNotiRepository.updateIsCheckByUserId(userId);
+        jsonObject.put("data", notis.stream().map(noti -> entityToNotiOutDto(noti)));
 
         return jsonObject;
     }
 
+    // 미사용
     // 알림 확인
     @Override
-    public JSONObject notiChecked(Long notiId, HttpServletRequest request) {
+    public JSONObject notiChecked(HttpServletRequest request) {
         JSONObject jsonObject = new JSONObject();
         Long userId = JwtProvider.getUserPkId(request);
-        Noti noti = iNotiRepository.findByIdAndUserId(notiId, userId)
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+        List<Noti> noti = iNotiRepository.findByUserId(userId);
 
-        noti.modCheck(true);
+        if (noti.isEmpty())
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
-        noti = iNotiRepository.save(noti);
+        noti.stream().map(n -> {
+            n.modCheck(true);
+            return iNotiRepository.save(n);
+        });
 
         jsonObject.put("data", noti);
         return jsonObject;
@@ -68,32 +82,33 @@ public class NotiServiceImpl implements INotiService {
     private NotiOutDto entityToNotiOutDto(Noti notification) {
 
         Long typeId = 0l;
-        String nickName = null;
-        String userCornImg = null;
-        String postImg = null;
+        Boolean isFollow = null;
 
-        switch (notification.getNotiType()){
+        switch (notification.getNotiType()) {
             case COOL:
                 typeId = notification.getCool().getPost().getId();
-                nickName = iUserConnect.getUserNickName(notification.getCool().getUserId()).getNickname();
-                userCornImg = iCornRepository.findImgUrlByUserId(notification.getCool().getUserId());
-                postImg = iPostImgRepository.findUrlByPostId(notification.getCool().getPost().getId());
                 break;
             case COMMENT:
                 typeId = notification.getComment().getPost().getId();
-                nickName = notification.getComment().getUserNickName();
-                userCornImg = iCornRepository.findImgUrlByUserId(notification.getComment().getUserId());
-                postImg = iPostImgRepository.findUrlByPostId(notification.getComment().getPost().getId());
                 break;
             case FOLLOW:
-                Corn corn = iCornRepository.findByUserId(notification.getUserId()).get();
+                Corn corn = iCornRepository.findByUserNickName(notification.getNickName())
+                        .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+                Optional<Follow> follow = iFollowRepository.findByUserIdAndCornId(notification.getUserId(), corn.getId());
+                if (follow.isPresent()) {
+                    isFollow = true;
+                } else {
+                    isFollow = false;
+                }
                 typeId = corn.getId();
-                nickName = iUserConnect.getUserNickName(notification.getFollow().getUserId()).getNickname();
-                userCornImg = iCornRepository.findImgUrlByUserId(notification.getFollow().getUserId());
+                break;
+            case OFFER:
+            case OFFER_ACCEPT:
+            case OFFER_REFUSE:
+                typeId = notification.getOffer().getId();
                 break;
             case QNA:
                 typeId = notification.getQna().getId();
-                nickName = "";
                 break;
         }
 
@@ -101,13 +116,30 @@ public class NotiServiceImpl implements INotiService {
                 .notiType(notification.getNotiType())
                 .notiId(notification.getId())
                 .typeId(typeId)
-                .nickName(nickName)
+                .isFollow(isFollow)
+                .nickName(notification.getNickName())
+                .userCornImg(notification.getUserCornImg())
                 .dsc(notification.getDsc())
                 .isCheck(notification.getIsCheck())
-                .regDate(notification.getRegDate())
-                .postImg(postImg)
-                .userCornImg(userCornImg)
+                .regDate(NotiUtils.converter(notification.getRegDate()))
+                .postImg(notification.getPostImg())
                 .build();
     }
+
+    // 확인 안한 알림 갯수
+    @Override
+    public JSONObject notiNonCheckedCnt(HttpServletRequest request) {
+
+        JSONObject jsonObject = new JSONObject();
+        Map<String, Long> countMap = new HashMap<>();
+
+        countMap.put("count", iNotiRepository.countByUserIdAndIsCheck(JwtProvider.getUserPkId(request), false));
+
+        jsonObject.put("data", countMap);
+
+        return jsonObject;
+    }
+
+
 
 }

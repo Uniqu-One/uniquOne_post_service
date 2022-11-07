@@ -66,14 +66,13 @@ public class EcoServiceImpl implements IEcoService{
                         .carbon(ecoCalculation)
                         .distance(ecoCalculation)
                 .build());
-
     }
 
     // 어제 탄소 절감 조회
     @Override
     public JSONObject findYesterdayEco() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("data", iEcoRepository.findByRegDate(LocalDate.now().minusDays(1)));
+        jsonObject.put("data", iEcoRepository.findByRegDate(LocalDate.now().minusDays(1).toString()));
         return jsonObject;
     }
 
@@ -93,8 +92,7 @@ public class EcoServiceImpl implements IEcoService{
         return jsonObject;
     }
 
-
-    // 카운트 카테고리 별 에코 계산 총 합
+    // 카운트 카테고리 별 에코 계산 총 합 테스트
     @Override
     public JSONObject test1() {
 

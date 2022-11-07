@@ -80,7 +80,7 @@ public class OfferServiceImpl implements IOfferService{
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         jsonObject.put("data", offerCntDtos.stream().map(offer ->
-                OfferUtils.entityToOfferOutDto(offer, iPostImgRepository.findUrlByPostId(offer.getPostId())))
+                OfferUtils.entityToOfferOutDto(offer, iPostRepository.findPriceById(offer.getPostId()), iPostImgRepository.findUrlByPostId(offer.getPostId())))
         );
 
         return jsonObject;
@@ -113,7 +113,7 @@ public class OfferServiceImpl implements IOfferService{
         OfferCntDto offerCntDto = offerRepositoryCustom.findCntByPostId(postId)
                 .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
-        jsonObject.put("data", OfferUtils.dtoToOfferDetailOutDto(offerCntDto, iPostImgRepository.findUrlByPostId(postId), offerDetailIndividualOutDto));
+        jsonObject.put("data", OfferUtils.dtoToOfferDetailOutDto(offerCntDto, iPostRepository.findPriceById(postId), iPostImgRepository.findUrlByPostId(postId), offerDetailIndividualOutDto));
 
         return jsonObject;
     }
@@ -150,14 +150,15 @@ public class OfferServiceImpl implements IOfferService{
         // 오퍼타입 수락일 경우 채팅방 생성 -> 채팅 noti 타입으로 save -> 채팅룸 id 리턴
         if (offer.getOfferType().equals(OfferType.ACCEPT)) {
             ChatRoomDto chatRoomDto = ChatRoomDto.builder()
-                    .receiverId(offer.getUserId())
                     .postId(offer.getPost().getId())
                     .chatType(ChatRoomType.SELLER)
                     .build();
             iChatConnect.offerChat(chatRoomDto, JwtProvider.getTokenFromRequestHeader(request));
-        }
+            iEmitterService.send(offer.getUserId(), offer, NotiType.OFFER_ACCEPT);
+        } else {
 
-        iEmitterService.send(offer.getUserId(), offer, NotiType.OFFER_CHECK);
+            iEmitterService.send(offer.getUserId(), offer, NotiType.OFFER_REFUSE);
+        }
 
         jsonObject.put("data", offer);
 

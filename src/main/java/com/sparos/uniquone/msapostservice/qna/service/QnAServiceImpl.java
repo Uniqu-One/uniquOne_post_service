@@ -94,6 +94,18 @@ public class QnAServiceImpl implements IQnAService {
         return jsonObject;
     }
 
+    // 문의 상세 조회
+    @Override
+    public JSONObject findDetailQnA(Long qnaId) {
+        JSONObject jsonObject = new JSONObject();
+        QnA qna = iQnARepository.findById(qnaId)
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+
+        jsonObject.put("data", QnAUtils.entityToQnAAdminOutDto(qna));
+
+        return jsonObject;
+    }
+
     // 답변 등록
     @Override
     public JSONObject createAnswer(AnswerInputDto answerInputDto) {

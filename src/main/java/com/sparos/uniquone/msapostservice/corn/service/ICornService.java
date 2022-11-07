@@ -15,6 +15,8 @@ public interface ICornService {
 
     CornInfoDto getMyCornInfo(Long userId);
 
+    CornInfoDto userGetOtherCornInfo(Long cornId,Long userId);
+
     CornInfoDto getOtherCornInfo(Long cornId);
 
     CornInfoDto getCornInfo(Long userId, Long cornId);
@@ -24,5 +26,5 @@ public interface ICornService {
     Object patchCornModifyInfo(CornModifyDto cornModifyDto, MultipartFile multipartFile, Long userId) throws IOException;
     CornRandomNickNameDto generatedNickName();
 
-    Object isCornExistence(HttpServletRequest httpServletRequest);
+    Object isCornExistence(Long userId);
 }

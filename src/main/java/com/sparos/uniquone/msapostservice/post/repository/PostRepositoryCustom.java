@@ -69,7 +69,8 @@ public class PostRepositoryCustom {
                         postAndLook.look.id.as("LookId"),
                         post.color,
                         post.productSize,
-                        post.conditions))
+                        post.conditions,
+                        post.price))
                 .from(post)
                 .join(postAndLook.post, post)
                 .where(post.id.eq(postId)).fetch();
@@ -89,6 +90,7 @@ public class PostRepositoryCustom {
                                 , cool.userId.eq(userId).as("isCool")
                                 , follow.userId.eq(userId).as("isFollow")
                                 , uniStar.level.as("uniStar")
+                                , corn.id.as("cornId")
                         )
                 ).from(post)
                 .leftJoin(postImg).on(post.eq(postImg.post))
@@ -126,7 +128,9 @@ public class PostRepositoryCustom {
                                 , post.id.as("postId")
                                 , postImg.url.as("postImgUrl")
                                 , corn.imgUrl.as("cornImgUrl")
+                                , corn.id.as("cornId")
                                 , corn.userNickName.as("userNickName")
+                                , corn.id.as("cornId")
                         )
                 ).from(post)
                 .leftJoin(postImg).on(post.eq(postImg.post))

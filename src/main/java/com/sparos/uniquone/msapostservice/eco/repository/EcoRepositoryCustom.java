@@ -36,7 +36,7 @@ public class EcoRepositoryCustom {
         );
 
         return jpaQueryFactory
-                .select(Projections.constructor(EcoCntDto.class,
+                .select(Projections.fields(EcoCntDto.class,
                         formattedDate.as("tradeRegDate"),
                         trade.outerCnt.as("outerCnt"),
                         trade.shirtCnt.as("shirtCnt"),

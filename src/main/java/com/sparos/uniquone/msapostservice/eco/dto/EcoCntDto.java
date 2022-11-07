@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class EcoCntDto {
 
-    private LocalDate tradeRegDate;
+    private String tradeRegDate;
 
     private Long outerCnt;
     private Long shirtCnt;

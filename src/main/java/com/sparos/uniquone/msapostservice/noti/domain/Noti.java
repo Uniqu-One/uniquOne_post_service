@@ -1,11 +1,13 @@
 package com.sparos.uniquone.msapostservice.noti.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.sparos.uniquone.msapostservice.comment.domain.Comment;
 import com.sparos.uniquone.msapostservice.cool.domain.Cool;
 import com.sparos.uniquone.msapostservice.follow.domain.Follow;
 import com.sparos.uniquone.msapostservice.offer.domain.Offer;
 import com.sparos.uniquone.msapostservice.qna.domain.QnA;
+import com.sparos.uniquone.msapostservice.util.feign.dto.Chat;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
@@ -27,6 +29,15 @@ public class Noti {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
+
+    @Column(name = "nickName", nullable = false)
+    private String nickName;
+
+    @Column(name = "user_corn_img",columnDefinition = "MEDIUMTEXT")
+    private String userCornImg;
+
+    @Column(name = "post_img",columnDefinition = "MEDIUMTEXT")
+    private String postImg;
 
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
@@ -79,6 +90,16 @@ public class Noti {
         this.isCheck = isCheck;
     }
 
+    public Noti(Long userId, String nickName, String userCornImg, String postImg, NotiType notiType, String dsc, Boolean isCheck) {
+        this.userId = userId;
+        this.nickName = nickName;
+        this.userCornImg = userCornImg;
+        this.postImg = postImg;
+        this.notiType = notiType;
+        this.dsc = dsc;
+        this.isCheck = isCheck;
+    }
+
     public void setCool(Cool cool) {
         this.cool = cool;
     }
@@ -101,6 +122,18 @@ public class Noti {
 
     public void setOffer(Offer offer) {
         this.offer = offer;
+    }
+
+    public void setNickname(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public void setUserCornImg(String userCornImg) {
+        this.userCornImg = userCornImg;
+    }
+
+    public void setPostImg(String postImg) {
+        this.postImg = postImg;
     }
 
     public void modCheck(Boolean check) {

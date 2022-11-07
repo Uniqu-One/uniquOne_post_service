@@ -24,12 +24,12 @@ public class OfferUtils {
                 .build();
     }
 
-    public static OfferOutDto entityToOfferOutDto(OfferCntDto offerCntDto, String postImgUrl) {
+    public static OfferOutDto entityToOfferOutDto(OfferCntDto offerCntDto, Integer price, String postImgUrl) {
         return OfferOutDto.builder()
                 .postId(offerCntDto.getPostId())
                 .postTitle(offerCntDto.getPostTitle())
                 .postImg(postImgUrl)
-                .price(offerCntDto.getPrice())
+                .price(price)
                 .waitingCnt(offerCntDto.getWaitingCnt())
                 .acceptCount(offerCntDto.getAcceptCount())
                 .refuseCount(offerCntDto.getRefuseCount())
@@ -38,8 +38,6 @@ public class OfferUtils {
 
     public static OfferDetailIndividualOutDto entityToOfferDetailIndividualOutDto(Offer offer, String cornImgUrl, Long userId, String userNickName, String chatRoomId) {
 
-        System.err.println("chatRoomId=========================================================");
-        System.err.println(chatRoomId);
         String offerCheckDate = "";
 
         if (!offer.getOfferType().equals(OfferType.WAITING))
@@ -58,13 +56,13 @@ public class OfferUtils {
                 .build();
     }
 
-    public static OfferDetailOutDto dtoToOfferDetailOutDto(OfferCntDto offerCntDto, String postImgUrl, List<OfferDetailIndividualOutDto> offerDetailIndividualOutDto) {
+    public static OfferDetailOutDto dtoToOfferDetailOutDto(OfferCntDto offerCntDto, Integer price, String postImgUrl, List<OfferDetailIndividualOutDto> offerDetailIndividualOutDto) {
 
         return OfferDetailOutDto.builder()
                 .postId(offerCntDto.getPostId())
                 .postTitle(offerCntDto.getPostTitle())
                 .postImg(postImgUrl)
-                .postPrice(offerCntDto.getPrice())
+                .postPrice(price)
                 .waitingCnt(offerCntDto.getWaitingCnt())
                 .acceptCount(offerCntDto.getAcceptCount())
                 .refuseCount(offerCntDto.getRefuseCount())

@@ -11,6 +11,8 @@ import java.util.List;
 @Builder
 public class PostDetailInfoDto {
 
+    private List<String> imgUrlList;
+
     private String title;
 
     private String dsc;
@@ -28,5 +30,19 @@ public class PostDetailInfoDto {
     private ProductSize productSize;
 
     private String condition;
+
+    private Boolean isCool;
+
+    private String cornImgUrl;
+
+    private String userNickName;
+
+    private Integer uniStar;
+
+    private Boolean isFollow;
+
+    private Long cornId;
+
+    private Integer price;
 
 }

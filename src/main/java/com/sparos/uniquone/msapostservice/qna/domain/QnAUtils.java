@@ -1,5 +1,6 @@
 package com.sparos.uniquone.msapostservice.qna.domain;
 
+import com.sparos.uniquone.msapostservice.qna.dto.QnAAdminOutDto;
 import com.sparos.uniquone.msapostservice.qna.dto.QnADetailOutDto;
 import com.sparos.uniquone.msapostservice.qna.dto.QnAOutDto;
 import com.sparos.uniquone.msapostservice.qna.dto.QuestionInputDto;
@@ -27,6 +28,19 @@ public class QnAUtils {
                 .isAnswer(qna.getAnswer() == null? false : true)
                 .build();
     }
+
+
+    public static QnAAdminOutDto entityToQnAAdminOutDto(QnA qna) {
+        return QnAAdminOutDto.builder()
+                .qnaId(qna.getId())
+                .question(qna.getQuestion())
+                .questionType(qna.getQuestionType())
+                .qRegDate(qna.getQRegDate().format(DateTimeFormatter.ofPattern("yyyy년M월dd일 hh:mm")))
+                .answer(qna.getAnswer())
+                .isAnswer(qna.getAnswer() == null? false : true)
+                .build();
+    }
+
 
     public static QnADetailOutDto entityToQnADetailOutDto(QnA qna, String cornImg) {
         Boolean isAnswer = qna.getAnswer() == null? false : true;

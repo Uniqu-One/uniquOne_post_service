@@ -29,8 +29,7 @@ public class Follow {
     private LocalDateTime regDate;
 
     @Builder
-    public Follow(Long id, Long userId, Corn corn, LocalDateTime regDate) {
-        this.id = id;
+    public Follow(Long userId, Corn corn, LocalDateTime regDate) {
         this.userId = userId;
         this.corn = corn;
         this.regDate = regDate;

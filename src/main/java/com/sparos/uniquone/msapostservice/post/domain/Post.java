@@ -29,7 +29,7 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "post_category_id")
     private PostCategory postCategory;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    @Column(nullable = false, columnDefinition = "VARCHAR(30)")
     private String title;
 
     @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
@@ -44,6 +44,7 @@ public class Post extends BaseTimeEntity {
 
     private Integer price;
 
+    @Enumerated(EnumType.STRING)
     private ProductSize productSize;
 
     private String color;
