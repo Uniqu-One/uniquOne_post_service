@@ -102,6 +102,9 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
 
+	// https://mvnrepository.com/artifact/net.coobird/thumbnailator titleImage 용
+	implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.12'
+
 }
 
 dependencyManagement {

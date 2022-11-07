@@ -4,6 +4,7 @@ import com.sparos.uniquone.msapostservice.corn.dto.CornCreateDto;
 import com.sparos.uniquone.msapostservice.corn.dto.CornInfoDto;
 import com.sparos.uniquone.msapostservice.corn.dto.CornModifyDto;
 import com.sparos.uniquone.msapostservice.corn.dto.CornRandomNickNameDto;
+import com.sparos.uniquone.msapostservice.corn.dto.response.CornMyDashboardResponseDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,9 @@ public interface ICornService {
 
     Object patchCornModifyInfo(CornModifyDto cornModifyDto, MultipartFile multipartFile, Long userId) throws IOException;
     CornRandomNickNameDto generatedNickName();
+
+    CornMyDashboardResponseDto getMyCornDashboard(HttpServletRequest request);
+
 
     Object isCornExistence(Long userId);
 }

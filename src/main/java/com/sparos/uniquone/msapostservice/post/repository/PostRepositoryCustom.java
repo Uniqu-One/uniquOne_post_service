@@ -119,6 +119,9 @@ public class PostRepositoryCustom {
     //추천순 포스트 리스트 비회원
     public PostRecommendListResponseDto getPostCoolListOfNonUser(Pageable pageable) {
 
+
+//        class java.lang.Long, class java.lang.String, class java.lang.String, class java.lang.Long, class java.lang.String, class java.lang.Long
+
         List<PostRecommendResponseDto> result = jpaQueryFactory.select(
                         Projections.constructor(
                                 PostRecommendResponseDto.class

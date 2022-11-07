@@ -2,6 +2,7 @@ package com.sparos.uniquone.msapostservice.corn.service;
 
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.dto.*;
+import com.sparos.uniquone.msapostservice.corn.dto.response.CornMyDashboardResponseDto;
 import com.sparos.uniquone.msapostservice.corn.repository.CornRepositoryCustom;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.follow.domain.Follow;
@@ -14,8 +15,10 @@ import com.sparos.uniquone.msapostservice.util.s3.AwsS3UploaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +26,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -224,11 +226,38 @@ public class CornServiceImpl implements ICornService {
     }
 
     @Override
+    public CornMyDashboardResponseDto getMyCornDashboard(HttpServletRequest request) {
+        if (!isUser(request)) {
+            throw new UniquOneServiceException(ExceptionCode.ONLY_USER, HttpStatus.OK);
+        }
+        Long userPkId = JwtProvider.getUserPkId(request);
+        //콘 아이디 검색
+        Corn corn = iCornRepository.findByUserId(userPkId).orElseThrow(() -> {
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.OK);
+        });
+
+        cornRepositoryCustom.getMyCornDashboard(userPkId, corn.getId());
+
+        return null;
+
+    }
+
+    @Override
     public Object isCornExistence(Long userId) {
         Map<String, Boolean> isMap = new HashMap<>();
         isMap.put("isCornExistence", iCornRepository.existsByUserId(userId));
         return isMap;
     }
 
+    private boolean isUser(HttpServletRequest request) {
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (StringUtils.hasText(token)) {
+            if (JwtProvider.validateToken(token))
+                return true;
+            throw new UniquOneServiceException(ExceptionCode.INVALID_TOKEN, HttpStatus.OK);
+        }
+
+        return false;
+    }
 
 }

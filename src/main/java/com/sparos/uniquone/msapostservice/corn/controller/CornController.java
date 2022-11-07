@@ -113,4 +113,11 @@ public class CornController {
         }
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_NOT_TOKEN_CODE,"토큰이없습니다."));
     }
+
+    @GetMapping("/my/dashboard")
+    public ResponseEntity<SuccessResponse> getMyCornDashboard(HttpServletRequest request){
+        //토큰 검사.
+
+        return null;
+    }
 }
