@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
 import java.util.List;
@@ -53,9 +54,8 @@ public class CornRepositoryCustom {
                 .from(follow)
                 .where(follow.corn.id.eq(cornId),
                         follow.regDate.between
-                                (LocalDateTime.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY)),
-                                        LocalDateTime.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)
-                                        )
+                                (LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY)).atStartOfDay(),
+                                        LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).atStartOfDay()
                                 ))
                 .fetchOne();
 
@@ -64,7 +64,11 @@ public class CornRepositoryCustom {
                 .from(corn)
                 .leftJoin(post).on(post.corn.eq(corn))
                 .leftJoin(cool).on(cool.post.eq(post))
-                .where(corn.id.eq(cornId))
+                .where(corn.id.eq(cornId),
+                        cool.regDate.between(
+                                getMondayThisWeek(LocalDate.now()).atStartOfDay(),
+                                LocalDate.now().with(DayOfWeek.SUNDAY).atStartOfDay()
+                        ))
                 .fetchOne();
 
         //콘이 가진 포스트 들의 유니스타 개수. 레벨은 힘듬 ..ㅎ;
@@ -72,22 +76,47 @@ public class CornRepositoryCustom {
                 .from(corn)
                 .leftJoin(post).on(post.corn.eq(corn))
                 .leftJoin(uniStar).on(uniStar.post.eq(post))
-                .where(corn.id.eq(cornId))
+                .where(corn.id.eq(cornId),
+                        uniStar.regDate.between(
+                                getMondayThisWeek(LocalDate.now()).atStartOfDay(),
+                                LocalDate.now().with(DayOfWeek.SUNDAY).atStartOfDay()
+                        ))
                 .fetchOne();
         //콘이 가진 포스트 들의 오퍼 개수.;
         Long offerCount = jpaQueryFactory.select(offer.count())
                 .from(corn)
                 .leftJoin(post).on(post.corn.eq(corn))
                 .leftJoin(offer).on(offer.post.eq(post))
-                .where(corn.id.eq(cornId))
+                .where(corn.id.eq(cornId),
+                        offer.regDate.between(
+                                getMondayThisWeek(LocalDate.now()).atStartOfDay(),
+                                LocalDate.now().with(DayOfWeek.SUNDAY).atStartOfDay()
+                        ))
                 .fetchOne();
 
 
-        log.info("월요일 날짜 = {} ", LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY)));
-        log.info("일요일 날짜 = {} ", LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)));
-        log.info("월요일 날짜2 = {} ", LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).atStartOfDay());
+//        log.info("월요일 날짜 = {} ", LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY)));
+//        log.info("일요일 날짜 = {} ", LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)));
+////        log.info("월요일 날짜2 = {} ", LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).atStartOfDay());
+//        log.info("월요일 날짜2 = {} ", LocalDate.now().with(DayOfWeek.MONDAY));
+//        log.info("일요일 날짜2 = {} ", LocalDate.now().with(DayOfWeek.SUNDAY).atStartOfDay());
 
-
+//        log.info("월요일 Test = {} ", LocalDate.of(2022, Month.NOVEMBER, 12).with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY)));
+//        log.info("월요일 Test2 = {} ", getMondayThisWeek(LocalDate.of(2022, Month.NOVEMBER, 12)).atStartOfDay());
+//        log.info("일요일 Test = {} ", LocalDate.of(2022, Month.NOVEMBER, 13).with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)));
+//        log.info("일요일 날짜3 = {} ",LocalDate.of(2022, Month.NOVEMBER, 8).with(DayOfWeek.SUNDAY).atStartOfDay());
         return new CornMyDashboardResponseDto(followCount, coolCount, uniStarCount, offerCount);
+    }
+
+    public static LocalDate getMondayThisWeek(LocalDate todayDate) {
+        final LocalDate c2;
+        //    현재 날자의 요일을 가져오는데 오늘이 일요일 이면 - 6일 뺀다.
+        if (todayDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            c2 = todayDate.minusDays(6);
+        } else {
+            c2 = todayDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        }
+        return c2;
+
     }
 }
