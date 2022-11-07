@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatRoomDto {
+public class OfferChatRoomCreateDto {
 
     private Long postId;
+    private Long userId;
     private Long receiverId;
-    private Integer postPrice;
+    private Long postPrice;
     private Long offerPrice;
-    private ChatRoomType chatType;
 
 }

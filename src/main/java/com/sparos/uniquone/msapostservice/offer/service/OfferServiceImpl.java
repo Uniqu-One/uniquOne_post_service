@@ -16,6 +16,7 @@ import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.util.feign.dto.ChatRoomDto;
 import com.sparos.uniquone.msapostservice.util.feign.dto.ChatRoomType;
 import com.sparos.uniquone.msapostservice.util.feign.service.IChatConnect;
+import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
@@ -41,6 +42,7 @@ public class OfferServiceImpl implements IOfferService{
     private final OfferRepositoryCustom offerRepositoryCustom;
     private final IEmitterService iEmitterService;
     private final IChatConnect iChatConnect;
+    private final IUserConnect iUserConnect;
 
     // 오퍼 보내기
     @Override
@@ -106,7 +108,8 @@ public class OfferServiceImpl implements IOfferService{
 
                     return OfferUtils.entityToOfferDetailIndividualOutDto(
                             offer,
-                            iCornRepository.findImgUrlByUserId(userId), userId, userNickName,
+                            iCornRepository.findImgUrlByUserId(offer.getUserId()), offer.getUserId(),
+                            iUserConnect.getNickName(offer.getUserId()),
                             chatRoomId);
                 }).collect(Collectors.toList());
 
@@ -140,8 +143,6 @@ public class OfferServiceImpl implements IOfferService{
     public JSONObject offerChecked(OfferCheckedInPutDto offerCheckedInPutDto, HttpServletRequest request) {
 
         JSONObject jsonObject = new JSONObject();
-        Map<String, String> chatRoomIdMap = new HashMap<>();
-
         Offer offer = iOfferRepository.findById(offerCheckedInPutDto.getOfferId())
               .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
@@ -151,6 +152,9 @@ public class OfferServiceImpl implements IOfferService{
         if (offer.getOfferType().equals(OfferType.ACCEPT)) {
             ChatRoomDto chatRoomDto = ChatRoomDto.builder()
                     .postId(offer.getPost().getId())
+                    .receiverId(offer.getUserId())
+                    .postPrice(offer.getPost().getPrice())
+                    .offerPrice(offer.getPrice())
                     .chatType(ChatRoomType.SELLER)
                     .build();
             iChatConnect.offerChat(chatRoomDto, JwtProvider.getTokenFromRequestHeader(request));
