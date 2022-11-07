@@ -15,5 +15,8 @@ public class FollowerInfoDto {
     private Long cornId;
     private String userName;
     private Long userId;
+    private Boolean isFollow;
+
+    public void addIsFollow(Boolean isFollow){ this.isFollow=isFollow;}
 
 }

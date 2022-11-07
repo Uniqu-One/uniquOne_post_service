@@ -11,9 +11,12 @@ public class FollowingInfoDto {
     private String cornImgUrl;
     private String cornTitle;
     private String userName;
+    private Boolean isFollow;
     private Long cornId;
 
     public void addUserName(String userName){
         this.userName=userName;
     }
+    public void addIsFollow(Boolean isFollow){ this.isFollow=isFollow; }
+    public void addCornId(Long cornId){ this.cornId=cornId; }
 }

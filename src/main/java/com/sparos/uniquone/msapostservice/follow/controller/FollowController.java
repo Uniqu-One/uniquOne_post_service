@@ -6,7 +6,9 @@ import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
 import com.sparos.uniquone.msapostservice.util.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,8 +42,14 @@ public class FollowController {
     }
 
     @GetMapping("/otherfollower/{cornId}")
-    public ResponseEntity<SuccessResponse> getOtherFollower (HttpServletRequest httpServletRequest,@PathVariable("cornId")Long cornId ){
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE,iFollowService.getOtherFollower(cornId)));
+    public ResponseEntity<SuccessResponse> getOtherFollower (HttpServletRequest httpServletRequest,@PathVariable("cornId")Long cornId ) {
+        String token = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
+        if (StringUtils.hasText(token)) {
+            if (JwtProvider.validateToken(token)) ;
+            Long userPkId = JwtProvider.getUserPkId(httpServletRequest);
+            return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iFollowService.getOtherFollower(cornId, userPkId)));
+        }
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, iFollowService.getOtherFollower(cornId)));
     }
 
     @GetMapping("/myfollower")
