@@ -6,18 +6,12 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparos.uniquone.msapostservice.eco.dto.EcoCntDto;
-import com.sparos.uniquone.msapostservice.offer.dto.OfferCntDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
 
-import static com.sparos.uniquone.msapostservice.offer.domain.QOffer.offer;
 import static com.sparos.uniquone.msapostservice.trade.domain.QTrade.trade;
 
 @RequiredArgsConstructor
@@ -27,7 +21,7 @@ public class EcoRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public EcoCntDto findCntByDate(){
+    public EcoCntDto findCntByDate() {
 
         StringTemplate formattedDate = Expressions.stringTemplate(
                 "DATE_FORMAT({0}, {1})",
