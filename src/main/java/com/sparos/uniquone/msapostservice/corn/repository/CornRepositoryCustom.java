@@ -54,7 +54,7 @@ public class CornRepositoryCustom {
                 .from(follow)
                 .where(follow.corn.id.eq(cornId),
                         follow.regDate.between
-                                (LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY)).atStartOfDay(),
+                                (getMondayThisWeek(LocalDate.now()).atStartOfDay(),
                                         LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).atStartOfDay()
                                 ))
                 .fetchOne();
