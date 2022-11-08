@@ -125,6 +125,7 @@ public class SearchPostRepositoryImpl extends QuerydslRepositorySupport implemen
 //            hasNext = true;
 //        }
         hasNext = getPageHasNext(result, result.size(), pageable.getPageSize());
+        log.info("keyword = {} ", searchRequestDto.getKeyword());
 
 
         return new SearchPostListResponseDto(result, totalSearchCount, hasNext);
