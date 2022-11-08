@@ -34,6 +34,13 @@ public class NotiController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
 
+    // 미확인 알림 카운팅
+    @GetMapping(value = "/nonCnt")
+    public ResponseEntity<SuccessResponse> notiNonCheckedCnt(HttpServletRequest request) {
+        JSONObject jsonObject = iNotiService.notiNonCheckedCnt(request);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
+    }
+
     // 미사용
     // 알림 확인
     @PatchMapping(value = "")
@@ -42,11 +49,5 @@ public class NotiController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
 
-    // 비확인 알림 카운팅
-    @GetMapping(value = "/nonCnt")
-    public ResponseEntity<SuccessResponse> notiNonCheckedCnt(HttpServletRequest request) {
-        JSONObject jsonObject = iNotiService.notiNonCheckedCnt(request);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
-    }
 }
 

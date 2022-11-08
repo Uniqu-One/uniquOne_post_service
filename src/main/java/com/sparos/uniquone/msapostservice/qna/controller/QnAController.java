@@ -1,6 +1,5 @@
 package com.sparos.uniquone.msapostservice.qna.controller;
 
-import com.sparos.uniquone.msapostservice.qna.dto.AnswerInputDto;
 import com.sparos.uniquone.msapostservice.qna.dto.QuestionInputDto;
 import com.sparos.uniquone.msapostservice.qna.service.IQnAService;
 import com.sparos.uniquone.msapostservice.util.response.SuccessCode;
