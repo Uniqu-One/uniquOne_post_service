@@ -95,6 +95,7 @@ public class ComplexServiceImpl implements IComplexService {
         mainContentsDtoList.stream().map(MainContentsDto -> {
             MainContentsDto.addIsCool(iCoolRepository.existsByUserIdAndPostId(userId, MainContentsDto.getPostId()));
             MainContentsDto.addPostImgUrl(iPostImgRepository.findOneByPostIdAndIdx(MainContentsDto.getPostId(),1).getUrl());
+            MainContentsDto.addIsFollow(true);
             return MainContentsDto;
         }).collect(Collectors.toList());
         return PostSlicePageDto.builder()
@@ -124,6 +125,7 @@ public class ComplexServiceImpl implements IComplexService {
                 .build();
         return postSlicePageDto;
     }
+
 
     @Override
     public Object getPostDetailPageCronInfo(Long cornId) {

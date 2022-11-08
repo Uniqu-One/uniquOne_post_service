@@ -26,4 +26,6 @@ public class CornInfoDto {
     private String dsc;
 
     private Boolean isFollow;
+
+    private String userNickName;
 }

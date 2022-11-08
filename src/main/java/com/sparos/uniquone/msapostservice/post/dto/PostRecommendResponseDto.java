@@ -1,6 +1,8 @@
 package com.sparos.uniquone.msapostservice.post.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ public class PostRecommendResponseDto {
     private Boolean isFollow;
     private Integer uniStar;
 
+    private Long cornId;
     public PostRecommendResponseDto(Long postId, String postImgUrl) {
         this.postId = postId;
         this.postImgUrl = postImgUrl;
@@ -25,7 +28,16 @@ public class PostRecommendResponseDto {
         this.cornImgUrl = cornImgUrl;
         this.userNickName = userNickName;
     }
-    public PostRecommendResponseDto(Long postId,String postImgUrl ,String cornImgUrl, String userNickName, boolean isCool, boolean isFollow, Integer uniStar) {
+
+    public PostRecommendResponseDto(Long postId, String postImgUrl, String cornImgUrl, String userNickName, Long cornId) {
+        this.postId = postId;
+        this.postImgUrl = postImgUrl;
+        this.cornImgUrl = cornImgUrl;
+        this.userNickName = userNickName;
+        this.cornId = cornId;
+    }
+
+    public PostRecommendResponseDto(Long postId, String postImgUrl , String cornImgUrl, String userNickName, boolean isCool, boolean isFollow, Integer uniStar) {
         this.postId = postId;
         this.postImgUrl = postImgUrl;
         this.cornImgUrl = cornImgUrl;
@@ -33,6 +45,16 @@ public class PostRecommendResponseDto {
         this.isCool = isCool;
         this.isFollow = isFollow;
         this.uniStar = uniStar;
+    }
+    public PostRecommendResponseDto(Long postId, String postImgUrl , String cornImgUrl, String userNickName, boolean isCool, boolean isFollow, Integer uniStar, Long cornId) {
+        this.postId = postId;
+        this.postImgUrl = postImgUrl;
+        this.cornImgUrl = cornImgUrl;
+        this.userNickName = userNickName;
+        this.isCool = isCool;
+        this.isFollow = isFollow;
+        this.uniStar = uniStar;
+        this.cornId = cornId;
     }
 
     public PostRecommendResponseDto(Long postId, String postImgUrl, Boolean isCool) {

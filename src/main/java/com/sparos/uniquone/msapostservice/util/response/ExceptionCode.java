@@ -33,7 +33,9 @@ public enum ExceptionCode {
     NOTFOUND_UNISTAR("F013","유니스타가 존재 하지 않습니다."),
 
     NOTFOUND_CORN("F014","콘이 존재 하지 않습니다."),
-    NOTFOUND_POST("F015","포스트가 존재 하지 않습니다.")
+    NOTFOUND_POST("F015","포스트가 존재 하지 않습니다."),
+    ONLY_USER("F016","유저만 가능한 기능 입니다.")
+
     ;
 
 

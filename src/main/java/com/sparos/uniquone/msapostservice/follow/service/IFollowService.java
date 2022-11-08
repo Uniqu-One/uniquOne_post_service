@@ -7,5 +7,6 @@ public interface IFollowService {
     Object getFollowing(Long userId);
     Object getOtherFollowing(Long cornId);
     Object getFollower(Long userId);
+    Object getOtherFollower(Long cornId, Long userId);
     Object getOtherFollower(Long cornId);
 }

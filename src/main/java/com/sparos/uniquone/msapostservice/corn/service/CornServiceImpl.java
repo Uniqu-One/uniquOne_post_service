@@ -2,6 +2,7 @@ package com.sparos.uniquone.msapostservice.corn.service;
 
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.dto.*;
+import com.sparos.uniquone.msapostservice.corn.dto.response.CornMyDashboardResponseDto;
 import com.sparos.uniquone.msapostservice.corn.repository.CornRepositoryCustom;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.follow.domain.Follow;
@@ -14,8 +15,10 @@ import com.sparos.uniquone.msapostservice.util.s3.AwsS3UploaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +26,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -67,19 +69,20 @@ public class CornServiceImpl implements ICornService {
     public CornInfoDto getMyCornInfo(Long userId) {
         Corn corn = iCornRepository.findByUserId(userId).orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
         ReviewStarPostEAInfoOutputDto reviewStarPostEAInfoOutputDto = cornRepositoryCustom.findByCornIdPostReview(corn.getId());
-        if(reviewStarPostEAInfoOutputDto!=null){
-        return CornInfoDto.builder()
-                .imgUrl(corn.getImgUrl())
-                .title(corn.getTitle())
-                .reviewStar(reviewStarPostEAInfoOutputDto.getReviewStar())
-                .reviewEA(reviewStarPostEAInfoOutputDto.getReviewEA())
-                .postEA(reviewStarPostEAInfoOutputDto.getPostEA())
-                .followerEA(iFollowRepository.countByCorn(corn).get())
-                .followingEA(iFollowRepository.countByUserId(userId).get())
-                .url(corn.getUrl())
-                .dsc(corn.getDsc())
-                .build();
-        }else {
+        if (reviewStarPostEAInfoOutputDto != null) {
+            return CornInfoDto.builder()
+                    .imgUrl(corn.getImgUrl())
+                    .title(corn.getTitle())
+                    .reviewStar(reviewStarPostEAInfoOutputDto.getReviewStar())
+                    .reviewEA(reviewStarPostEAInfoOutputDto.getReviewEA())
+                    .postEA(reviewStarPostEAInfoOutputDto.getPostEA())
+                    .followerEA(iFollowRepository.countByCorn(corn).get())
+                    .followingEA(iFollowRepository.countByUserId(userId).get())
+                    .url(corn.getUrl())
+                    .dsc(corn.getDsc())
+                    .userNickName(corn.getUserNickName())
+                    .build();
+        } else {
             return CornInfoDto.builder()
                     .imgUrl(corn.getImgUrl())
                     .title(corn.getTitle())
@@ -87,6 +90,7 @@ public class CornServiceImpl implements ICornService {
                     .followingEA(iFollowRepository.countByUserId(userId).get())
                     .url(corn.getUrl())
                     .dsc(corn.getDsc())
+                    .userNickName(corn.getUserNickName())
                     .build();
         }
 
@@ -97,17 +101,30 @@ public class CornServiceImpl implements ICornService {
         Corn corn = iCornRepository.findById(cornId).orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
         List<Follow> follower = iFollowRepository.findByCornId(cornId);
         ReviewStarPostEAInfoOutputDto reviewStarPostEAInfoOutputDto = cornRepositoryCustom.findByCornIdPostReview(cornId);
-        return CornInfoDto.builder()
-                .imgUrl(corn.getImgUrl())
-                .title(corn.getTitle())
-                .reviewStar(reviewStarPostEAInfoOutputDto.getReviewStar())
-                .reviewEA(reviewStarPostEAInfoOutputDto.getReviewEA())
-                .postEA(reviewStarPostEAInfoOutputDto.getPostEA())
-                .followerEA(follower.stream().count())
-                .followingEA(iFollowRepository.countByUserId(corn.getUserId()).get())
-                .url(corn.getUrl())
-                .dsc(corn.getDsc())
-                .isFollow(follower.stream().anyMatch(follow -> follow.getUserId().equals(userId))).build();
+        if (reviewStarPostEAInfoOutputDto != null) {
+            return CornInfoDto.builder()
+                    .imgUrl(corn.getImgUrl())
+                    .title(corn.getTitle())
+                    .reviewStar(reviewStarPostEAInfoOutputDto.getReviewStar())
+                    .reviewEA(reviewStarPostEAInfoOutputDto.getReviewEA())
+                    .postEA(reviewStarPostEAInfoOutputDto.getPostEA())
+                    .followerEA(follower.stream().count())
+                    .followingEA(iFollowRepository.countByUserId(corn.getUserId()).get())
+                    .url(corn.getUrl())
+                    .dsc(corn.getDsc())
+                    .userNickName(corn.getUserNickName())
+                    .isFollow(follower.stream().anyMatch(follow -> follow.getUserId().equals(userId))).build();
+        } else {
+            return CornInfoDto.builder()
+                    .imgUrl(corn.getImgUrl())
+                    .title(corn.getTitle())
+                    .followerEA(follower.stream().count())
+                    .followingEA(iFollowRepository.countByUserId(corn.getUserId()).get())
+                    .url(corn.getUrl())
+                    .dsc(corn.getDsc())
+                    .userNickName(corn.getUserNickName())
+                    .isFollow(follower.stream().anyMatch(follow -> follow.getUserId().equals(userId))).build();
+        }
     }
 
     @Override
@@ -115,34 +132,60 @@ public class CornServiceImpl implements ICornService {
         Corn corn = iCornRepository.findById(cornId).orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
         List<Follow> follower = iFollowRepository.findByCornId(cornId);
         ReviewStarPostEAInfoOutputDto reviewStarPostEAInfoOutputDto = cornRepositoryCustom.findByCornIdPostReview(cornId);
-        return CornInfoDto.builder()
-                .imgUrl(corn.getImgUrl())
-                .title(corn.getTitle())
-                .reviewStar(reviewStarPostEAInfoOutputDto.getReviewStar())
-                .reviewEA(reviewStarPostEAInfoOutputDto.getReviewEA())
-                .postEA(reviewStarPostEAInfoOutputDto.getPostEA())
-                .followerEA(follower.stream().count())
-                .followingEA(iFollowRepository.countByUserId(corn.getUserId()).get())
-                .url(corn.getUrl())
-                .dsc(corn.getDsc())
-                .build();
+        if (reviewStarPostEAInfoOutputDto != null) {
+            return CornInfoDto.builder()
+                    .imgUrl(corn.getImgUrl())
+                    .title(corn.getTitle())
+                    .reviewStar(reviewStarPostEAInfoOutputDto.getReviewStar())
+                    .reviewEA(reviewStarPostEAInfoOutputDto.getReviewEA())
+                    .postEA(reviewStarPostEAInfoOutputDto.getPostEA())
+                    .followerEA(follower.stream().count())
+                    .followingEA(iFollowRepository.countByUserId(corn.getUserId()).get())
+                    .url(corn.getUrl())
+                    .dsc(corn.getDsc())
+                    .userNickName(corn.getUserNickName())
+                    .build();
+        } else {
+            return CornInfoDto.builder()
+                    .imgUrl(corn.getImgUrl())
+                    .title(corn.getTitle())
+                    .followerEA(follower.stream().count())
+                    .followingEA(iFollowRepository.countByUserId(corn.getUserId()).get())
+                    .url(corn.getUrl())
+                    .dsc(corn.getDsc())
+                    .userNickName(corn.getUserNickName())
+                    .build();
+        }
     }
 
     @Override
     public CornInfoDto getCornInfo(Long userId, Long cornId) {
         Corn corn = iCornRepository.findByUserId(userId).orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
         ReviewStarPostEAInfoOutputDto reviewStarPostEAInfoOutputDto = cornRepositoryCustom.findByCornIdPostReview(corn.getId());
-        return CornInfoDto.builder()
-                .imgUrl(corn.getImgUrl())
-                .title(corn.getTitle())
-                .reviewStar(reviewStarPostEAInfoOutputDto.getReviewStar())
-                .reviewEA(reviewStarPostEAInfoOutputDto.getReviewEA())
-                .postEA(reviewStarPostEAInfoOutputDto.getPostEA())
-                .followerEA(iFollowRepository.countByCorn(corn).get())
-                .followingEA(iFollowRepository.countByUserId(userId).get())
-                .url(corn.getUrl())
-                .dsc(corn.getDsc())
-                .isFollow(iFollowRepository.existsByUserIdAndCornId(userId, cornId)).build();
+        if (reviewStarPostEAInfoOutputDto != null) {
+            return CornInfoDto.builder()
+                    .imgUrl(corn.getImgUrl())
+                    .title(corn.getTitle())
+                    .reviewStar(reviewStarPostEAInfoOutputDto.getReviewStar())
+                    .reviewEA(reviewStarPostEAInfoOutputDto.getReviewEA())
+                    .postEA(reviewStarPostEAInfoOutputDto.getPostEA())
+                    .followerEA(iFollowRepository.countByCorn(corn).get())
+                    .followingEA(iFollowRepository.countByUserId(userId).get())
+                    .url(corn.getUrl())
+                    .dsc(corn.getDsc())
+                    .userNickName(corn.getUserNickName())
+                    .isFollow(iFollowRepository.existsByUserIdAndCornId(userId, cornId)).build();
+        } else {
+            return CornInfoDto.builder()
+                    .imgUrl(corn.getImgUrl())
+                    .title(corn.getTitle())
+                    .followerEA(iFollowRepository.countByCorn(corn).get())
+                    .followingEA(iFollowRepository.countByUserId(userId).get())
+                    .url(corn.getUrl())
+                    .dsc(corn.getDsc())
+                    .userNickName(corn.getUserNickName())
+                    .isFollow(iFollowRepository.existsByUserIdAndCornId(userId, cornId)).build();
+        }
     }
 
     @Override
@@ -159,14 +202,14 @@ public class CornServiceImpl implements ICornService {
     @Override
     public Object patchCornModifyInfo(CornModifyDto cornModifyDto, MultipartFile multipartFile, Long userId) throws IOException {
         if (multipartFile != null && !multipartFile.isEmpty()) {
-            Corn corn = iCornRepository.findByUserId(userId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+            Corn corn = iCornRepository.findByUserId(userId).orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
             corn.modImgUrl(awsS3UploaderService.upload(multipartFile, "uniquoneimg", "img"));
             corn.modTitle(cornModifyDto.getTitle());
             corn.modDsc(cornModifyDto.getDsc());
             corn.modUrl(cornModifyDto.getUrl());
             Corn saveCorn = iCornRepository.save(corn);
         } else {
-            Corn corn = iCornRepository.findByUserId(userId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+            Corn corn = iCornRepository.findByUserId(userId).orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
             corn.modImgUrl(cornModifyDto.getImgUrl());
             corn.modTitle(cornModifyDto.getTitle());
             corn.modDsc(cornModifyDto.getDsc());
@@ -183,11 +226,35 @@ public class CornServiceImpl implements ICornService {
     }
 
     @Override
+    public CornMyDashboardResponseDto getMyCornDashboard(HttpServletRequest request) {
+        if (!isUser(request)) {
+            throw new UniquOneServiceException(ExceptionCode.ONLY_USER, HttpStatus.OK);
+        }
+        Long userPkId = JwtProvider.getUserPkId(request);
+        //콘 아이디 검색
+        Corn corn = iCornRepository.findByUserId(userPkId).orElseThrow(() -> {
+            throw new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.OK);
+        });
+
+        return cornRepositoryCustom.getMyCornDashboard(userPkId, corn.getId());
+    }
+
+    @Override
     public Object isCornExistence(Long userId) {
         Map<String, Boolean> isMap = new HashMap<>();
         isMap.put("isCornExistence", iCornRepository.existsByUserId(userId));
         return isMap;
     }
 
+    private boolean isUser(HttpServletRequest request) {
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (StringUtils.hasText(token)) {
+            if (JwtProvider.validateToken(token))
+                return true;
+            throw new UniquOneServiceException(ExceptionCode.INVALID_TOKEN, HttpStatus.OK);
+        }
+
+        return false;
+    }
 
 }
