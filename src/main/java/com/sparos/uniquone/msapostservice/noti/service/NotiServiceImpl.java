@@ -113,8 +113,8 @@ public class NotiServiceImpl implements INotiService {
         }
 
         return NotiOutDto.builder()
-                .notiType(notification.getNotiType())
                 .notiId(notification.getId())
+                .notiType(notification.getNotiType())
                 .typeId(typeId)
                 .isFollow(isFollow)
                 .nickName(notification.getNickName())

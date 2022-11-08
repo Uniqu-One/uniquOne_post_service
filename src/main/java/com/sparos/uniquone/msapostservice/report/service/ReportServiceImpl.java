@@ -38,6 +38,7 @@ public class ReportServiceImpl implements IReportService{
         return jsonObject;
     }
 
+    // 신고 내역 조회
     @Override
     public JSONObject findAllReport() {
 

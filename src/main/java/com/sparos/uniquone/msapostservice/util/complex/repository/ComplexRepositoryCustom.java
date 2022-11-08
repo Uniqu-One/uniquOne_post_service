@@ -41,7 +41,7 @@ public class ComplexRepositoryCustom {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1)
                 .where(corn.id.in(cornIdList))
-                .orderBy(post.regDate.asc()).fetch();
+                .orderBy(post.regDate.desc()).fetch();
         return MainContentsDtoList;
     }
 
@@ -63,7 +63,7 @@ public class ComplexRepositoryCustom {
                 .leftJoin(corn).on(corn.eq(post.corn))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1)
-                .where(postAndLook.look.id.in(lookIdList)).groupBy(post).orderBy(post.regDate.asc()).fetch();
+                .where(postAndLook.look.id.in(lookIdList)).groupBy(post).orderBy(post.regDate.desc()).fetch();
         return MainContentsDtoList;
     }
 
