@@ -13,10 +13,13 @@ import lombok.NoArgsConstructor;
 public class QnAAdminOutDto {
 
     private Long qnaId;
+    private String userCornImg;
+    private String userNickName;
     private String question;
     private QuestionType questionType;
-    private String qRegDate;
     private String answer;
+    private String qRegDate;
+    private String aRegDate;
 
     private Boolean isAnswer;
 
