@@ -10,7 +10,7 @@ public interface IReportService {
     // 신고 등록
     JSONObject createReport(ReportInputDto reportInputDto, HttpServletRequest request);
 
-    // 모든 신고 내역 조회
+    // 신고 내역 조회
     JSONObject findAllReport();
 
 }

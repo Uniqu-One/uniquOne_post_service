@@ -17,7 +17,7 @@ public class AdminReportController {
 
     private final IReportService iReportService;
 
-    // 모든 문의 리스트 조회
+    // 신고 내역 조회
     @GetMapping("")
     public ResponseEntity<SuccessResponse> findAllReport() {
         JSONObject jsonObject = iReportService.findAllReport();
