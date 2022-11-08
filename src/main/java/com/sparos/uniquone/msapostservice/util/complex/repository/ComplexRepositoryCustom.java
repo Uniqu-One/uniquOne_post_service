@@ -35,12 +35,12 @@ public class ComplexRepositoryCustom {
                         corn.userNickName.as("userNickName"),
                         post.regDate.as("regDate"),
                         uniStar.level.as("uniStar")))
-                .from(corn)
-                .leftJoin(post).on(post.corn.eq(corn))
+                .from(post)
+                .leftJoin(corn).on(corn.eq(post.corn))
                 .leftJoin(uniStar).on(uniStar.post.eq(post).and(uniStar.userId.eq(userId)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1)
-                .where(corn.id.in(cornIdList))
+                .where(post.corn.id.in(cornIdList))
                 .orderBy(post.regDate.desc()).fetch();
         return MainContentsDtoList;
     }
