@@ -3,11 +3,12 @@ package com.sparos.uniquone.msapostservice.cool.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
-import com.sparos.uniquone.msapostservice.util.QBaseTimeEntity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
