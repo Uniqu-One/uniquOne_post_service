@@ -1,7 +1,10 @@
 package com.sparos.uniquone.msapostservice.corn.domain;
 
 import com.sparos.uniquone.msapostservice.util.BaseTimeEntity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
