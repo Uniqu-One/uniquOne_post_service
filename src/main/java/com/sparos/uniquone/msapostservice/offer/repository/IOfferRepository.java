@@ -21,5 +21,5 @@ public interface IOfferRepository extends JpaRepository<Offer, Long> {
 
     List<Offer> findByPostId(Long postId);
 
-    List<Offer> findByUserId(Long userId);
+    List<Offer> findByUserIdOrderByRegDateDesc(Long userId);
 }

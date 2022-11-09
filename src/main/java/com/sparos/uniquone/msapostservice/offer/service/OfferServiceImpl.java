@@ -94,7 +94,6 @@ public class OfferServiceImpl implements IOfferService{
 
         JSONObject jsonObject = new JSONObject();
         Long userId = JwtProvider.getUserPkId(request);
-        String userNickName = JwtProvider.getUserNickName(request);
 
         List<Offer> offers = iOfferRepository.findByPostId(postId);
         if (offers.isEmpty())
@@ -128,7 +127,7 @@ public class OfferServiceImpl implements IOfferService{
         JSONObject jsonObject = new JSONObject();
         Long userId = JwtProvider.getUserPkId(request);
 
-        List<Offer> offers = iOfferRepository.findByUserId(userId);
+        List<Offer> offers = iOfferRepository.findByUserIdOrderByRegDateDesc(userId);
         if (offers.isEmpty())
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 

@@ -42,20 +42,12 @@ public class NotiServiceImpl implements INotiService {
 
         Pageable pageable = PageRequest.of(pageNum - 1, 30, Sort.by(Sort.Direction.DESC, "regDate"));
         List<Noti> notis = iNotiRepository.findByUserId(userId, pageable);
-        System.err.println("1111111111111");
+
         if (notis.isEmpty()) {
-            System.err.println("222222222222222");
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
         }
-//        List<NotiOutDto> notiOutDto = new ArrayList<>();
-
-/*        for (Noti noti : notis){
-            notiOutDto.add(entityToNotiOutDto(noti));
-        }
-        jsonObject.put("data", notiOutDto.toArray());*/
 
         iNotiRepository.updateIsCheckByUserId(userId);
-        System.err.println("333333333333333333");
         jsonObject.put("data", notis.stream().map(noti -> entityToNotiOutDto(noti)));
 
         return jsonObject;
