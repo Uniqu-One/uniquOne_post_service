@@ -3,7 +3,6 @@ package com.sparos.uniquone.msapostservice.comment.service;
 import com.sparos.uniquone.msapostservice.comment.domain.Comment;
 import com.sparos.uniquone.msapostservice.comment.domain.CommentUtils;
 import com.sparos.uniquone.msapostservice.comment.dto.request.CommentCreateRequestDto;
-import com.sparos.uniquone.msapostservice.comment.dto.response.CommentListResponseDto;
 import com.sparos.uniquone.msapostservice.comment.dto.response.CommentResponseDto;
 import com.sparos.uniquone.msapostservice.comment.dto.response.CommentUpdateResponseDto;
 import com.sparos.uniquone.msapostservice.comment.dto.response.CommentUserInfoResponseDto;
@@ -14,7 +13,6 @@ import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.noti.domain.NotiType;
 import com.sparos.uniquone.msapostservice.noti.repository.INotiRepository;
 import com.sparos.uniquone.msapostservice.noti.service.IEmitterService;
-import com.sparos.uniquone.msapostservice.noti.service.INotiService;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
@@ -30,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -40,10 +37,8 @@ public class CommentServiceImpl implements CommentService {
     private final IPostRepository postRepository;
     private final ICommentRepository commentRepository;
     private final CommentRepositorySupport commentRepositorySupport;
-
     private final ICornRepository cornRepository;
     private final INotiRepository iNotiRepository;
-
     private final IEmitterService iEmitterService;
 
     @Override
@@ -71,10 +66,15 @@ public class CommentServiceImpl implements CommentService {
         String userEmail = JwtProvider.getUserEmail(token);
         String userNickName = JwtProvider.getUserNickName(token);
 
+        Corn corn = cornRepository.findByUserId(userPkId).orElseThrow(() -> {
+            throw new UniquOneServiceException(ExceptionCode.NOTFOUND_CORN, HttpStatus.OK);
+        });
+
         Comment comment = Comment.builder()
                 .userId(userPkId)
                 .userEmail(userEmail)
                 .userNickName(userNickName)
+                .cornId(corn.getId())
                 .post(post)
                 .content(requestDto.getContent())
                 .build();
@@ -91,6 +91,7 @@ public class CommentServiceImpl implements CommentService {
         if (parent != null) {
             commentResponseDto = CommentResponseDto.builder()
                     .commentId(comment.getId())
+                    .cornId(comment.getCornId())
                     .userId(userPkId)
                     .writerNick(comment.getUserNickName())
                     .content(comment.getContent())
@@ -102,6 +103,7 @@ public class CommentServiceImpl implements CommentService {
         } else {
             commentResponseDto = CommentResponseDto.builder()
                     .commentId(comment.getId())
+                    .cornId(comment.getCornId())
                     .userId(userPkId)
                     .writerNick(comment.getUserNickName())
                     .content(comment.getContent())
