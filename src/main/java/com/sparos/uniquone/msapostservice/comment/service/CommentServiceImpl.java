@@ -216,8 +216,8 @@ public class CommentServiceImpl implements CommentService {
             throw new UniquOneServiceException(ExceptionCode.INVALID_USERID, HttpStatus.OK);
         }
 
-        commentRepository.deleteById(commentId);
         iNotiRepository.updateCommentByCommentId(commentId);
+        commentRepository.deleteById(commentId);
 
         return ResponseEntity.status(HttpStatus.OK).body("삭제완료.");
     }
