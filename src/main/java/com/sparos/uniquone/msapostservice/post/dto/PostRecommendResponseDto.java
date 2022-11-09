@@ -19,10 +19,12 @@ public class PostRecommendResponseDto {
     private Integer uniStar;
 
     private Long cornId;
+
     public PostRecommendResponseDto(Long postId, String postImgUrl) {
         this.postId = postId;
         this.postImgUrl = postImgUrl;
     }
+
     public PostRecommendResponseDto(Long postId, String postImgUrl, String cornImgUrl, String userNickName) {
         this.postId = postId;
         this.postImgUrl = postImgUrl;
@@ -37,7 +39,8 @@ public class PostRecommendResponseDto {
         this.userNickName = userNickName;
         this.cornId = cornId;
     }
-    public PostRecommendResponseDto(Long postId,String cornNickName, String postImgUrl, String cornImgUrl, String userNickName, Long cornId) {
+
+    public PostRecommendResponseDto(Long postId, String postImgUrl, String cornNickName, String cornImgUrl, String userNickName, Long cornId) {
         this.postId = postId;
         this.postImgUrl = postImgUrl;
         this.cornNickName = cornNickName;
@@ -47,7 +50,7 @@ public class PostRecommendResponseDto {
     }
 
 
-    public PostRecommendResponseDto(Long postId, String postImgUrl , String cornImgUrl, String userNickName, boolean isCool, boolean isFollow, Integer uniStar) {
+    public PostRecommendResponseDto(Long postId, String postImgUrl, String cornImgUrl, String userNickName, boolean isCool, boolean isFollow, Integer uniStar) {
         this.postId = postId;
         this.postImgUrl = postImgUrl;
         this.cornImgUrl = cornImgUrl;
@@ -56,7 +59,8 @@ public class PostRecommendResponseDto {
         this.isFollow = isFollow;
         this.uniStar = uniStar;
     }
-    public PostRecommendResponseDto(Long postId, String postImgUrl , String cornImgUrl, String userNickName, boolean isCool, boolean isFollow, Integer uniStar, Long cornId) {
+
+    public PostRecommendResponseDto(Long postId, String postImgUrl, String cornImgUrl, String userNickName, boolean isCool, boolean isFollow, Integer uniStar, Long cornId) {
         this.postId = postId;
         this.postImgUrl = postImgUrl;
         this.cornImgUrl = cornImgUrl;
@@ -66,7 +70,8 @@ public class PostRecommendResponseDto {
         this.uniStar = uniStar;
         this.cornId = cornId;
     }
-    public PostRecommendResponseDto(Long postId, String postImgUrl ,String cornNickName ,String cornImgUrl, String userNickName, boolean isCool, boolean isFollow, Integer uniStar, Long cornId) {
+
+    public PostRecommendResponseDto(Long postId, String postImgUrl, String cornNickName, String cornImgUrl, String userNickName, boolean isCool, boolean isFollow, Integer uniStar, Long cornId) {
         this.postId = postId;
         this.postImgUrl = postImgUrl;
         this.cornNickName = cornNickName;
