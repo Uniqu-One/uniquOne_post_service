@@ -25,7 +25,7 @@ public class CommonsServiceImpl implements CommonsService {
         Optional<Corn> oCorn = cornRepository.findByUserId(userPkId);
 
         if(oCorn.isPresent()){
-            return new CommonsUserResponseDto(userPkId,oCorn.get().getId(),oCorn.get().getImgUrl());
+            return new CommonsUserResponseDto(userPkId,oCorn.get().getUserNickName(),oCorn.get().getId(),oCorn.get().getImgUrl());
         }
 
         return new CommonsUserResponseDto(userPkId, null);
