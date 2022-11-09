@@ -33,13 +33,16 @@ public class FollowServiceImpl implements IFollowService {
 
     @Override
     public Object postFollowing(Long cornId, Long userId) {
-        Corn corn = iCornRepository.findById(cornId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
-        Follow follow = iFollowRepository.save(Follow.builder().corn(corn).userId(userId).build());
-
-        iEmitterService.send(corn.getUserId(), follow, NotiType.FOLLOW);
-
-        return "팔로우 되었습니다.";
-    }
+        Corn corn = iCornRepository.findById(cornId).orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+        Boolean isFollow = iFollowRepository.existsByUserIdAndCornId(userId, cornId);
+        if (!isFollow) {
+            Follow follow = iFollowRepository.save(Follow.builder().corn(corn).userId(userId).build());
+            iEmitterService.send(corn.getUserId(), follow, NotiType.FOLLOW);
+            return "팔로우 되었습니다.";
+        }else {
+         return "이미 팔로우 되었습니다.";
+        }
+   }
 
     @Override
     public Object deleteUnFollowing(Long cornId, Long userId) {
@@ -78,41 +81,41 @@ public class FollowServiceImpl implements IFollowService {
 
     @Override
     public Object getFollower(Long userId) {
-        Corn userCorn = iCornRepository.findByUserId(userId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+        Corn userCorn = iCornRepository.findByUserId(userId).orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
         List<Follow> followerList = iFollowRepository.findByCornId(userCorn.getId());
         List<FollowerInfoDto> followerInfoDtoList = followerList.stream().map(follow -> {
             Optional<Corn> corn = iCornRepository.findByUserId(follow.getUserId());
-            if(corn.isPresent()){
-                Boolean isFollow = iFollowRepository.existsByUserIdAndCornId(userId,corn.get().getId());
-             return FollowerInfoDto.builder().cornTitle(corn.get().getTitle())
-                     .cornImgUrl(corn.get().getImgUrl())
-                     .cornId(corn.get().getId())
-                     .userName(iUserConnect.getUserNickName(follow.getUserId()).getNickname())
-                     .userId(follow.getUserId())
-                     .isFollow(isFollow).build();
-            }else{
-            return FollowerInfoDto.builder()
-                    .userName(iUserConnect.getUserNickName(follow.getUserId()).getNickname())
-                    .userId(follow.getUserId()).build();
-            }
-        }).collect(Collectors.toList());
-        return followerInfoDtoList;
-    }
-
-    @Override
-    public Object getOtherFollower(Long cornId,Long userId) {
-        List<Follow> followerList = iFollowRepository.findByCornId(cornId);
-        List<FollowerInfoDto> followerInfoDtoList = followerList.stream().map(follow -> {
-            Optional<Corn> corn = iCornRepository.findByUserId(follow.getUserId());
-            if(corn.isPresent()){
-                Boolean isFollow = iFollowRepository.existsByUserIdAndCornId(userId,corn.get().getId());
+            if (corn.isPresent()) {
+                Boolean isFollow = iFollowRepository.existsByUserIdAndCornId(userId, corn.get().getId());
                 return FollowerInfoDto.builder().cornTitle(corn.get().getTitle())
                         .cornImgUrl(corn.get().getImgUrl())
                         .cornId(corn.get().getId())
                         .userName(iUserConnect.getUserNickName(follow.getUserId()).getNickname())
                         .userId(follow.getUserId())
                         .isFollow(isFollow).build();
-            }else{
+            } else {
+                return FollowerInfoDto.builder()
+                        .userName(iUserConnect.getUserNickName(follow.getUserId()).getNickname())
+                        .userId(follow.getUserId()).build();
+            }
+        }).collect(Collectors.toList());
+        return followerInfoDtoList;
+    }
+
+    @Override
+    public Object getOtherFollower(Long cornId, Long userId) {
+        List<Follow> followerList = iFollowRepository.findByCornId(cornId);
+        List<FollowerInfoDto> followerInfoDtoList = followerList.stream().map(follow -> {
+            Optional<Corn> corn = iCornRepository.findByUserId(follow.getUserId());
+            if (corn.isPresent()) {
+                Boolean isFollow = iFollowRepository.existsByUserIdAndCornId(userId, corn.get().getId());
+                return FollowerInfoDto.builder().cornTitle(corn.get().getTitle())
+                        .cornImgUrl(corn.get().getImgUrl())
+                        .cornId(corn.get().getId())
+                        .userName(iUserConnect.getUserNickName(follow.getUserId()).getNickname())
+                        .userId(follow.getUserId())
+                        .isFollow(isFollow).build();
+            } else {
                 return FollowerInfoDto.builder()
                         .userName(iUserConnect.getUserNickName(follow.getUserId()).getNickname())
                         .userId(follow.getUserId()).build();
@@ -126,13 +129,13 @@ public class FollowServiceImpl implements IFollowService {
         List<Follow> followerList = iFollowRepository.findByCornId(cornId);
         List<FollowerInfoDto> followerInfoDtoList = followerList.stream().map(follow -> {
             Optional<Corn> corn = iCornRepository.findByUserId(follow.getUserId());
-            if(corn.isPresent()){
+            if (corn.isPresent()) {
                 return FollowerInfoDto.builder().cornTitle(corn.get().getTitle())
                         .cornImgUrl(corn.get().getImgUrl())
                         .cornId(corn.get().getId())
                         .userName(iUserConnect.getUserNickName(follow.getUserId()).getNickname())
                         .userId(follow.getUserId()).build();
-            }else{
+            } else {
                 return FollowerInfoDto.builder()
                         .userName(iUserConnect.getUserNickName(follow.getUserId()).getNickname())
                         .userId(follow.getUserId()).build();

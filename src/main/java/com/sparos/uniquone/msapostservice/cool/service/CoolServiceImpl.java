@@ -18,12 +18,15 @@ public class CoolServiceImpl implements ICoolService {
 
     @Override
     public Object addCool(Long userId, Long postId) {
-        Cool cool = iCoolRepository.save(Cool.builder().post(iPostRepository.findById(postId).get()).userId(userId).build());
-
-        // 알림
-        iEmitterService.send(cool.getPost().getCorn().getUserId(), cool, NotiType.COOL);
-
-        return "좋아요가 완료되었습니다.";
+        Boolean isCool = iCoolRepository.existsByUserIdAndPostId(userId,postId);
+        if(!isCool) {
+            Cool cool = iCoolRepository.save(Cool.builder().post(iPostRepository.findById(postId).get()).userId(userId).build());
+            // 알림
+            iEmitterService.send(cool.getPost().getCorn().getUserId(), cool, NotiType.COOL);
+            return "좋아요가 완료되었습니다.";
+        }else {
+            return "이미 좋아요가 반영되었습니다.";
+        }
     }
 
     @Override
