@@ -80,9 +80,9 @@ public class AdminController {
     }
 
     // 모든 문의 리스트 조회
-    @GetMapping("/qna")
-    public ResponseEntity<SuccessResponse> findAllQnA() {
-        JSONObject jsonObject = iQnAService.findAllQnA();
+    @GetMapping("/qna/all/{pageNum}")
+    public ResponseEntity<SuccessResponse> findAllQnA(@PathVariable int pageNum) {
+        JSONObject jsonObject = iQnAService.findAllQnA(pageNum);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
 

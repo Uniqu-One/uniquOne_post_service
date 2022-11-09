@@ -26,6 +26,13 @@ public class EcoController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
     }
 
+    // 지금까지 탄소 절감 합
+    @GetMapping("/allSum")
+    public ResponseEntity<SuccessResponse> findAllSumEco() {
+        JSONObject jsonObject = iEcoService.findAllSumEco();
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SUCCESS_CODE, jsonObject.get("data")));
+    }
+
     // 총 탄소 절감 조회
     @GetMapping("/all")
     public ResponseEntity<SuccessResponse> findAllEco() {

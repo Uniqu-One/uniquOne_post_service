@@ -18,7 +18,7 @@ public interface IQnAService {
     JSONObject findMyDetailQnA(Long qnaId, HttpServletRequest request);
 
     // 모든 문의 내역 조회
-    JSONObject findAllQnA();
+    JSONObject findAllQnA(int pageNum);
 
     // 문의 상세 조회
     JSONObject findDetailQnA(Long qnaId);
