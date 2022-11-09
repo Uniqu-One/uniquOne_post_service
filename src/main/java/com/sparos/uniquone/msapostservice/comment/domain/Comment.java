@@ -30,6 +30,9 @@ public class Comment extends BaseTimeEntity {
     @Column(nullable = false)
     private String userNickName;
 
+    @Column(nullable = false)
+    private Long cornId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;

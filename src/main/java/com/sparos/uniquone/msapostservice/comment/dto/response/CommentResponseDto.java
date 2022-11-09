@@ -17,11 +17,14 @@ import java.util.List;
 @NoArgsConstructor
 public class CommentResponseDto {
 
+    private Long cornId;
     private Long commentId;
 
     private Long parentId;
+
     private String parentNickname;
     private Long userId;
+
     private String cornImgUrl;
     private String writerNick;
 
@@ -35,6 +38,7 @@ public class CommentResponseDto {
     public CommentResponseDto(Comment comment) {
         this.commentId = comment.getId();
         this.userId = comment.getUserId();
+        this.cornId = comment.getCornId();
         this.writerNick = comment.getUserNickName();
         this.content = comment.getContent();
         this.depth = comment.getDepth();
