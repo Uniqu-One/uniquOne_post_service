@@ -85,6 +85,7 @@ public class PostRepositoryCustom {
                         Projections.constructor(PostRecommendResponseDto.class
                                 , post.id.as("postId")
                                 , postImg.url.as("postImgUrl")
+                                , corn.title.as("cornNickName")
                                 , corn.imgUrl.as("cornImgUrl")
                                 , corn.userNickName.as("userNickName")
                                 , cool.userId.eq(userId).as("isCool")
@@ -127,6 +128,7 @@ public class PostRepositoryCustom {
                                 PostRecommendResponseDto.class
                                 , post.id.as("postId")
                                 , postImg.url.as("postImgUrl")
+                                , corn.title.as("cornNickName")
                                 , corn.imgUrl.as("cornImgUrl")
                                 , corn.userNickName.as("userNickName")
                                 , corn.id.as("cornId")
