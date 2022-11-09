@@ -13,5 +13,7 @@ public interface ICoolRepository extends JpaRepository<Cool, Long> {
     @Transactional
     void deleteByUserIdAndPostId(Long userId,Long postId);
 
+    Optional<Cool> findByUserIdAndPostId(Long userId,Long postId);
+
     Boolean existsByUserIdAndPostId(Long userId, Long PostId);
 }
