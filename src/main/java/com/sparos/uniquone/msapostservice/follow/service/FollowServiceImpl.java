@@ -1,5 +1,6 @@
 package com.sparos.uniquone.msapostservice.follow.service;
 
+import com.sparos.uniquone.msapostservice.cool.domain.Cool;
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.follow.domain.Follow;
@@ -8,6 +9,7 @@ import com.sparos.uniquone.msapostservice.follow.dto.FollowingInfoDto;
 import com.sparos.uniquone.msapostservice.follow.repository.FollowRepositoryCustom;
 import com.sparos.uniquone.msapostservice.follow.repository.IFollowRepository;
 import com.sparos.uniquone.msapostservice.noti.domain.NotiType;
+import com.sparos.uniquone.msapostservice.noti.repository.INotiRepository;
 import com.sparos.uniquone.msapostservice.noti.service.IEmitterService;
 import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
@@ -27,6 +29,7 @@ public class FollowServiceImpl implements IFollowService {
     private final IFollowRepository iFollowRepository;
     private final FollowRepositoryCustom followRepositoryCustom;
     private final ICornRepository iCornRepository;
+    private final INotiRepository iNotiRepository;
 
     private final IUserConnect iUserConnect;
     private final IEmitterService iEmitterService;
@@ -46,7 +49,13 @@ public class FollowServiceImpl implements IFollowService {
 
     @Override
     public Object deleteUnFollowing(Long cornId, Long userId) {
+
+        Follow follow = iFollowRepository.findByUserIdAndCornId(userId, cornId)
+                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+
         iFollowRepository.deleteByUserIdAndCornId(userId, cornId);
+        iNotiRepository.updateFollowByFollowId(follow.getId());
+
         return "팔로우 취소되었습니다.";
     }
 
