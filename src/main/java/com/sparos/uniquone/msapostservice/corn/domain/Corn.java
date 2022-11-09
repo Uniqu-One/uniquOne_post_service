@@ -22,7 +22,7 @@ public class Corn extends BaseTimeEntity {
 
     private String userNickName;
 
-    @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(10)")
+    @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(20)")
     private String title;
 
     @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
