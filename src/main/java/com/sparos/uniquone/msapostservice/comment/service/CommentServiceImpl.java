@@ -11,6 +11,7 @@ import com.sparos.uniquone.msapostservice.comment.repository.ICommentRepository;
 import com.sparos.uniquone.msapostservice.corn.domain.Corn;
 import com.sparos.uniquone.msapostservice.corn.repository.ICornRepository;
 import com.sparos.uniquone.msapostservice.noti.domain.NotiType;
+import com.sparos.uniquone.msapostservice.noti.repository.INotiRepository;
 import com.sparos.uniquone.msapostservice.noti.service.IEmitterService;
 import com.sparos.uniquone.msapostservice.post.domain.Post;
 import com.sparos.uniquone.msapostservice.post.repository.IPostRepository;
@@ -37,6 +38,7 @@ public class CommentServiceImpl implements CommentService {
     private final ICommentRepository commentRepository;
     private final CommentRepositorySupport commentRepositorySupport;
     private final ICornRepository cornRepository;
+    private final INotiRepository iNotiRepository;
     private final IEmitterService iEmitterService;
 
     @Override
@@ -216,6 +218,7 @@ public class CommentServiceImpl implements CommentService {
             throw new UniquOneServiceException(ExceptionCode.INVALID_USERID, HttpStatus.OK);
         }
 
+        iNotiRepository.updateCommentByCommentId(commentId);
         commentRepository.deleteById(commentId);
 
         return ResponseEntity.status(HttpStatus.OK).body("삭제완료.");

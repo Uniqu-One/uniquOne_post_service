@@ -143,7 +143,7 @@ public class EmitterServiceImpl implements IEmitterService {
             case COOL:
                 noti.setCool((Cool) object);
                 noti.setNickname(iUserConnect.getUserNickName(((Cool) object).getUserId()).getNickname());
-                noti.setUserCornImg(iCornRepository.findImgUrlByUserId(userId));
+                noti.setUserCornImg(iCornRepository.findImgUrlByUserId(((Cool) object).getUserId()));
                 noti.setPostImg(iPostImgRepository.findUrlByPostId(((Cool) object).getPost().getId()));
                 noti.setDsc("님이 회원님의 포스트를 좋아합니다.");
                 break;

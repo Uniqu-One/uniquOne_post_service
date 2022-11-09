@@ -42,10 +42,11 @@ public class NotiServiceImpl implements INotiService {
 
         Pageable pageable = PageRequest.of(pageNum - 1, 30, Sort.by(Sort.Direction.DESC, "regDate"));
         List<Noti> notis = iNotiRepository.findByUserId(userId, pageable);
-
-        if (notis.isEmpty())
+        System.err.println("1111111111111");
+        if (notis.isEmpty()) {
+            System.err.println("222222222222222");
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
-
+        }
 //        List<NotiOutDto> notiOutDto = new ArrayList<>();
 
 /*        for (Noti noti : notis){
@@ -54,6 +55,7 @@ public class NotiServiceImpl implements INotiService {
         jsonObject.put("data", notiOutDto.toArray());*/
 
         iNotiRepository.updateIsCheckByUserId(userId);
+        System.err.println("333333333333333333");
         jsonObject.put("data", notis.stream().map(noti -> entityToNotiOutDto(noti)));
 
         return jsonObject;
@@ -80,27 +82,33 @@ public class NotiServiceImpl implements INotiService {
     }
 
     private NotiOutDto entityToNotiOutDto(Noti notification) {
-
         Long typeId = 0l;
         Boolean isFollow = null;
 
         switch (notification.getNotiType()) {
             case COOL:
-                typeId = notification.getCool().getPost().getId();
+                if (notification.getCool() != null)
+                    typeId = notification.getCool().getPost().getId();
                 break;
             case COMMENT:
-                typeId = notification.getComment().getPost().getId();
+                if (notification.getComment() != null)
+                    typeId = notification.getComment().getPost().getId();
                 break;
             case FOLLOW:
-                Corn corn = iCornRepository.findByUserNickName(notification.getNickName())
-                        .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
-                Optional<Follow> follow = iFollowRepository.findByUserIdAndCornId(notification.getUserId(), corn.getId());
-                if (follow.isPresent()) {
-                    isFollow = true;
-                } else {
-                    isFollow = false;
+                if (notification.getFollow() != null) {
+                    Optional<Corn> corn = iCornRepository.findByUserNickName(notification.getNickName());
+                    if (corn.isPresent()) {
+                        Optional<Follow> follow = iFollowRepository.findByUserIdAndCornId(notification.getUserId(), corn.get().getId());
+                        if (follow.isPresent()) {
+                            isFollow = true;
+                        } else {
+                            isFollow = false;
+                        }
+                        typeId = corn.get().getId();
+                    } else {
+                        isFollow = false;
+                    }
                 }
-                typeId = corn.getId();
                 break;
             case OFFER:
             case OFFER_ACCEPT:

@@ -13,6 +13,7 @@ import com.sparos.uniquone.msapostservice.qna.domain.QnAUtils;
 import com.sparos.uniquone.msapostservice.qna.dto.AnswerInputDto;
 import com.sparos.uniquone.msapostservice.qna.dto.QuestionInputDto;
 import com.sparos.uniquone.msapostservice.qna.repository.IQnARepository;
+import com.sparos.uniquone.msapostservice.util.feign.service.IUserConnect;
 import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
@@ -31,6 +32,7 @@ public class QnAServiceImpl implements IQnAService {
     private final IQnARepository iQnARepository;
     private final ICornRepository iCornRepository;
     private final IEmitterService iEmitterService;
+    private final IUserConnect iUserConnect;
 
     // 문의 등록
     @Override
@@ -55,7 +57,7 @@ public class QnAServiceImpl implements IQnAService {
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         jsonObject.put("data", qnas.stream().map(qna ->
-                QnAUtils.entityToQnAOutDto(qna))
+                QnAUtils.entityToQnAOutDto(qna, iUserConnect.getNickName(qna.getUserId())))
         );
 
         return jsonObject;
@@ -88,7 +90,7 @@ public class QnAServiceImpl implements IQnAService {
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         jsonObject.put("data", qnas.stream().map(qna ->
-                QnAUtils.entityToQnAOutDto(qna))
+                QnAUtils.entityToQnAOutDto(qna, iUserConnect.getNickName(qna.getUserId())))
         );
 
         return jsonObject;
@@ -101,7 +103,8 @@ public class QnAServiceImpl implements IQnAService {
         QnA qna = iQnARepository.findById(qnaId)
                 .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
-        jsonObject.put("data", QnAUtils.entityToQnAAdminOutDto(qna));
+        jsonObject.put("data", QnAUtils.entityToQnAAdminOutDto(
+                qna, iCornRepository.findImgUrlByUserId(qna.getUserId()), iUserConnect.getNickName(qna.getUserId())));
 
         return jsonObject;
     }

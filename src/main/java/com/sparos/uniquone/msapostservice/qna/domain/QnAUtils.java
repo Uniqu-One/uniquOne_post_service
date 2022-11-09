@@ -19,9 +19,10 @@ public class QnAUtils {
                 .build();
     }
 
-    public static QnAOutDto entityToQnAOutDto(QnA qna) {
+    public static QnAOutDto entityToQnAOutDto(QnA qna, String userNickname) {
         return QnAOutDto.builder()
                 .qnaId(qna.getId())
+                .userNickname(userNickname)
                 .question(qna.getQuestion())
                 .questionType(qna.getQuestionType())
                 .qRegDate(qna.getQRegDate().format(DateTimeFormatter.ofPattern("yyyy년M월dd일 hh:mm")))
@@ -30,13 +31,16 @@ public class QnAUtils {
     }
 
 
-    public static QnAAdminOutDto entityToQnAAdminOutDto(QnA qna) {
+    public static QnAAdminOutDto entityToQnAAdminOutDto(QnA qna, String userCornImg, String userNickName) {
         return QnAAdminOutDto.builder()
                 .qnaId(qna.getId())
+                .userCornImg(userCornImg)
+                .userNickName(userNickName)
                 .question(qna.getQuestion())
                 .questionType(qna.getQuestionType())
-                .qRegDate(qna.getQRegDate().format(DateTimeFormatter.ofPattern("yyyy년M월dd일 hh:mm")))
                 .answer(qna.getAnswer())
+                .qRegDate(qna.getQRegDate().format(DateTimeFormatter.ofPattern("yyyy년M월dd일 hh:mm")))
+                .aRegDate(qna.getARegDate().format(DateTimeFormatter.ofPattern("yyyy년M월dd일 hh:mm")))
                 .isAnswer(qna.getAnswer() == null? false : true)
                 .build();
     }
