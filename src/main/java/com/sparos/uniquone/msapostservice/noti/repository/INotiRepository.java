@@ -19,17 +19,17 @@ public interface INotiRepository extends JpaRepository<Noti, Long> {
 
     @Transactional
     @Modifying
-    @Query("UPDATE Noti SET coolId = null WHERE coolId =:coolId")
+    @Query("UPDATE Noti SET cool_id = null WHERE cool_id =:coolId")
     void updateCoolByCoolId(@Param("coolId") Long coolId);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Noti SET followId = null WHERE followId =:followId")
+    @Query("UPDATE Noti SET follow_id = null WHERE follow_id =:followId")
     void updateFollowByFollowId(@Param("followId") Long followId);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Noti SET commentId = null WHERE commentId =:commentId")
+    @Query("UPDATE Noti SET comment_id = null WHERE comment_id =:commentId")
     void updateCommentByCommentId(@Param("commentId") Long commentId);
 
 
