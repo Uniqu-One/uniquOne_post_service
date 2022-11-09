@@ -57,7 +57,7 @@ public class QnAServiceImpl implements IQnAService {
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         jsonObject.put("data", qnas.stream().map(qna ->
-                QnAUtils.entityToQnAOutDto(qna))
+                QnAUtils.entityToQnAOutDto(qna, iUserConnect.getNickName(qna.getUserId())))
         );
 
         return jsonObject;
@@ -90,7 +90,7 @@ public class QnAServiceImpl implements IQnAService {
             throw new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED);
 
         jsonObject.put("data", qnas.stream().map(qna ->
-                QnAUtils.entityToQnAOutDto(qna))
+                QnAUtils.entityToQnAOutDto(qna, iUserConnect.getNickName(qna.getUserId())))
         );
 
         return jsonObject;
