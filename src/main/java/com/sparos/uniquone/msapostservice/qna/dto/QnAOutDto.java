@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class QnAOutDto {
 
     private Long qnaId;
+    private String userNickname;
     private String question;
     private QuestionType questionType;
     private String qRegDate;
