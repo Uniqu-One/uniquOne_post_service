@@ -83,9 +83,9 @@ public class EcoServiceImpl implements IEcoService{
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("data",  EcoSumDto.builder()
-                        .carbonSum(iEcoRepository.findCarbonSumEco())
-                        .distanceSum(iEcoRepository.findDistanceSumEco())
-                        .waterSum(iEcoRepository.findWaterSumEco())
+                        .carbon(iEcoRepository.findCarbonSumEco())
+                        .distance(iEcoRepository.findDistanceSumEco())
+                        .water(iEcoRepository.findWaterSumEco())
                 .build());
 
         return jsonObject;
