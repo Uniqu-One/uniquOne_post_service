@@ -1,6 +1,7 @@
 package com.sparos.uniquone.msapostservice.comment.dto.response;
 
 import com.sparos.uniquone.msapostservice.comment.domain.Comment;
+import com.sparos.uniquone.msapostservice.comment.domain.CommentUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +27,7 @@ public class CommentResponseDto {
 
     private String content;
     private Integer depth;
-    private LocalDateTime regDate;
+    private String regDate;
     private LocalDateTime modDate;
 
     private List<CommentResponseDto> children = new ArrayList<>();
@@ -37,7 +38,7 @@ public class CommentResponseDto {
         this.writerNick = comment.getUserNickName();
         this.content = comment.getContent();
         this.depth = comment.getDepth();
-        this.regDate = comment.getRegDate();
+        this.regDate = CommentUtils.converter(comment.getRegDate());
         this.modDate = comment.getModDate();
 //        this.nickName = comment.get
     }

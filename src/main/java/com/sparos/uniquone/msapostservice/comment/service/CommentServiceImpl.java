@@ -1,6 +1,7 @@
 package com.sparos.uniquone.msapostservice.comment.service;
 
 import com.sparos.uniquone.msapostservice.comment.domain.Comment;
+import com.sparos.uniquone.msapostservice.comment.domain.CommentUtils;
 import com.sparos.uniquone.msapostservice.comment.dto.request.CommentCreateRequestDto;
 import com.sparos.uniquone.msapostservice.comment.dto.response.CommentListResponseDto;
 import com.sparos.uniquone.msapostservice.comment.dto.response.CommentResponseDto;
@@ -92,7 +93,7 @@ public class CommentServiceImpl implements CommentService {
                     .writerNick(comment.getUserNickName())
                     .content(comment.getContent())
                     .depth(comment.getDepth())
-                    .regDate(comment.getRegDate())
+                    .regDate(CommentUtils.converter(comment.getRegDate()))
                     .modDate(comment.getModDate())
                     .parentId(comment.getParent().getId())
                     .build();
@@ -103,7 +104,7 @@ public class CommentServiceImpl implements CommentService {
                     .writerNick(comment.getUserNickName())
                     .content(comment.getContent())
                     .depth(0)
-                    .regDate(comment.getRegDate())
+                    .regDate(CommentUtils.converter(comment.getRegDate()))
                     .modDate(comment.getModDate())
                     .build();
         }

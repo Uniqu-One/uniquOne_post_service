@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CommonsUserResponseDto {
     private Long userId;
+    private String userNickName;
     private Long cornId;
 
     private String cornImg;
@@ -17,6 +18,12 @@ public class CommonsUserResponseDto {
     }
     public CommonsUserResponseDto(Long userId, Long cornId, String cornImg){
         this.userId = userId;
+        this.cornId = cornId;
+        this.cornImg = cornImg;
+    }
+    public CommonsUserResponseDto(Long userId, String userNickName,Long cornId, String cornImg){
+        this.userId = userId;
+        this.userNickName = userNickName;
         this.cornId = cornId;
         this.cornImg = cornImg;
     }
