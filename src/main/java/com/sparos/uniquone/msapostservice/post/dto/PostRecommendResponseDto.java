@@ -37,6 +37,15 @@ public class PostRecommendResponseDto {
         this.userNickName = userNickName;
         this.cornId = cornId;
     }
+    public PostRecommendResponseDto(Long postId,String cornNickName, String postImgUrl, String cornImgUrl, String userNickName, Long cornId) {
+        this.postId = postId;
+        this.postImgUrl = postImgUrl;
+        this.cornNickName =
+        this.cornImgUrl = cornImgUrl;
+        this.userNickName = userNickName;
+        this.cornId = cornId;
+    }
+
 
     public PostRecommendResponseDto(Long postId, String postImgUrl , String cornImgUrl, String userNickName, boolean isCool, boolean isFollow, Integer uniStar) {
         this.postId = postId;
