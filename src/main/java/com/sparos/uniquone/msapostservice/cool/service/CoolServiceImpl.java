@@ -39,8 +39,8 @@ public class CoolServiceImpl implements ICoolService {
         Cool cool = iCoolRepository.findByUserIdAndPostId(userId, postId)
                 .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
-        iCoolRepository.deleteByUserIdAndPostId(userId, postId);
         iNotiRepository.updateCoolByCoolId(cool.getId());
+        iCoolRepository.deleteByUserIdAndPostId(userId, postId);
 
         return "좋아요가 취소가 완료되었습니다.";
     }

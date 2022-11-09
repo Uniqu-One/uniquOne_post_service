@@ -53,8 +53,8 @@ public class FollowServiceImpl implements IFollowService {
         Follow follow = iFollowRepository.findByUserIdAndCornId(userId, cornId)
                 .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
-        iFollowRepository.deleteByUserIdAndCornId(userId, cornId);
         iNotiRepository.updateFollowByFollowId(follow.getId());
+        iFollowRepository.deleteByUserIdAndCornId(userId, cornId);
 
         return "팔로우 취소되었습니다.";
     }
