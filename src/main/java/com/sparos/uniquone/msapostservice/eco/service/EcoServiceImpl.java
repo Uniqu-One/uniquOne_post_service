@@ -2,6 +2,7 @@ package com.sparos.uniquone.msapostservice.eco.service;
 
 import com.sparos.uniquone.msapostservice.eco.domain.Eco;
 import com.sparos.uniquone.msapostservice.eco.dto.EcoCntDto;
+import com.sparos.uniquone.msapostservice.eco.dto.EcoSumDto;
 import com.sparos.uniquone.msapostservice.eco.repository.EcoRepositoryCustom;
 import com.sparos.uniquone.msapostservice.eco.repository.IEcoRepository;
 import com.sparos.uniquone.msapostservice.post.domain.PostCategory;
@@ -73,6 +74,20 @@ public class EcoServiceImpl implements IEcoService{
     public JSONObject findYesterdayEco() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data", iEcoRepository.findByRegDate(LocalDate.now().minusDays(1).toString()));
+        return jsonObject;
+    }
+
+    // 지금까지의 탄소 절감 합
+    @Override
+    public JSONObject findAllSumEco() {
+        JSONObject jsonObject = new JSONObject();
+
+        jsonObject.put("data",  EcoSumDto.builder()
+                        .carbonSum(iEcoRepository.findCarbonSumEco())
+                        .distanceSum(iEcoRepository.findDistanceSumEco())
+                        .waterSum(iEcoRepository.findWaterSumEco())
+                .build());
+
         return jsonObject;
     }
 

@@ -9,6 +9,9 @@ public interface IEcoService {
     // 어제 탄소 절감 조회
     JSONObject findYesterdayEco();
 
+    // 지금까지 탄소 절감 합
+    JSONObject findAllSumEco();
+
     // 총 탄소 절감 조회
     JSONObject findAllEco();
 
