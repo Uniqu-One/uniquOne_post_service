@@ -11,6 +11,7 @@ import java.util.List;
 public class PostRecommendResponseDto {
     private Long postId;
     private String postImgUrl;
+    private String cornNickName;
     private String cornImgUrl;
     private String userNickName;
     private Boolean isCool;
@@ -49,6 +50,17 @@ public class PostRecommendResponseDto {
     public PostRecommendResponseDto(Long postId, String postImgUrl , String cornImgUrl, String userNickName, boolean isCool, boolean isFollow, Integer uniStar, Long cornId) {
         this.postId = postId;
         this.postImgUrl = postImgUrl;
+        this.cornImgUrl = cornImgUrl;
+        this.userNickName = userNickName;
+        this.isCool = isCool;
+        this.isFollow = isFollow;
+        this.uniStar = uniStar;
+        this.cornId = cornId;
+    }
+    public PostRecommendResponseDto(Long postId, String postImgUrl ,String cornNickName ,String cornImgUrl, String userNickName, boolean isCool, boolean isFollow, Integer uniStar, Long cornId) {
+        this.postId = postId;
+        this.postImgUrl = postImgUrl;
+        this.cornNickName = cornNickName;
         this.cornImgUrl = cornImgUrl;
         this.userNickName = userNickName;
         this.isCool = isCool;
