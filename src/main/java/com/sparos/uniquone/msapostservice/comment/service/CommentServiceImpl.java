@@ -215,11 +215,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
                 new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.OK));
 
-        //현재 content의 pkID requestPkId랑 비교.
-        log.info("comment user Id = {}", comment.getUserId());
-        log.info("jwt user Id = {}", JwtProvider.getUserPkId(request));
-
-        if (comment.getUserId() != JwtProvider.getUserPkId(request)) {
+        if (!comment.getUserId().equals(JwtProvider.getUserPkId(request))) {
             throw new UniquOneServiceException(ExceptionCode.INVALID_USERID, HttpStatus.OK);
         }
 
