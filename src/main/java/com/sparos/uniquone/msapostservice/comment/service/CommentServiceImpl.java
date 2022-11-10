@@ -19,6 +19,7 @@ import com.sparos.uniquone.msapostservice.util.jwt.JwtProvider;
 import com.sparos.uniquone.msapostservice.util.response.ExceptionCode;
 import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommentServiceImpl implements CommentService {
 
     private final IPostRepository postRepository;
@@ -214,6 +216,9 @@ public class CommentServiceImpl implements CommentService {
                 new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.OK));
 
         //현재 content의 pkID requestPkId랑 비교.
+        log.info("comment user Id = {}", comment.getUserId());
+        log.info("jwt user Id = {}", JwtProvider.getUserPkId(request));
+
         if (comment.getUserId() != JwtProvider.getUserPkId(request)) {
             throw new UniquOneServiceException(ExceptionCode.INVALID_USERID, HttpStatus.OK);
         }
