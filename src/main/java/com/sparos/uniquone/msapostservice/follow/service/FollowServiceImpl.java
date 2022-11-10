@@ -17,6 +17,7 @@ import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -48,15 +49,20 @@ public class FollowServiceImpl implements IFollowService {
    }
 
     @Override
+    @Transactional(rollbackFor = UniquOneServiceException.class)
     public Object deleteUnFollowing(Long cornId, Long userId) {
+        try {
 
-        Follow follow = iFollowRepository.findByUserIdAndCornId(userId, cornId)
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+            Follow follow = iFollowRepository.findByUserIdAndCornId(userId, cornId)
+                    .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
-        iNotiRepository.updateFollowByFollowId(follow.getId());
-        iFollowRepository.deleteByUserIdAndCornId(userId, cornId);
+            iNotiRepository.updateFollowByFollowId(follow.getId());
+            iFollowRepository.deleteByUserIdAndCornId(userId, cornId);
 
-        return "팔로우 취소되었습니다.";
+            return "팔로우 취소되었습니다.";
+        }catch (Exception e){
+            throw new UniquOneServiceException(ExceptionCode.NOTDELET_FOLLOW,HttpStatus.ACCEPTED);
+        }
     }
 
 

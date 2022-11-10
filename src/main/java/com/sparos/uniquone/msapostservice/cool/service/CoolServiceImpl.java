@@ -12,6 +12,7 @@ import com.sparos.uniquone.msapostservice.util.response.UniquOneServiceException
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,13 +36,18 @@ public class CoolServiceImpl implements ICoolService {
     }
 
     @Override
+    @Transactional(rollbackFor = UniquOneServiceException.class)
     public Object delCool(Long userId, Long postId) {
-        Cool cool = iCoolRepository.findByUserIdAndPostId(userId, postId)
-                .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+        try {
+            Cool cool = iCoolRepository.findByUserIdAndPostId(userId, postId)
+                    .orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
 
-        iNotiRepository.updateCoolByCoolId(cool.getId());
-        iCoolRepository.deleteByUserIdAndPostId(userId, postId);
+            iNotiRepository.updateCoolByCoolId(cool.getId());
+            iCoolRepository.deleteByUserIdAndPostId(userId, postId);
 
-        return "좋아요가 취소가 완료되었습니다.";
+            return "좋아요가 취소가 완료되었습니다.";
+        }catch(Exception e){
+            throw new UniquOneServiceException(ExceptionCode.NOTDELET_COOL,HttpStatus.ACCEPTED);
+        }
     }
 }

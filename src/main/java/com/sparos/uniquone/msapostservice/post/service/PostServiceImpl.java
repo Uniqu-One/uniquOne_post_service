@@ -22,6 +22,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,96 +55,106 @@ public class PostServiceImpl implements IPostService {
     private final IFollowRepository iFollowRepository;
 
     @Override
+    @Transactional(rollbackFor = UniquOneServiceException.class)
     public Object addPost(PostInputDto postInputDto, List<MultipartFile> multipartFileList, Long userId) throws IOException {
-        if (!(multipartFileList.size()==1&&multipartFileList.get(0).isEmpty())) {
-            Corn corn = iCornRepository.findByUserId(userId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
-            Post post = iPostRepository.save(Post.builder()
-                    .title(postInputDto.getTitle())
-                    .corn(corn)
-                    .dsc(postInputDto.getDsc())
-                    .postType(postInputDto.getPostType())
-                    .postCategory(iPostCategoryRepository.findByName(postInputDto.getPostCategoryName()).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_POST_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED)))
-                    .conditions(postInputDto.getConditions())
-                    .color(postInputDto.getColor())
-                    .price(postInputDto.getPrice())
-                    .productSize(postInputDto.getProductSize())
-                    .build());
-            String[] postTagList = postInputDto.getPostTagLine().split("#");
-            for (String postDsc : postTagList) {
-                if (!postDsc.isEmpty() && !postDsc.equals(" ") && !post.equals(null))
-                    iPostTagRepository.save(PostTag.builder()
-                            .post(post)
-                            .dsc(postDsc)
-                            .build());
-            }
-
-            String[] lookList = postInputDto.getLookLine().split(",");
-            for (String lookName : lookList) {
-                iPostAndLookRepository.save(PostAndLook.builder()
-                        .post(post)
-                        .look(iLookRepository.findByName(lookName).get())
+        try {
+            if (!(multipartFileList.size() == 1 && multipartFileList.get(0).isEmpty())) {
+                Corn corn = iCornRepository.findByUserId(userId).orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+                Post post = iPostRepository.save(Post.builder()
+                        .title(postInputDto.getTitle())
+                        .corn(corn)
+                        .dsc(postInputDto.getDsc())
+                        .postType(postInputDto.getPostType())
+                        .postCategory(iPostCategoryRepository.findByName(postInputDto.getPostCategoryName()).orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_POST_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED)))
+                        .conditions(postInputDto.getConditions())
+                        .color(postInputDto.getColor())
+                        .price(postInputDto.getPrice())
+                        .productSize(postInputDto.getProductSize())
                         .build());
-            }
+                String[] postTagList = postInputDto.getPostTagLine().split("#");
+                for (String postDsc : postTagList) {
+                    if (!postDsc.isEmpty() && !postDsc.equals(" ") && !post.equals(null))
+                        iPostTagRepository.save(PostTag.builder()
+                                .post(post)
+                                .dsc(postDsc)
+                                .build());
+                }
 
-            Integer idx = 1;
-            for (MultipartFile multipartFile : multipartFileList) {
-                System.out.println(multipartFile);
-                if (!multipartFile.isEmpty())
-                    iPostImgRepository.save(PostImg.builder()
+                String[] lookList = postInputDto.getLookLine().split(",");
+                for (String lookName : lookList) {
+                    iPostAndLookRepository.save(PostAndLook.builder()
                             .post(post)
-                            .url(awsS3UploaderService.upload(multipartFile, "uniquoneimg", "img"))
-                            .idx(idx)
+                            .look(iLookRepository.findByName(lookName).get())
                             .build());
-                idx++;
-            }
+                }
 
-            return "등록 완료되었습니다.";
+                Integer idx = 1;
+                for (MultipartFile multipartFile : multipartFileList) {
+                    System.out.println(multipartFile);
+                    if (!multipartFile.isEmpty())
+                        iPostImgRepository.save(PostImg.builder()
+                                .post(post)
+                                .url(awsS3UploaderService.upload(multipartFile, "uniquoneimg", "img"))
+                                .idx(idx)
+                                .build());
+                    idx++;
+                }
+
+                return "등록 완료되었습니다.";
+            }
+            return "사진파일이 없습니다.";
+        }catch(Exception e){
+            throw new UniquOneServiceException(ExceptionCode.NOTADD_POST,HttpStatus.ACCEPTED);
         }
-        return "사진파일이 없습니다.";
     }
 
     @Override
+    @Transactional(rollbackFor = UniquOneServiceException.class)
     public Object modifyPost(PostInputDto postInputDto, Long userId, Long postId) {
-        Post post = iPostRepository.findById(postId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_POST_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
-        Corn corn = iCornRepository.findByUserId(userId).orElseThrow(()-> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
-        if (post.getCorn().equals(corn)) {
-            post.modDsc(postInputDto.getDsc());
-            post.modPostType(postInputDto.getPostType());
-            post.modPostCategoryName(iPostCategoryRepository.findByName(postInputDto.getPostCategoryName()).get());
-            post.modConditions(postInputDto.getConditions());
-            post.modColor(postInputDto.getColor());
-            iPostRepository.save(post);
+        try {
+            Post post = iPostRepository.findById(postId).orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_POST_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+            Corn corn = iCornRepository.findByUserId(userId).orElseThrow(() -> new UniquOneServiceException(ExceptionCode.NO_SUCH_CORN_ELEMENT_EXCEPTION, HttpStatus.ACCEPTED));
+            if (post.getCorn().equals(corn)) {
+                post.modDsc(postInputDto.getDsc());
+                post.modPostType(postInputDto.getPostType());
+                post.modPostCategoryName(iPostCategoryRepository.findByName(postInputDto.getPostCategoryName()).get());
+                post.modConditions(postInputDto.getConditions());
+                post.modColor(postInputDto.getColor());
+                iPostRepository.save(post);
 
-            List<PostTag> postTagEntityList = iPostTagRepository.findByPostId(postId);
+                List<PostTag> postTagEntityList = iPostTagRepository.findByPostId(postId);
 
-            iPostTagRepository.deleteAllInBatch(postTagEntityList);
+                iPostTagRepository.deleteAllInBatch(postTagEntityList);
 
-            String[] postTagList = postInputDto.getPostTagLine().split("#");
-            for (String postDsc : postTagList) {
-                if (!postDsc.isEmpty() && !postDsc.equals(" ") && !post.equals(null))
-                    iPostTagRepository.save(PostTag.builder()
+                String[] postTagList = postInputDto.getPostTagLine().split("#");
+                for (String postDsc : postTagList) {
+                    if (!postDsc.isEmpty() && !postDsc.equals(" ") && !post.equals(null))
+                        iPostTagRepository.save(PostTag.builder()
+                                .post(post)
+                                .dsc(postDsc)
+                                .build());
+                }
+
+                List<PostAndLook> postAndLookEntityList = iPostAndLookRepository.findByPostId(postId);
+
+                iPostAndLookRepository.deleteAllInBatch(postAndLookEntityList);
+
+                String[] lookList = postInputDto.getLookLine().split(",");
+                for (String lookName : lookList) {
+                    iPostAndLookRepository.save(PostAndLook.builder()
                             .post(post)
-                            .dsc(postDsc)
+                            .look(iLookRepository.findByName(lookName).get())
                             .build());
+                }
+
+                return "수정이 완료되었습니다.";
+
+            } else {
+
+                return "존재하지 않는 게시물이거나 수정 권한이 없습니다";
             }
-
-            List<PostAndLook> postAndLookEntityList = iPostAndLookRepository.findByPostId(postId);
-
-            iPostAndLookRepository.deleteAllInBatch(postAndLookEntityList);
-
-            String[] lookList = postInputDto.getLookLine().split(",");
-            for (String lookName : lookList) {
-                iPostAndLookRepository.save(PostAndLook.builder()
-                        .post(post)
-                        .look(iLookRepository.findByName(lookName).get())
-                        .build());
-            }
-
-            return "수정이 완료되었습니다.";
-
-        } else {
-
-            return "존재하지 않는 게시물이거나 수정 권한이 없습니다";
+        }catch (Exception e){
+           throw new UniquOneServiceException(ExceptionCode.NOTADD_POST,HttpStatus.ACCEPTED);
         }
     }
 
