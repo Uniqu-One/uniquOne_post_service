@@ -12,6 +12,13 @@
 
 <br>
 <br>
+# 백엔드 서비스 레포지토리 링크
+
+<a href = "https://github.com/Uniqu-One/uniquOne_user_service">
+<img width=250 src="https://img.shields.io/badge/UniquOne-Back_USER_SERVICE-181717?style=plastic&logo=GitHub&logoColor=white"/>
+</a>
+<br>
+<br>
 
 # 프로젝트 소개
 ### 중고 의류 ~ 입니다.
