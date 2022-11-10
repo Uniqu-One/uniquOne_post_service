@@ -67,7 +67,56 @@ CI/CD,클라우드 서비스(AWS), 상품,팔로우, 좋아요 <br>
 
 <br>
 <br>
-
+## 📔 포스트 서비스 디렉토리 구조
+```
+project
+├─ public
+│   └─ img   
+│   
+│   
+├─ src
+│   ├─main
+│   │ ├─java
+│   │ │  ├─ admin
+│   │ │  │   ├─ controller
+│   │ │  │   ├─ domain
+│   │ │  │   ├─ dto
+│   │ │  │   ├─ repository
+│   │ │  │   ├─ service
+│   │ │  │   └─ type
+│   │ │  ├─ Comment
+│   │ │  │   ├─ Controller
+│   │ │  │   ├─ domain
+│   │ │  │   ├─ dto
+│   │ │  │   ├─ repository
+│   │ │  │   └─ service
+│   │ │  ├─ utils
+│   │ │  │   ├─ commons
+│   │ │  │   ├─ complex
+│   │ │  │   ├─ feign
+│   │ │  │   ├─ generate
+│   │ │  │   ├─ jwt
+│   │ │  │   ├─ response
+│   │ │  │   ├─ s3
+│   │ │  │   └─ webConverter
+│   │ │  └─ MsaPostServiceApplication.java
+│   │ │
+│   │ │     
+│   │ └─ resources
+│   │       ├─ application.yml
+│   │       └─ bootstrap.yml
+│   │
+│   └─ test
+│   
+│   
+├─ .gitignore
+├─ build.gradle
+├─ Dockerfile
+├─ gradlew
+├─ gradlew.bat
+├─ settings.gradle
+└─ README.md
+``` 
 
 
 <br>
