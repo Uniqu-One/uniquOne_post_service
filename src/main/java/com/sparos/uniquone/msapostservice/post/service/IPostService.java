@@ -3,6 +3,7 @@ package com.sparos.uniquone.msapostservice.post.service;
 import com.sparos.uniquone.msapostservice.post.dto.PostInputDto;
 import com.sparos.uniquone.msapostservice.post.dto.PostRecommendListResponseDto;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;

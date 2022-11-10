@@ -18,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,29 +40,34 @@ public class CornServiceImpl implements ICornService {
     private final GenerateRandomConNick generateRandomConNick;
 
     @Override
+    @Transactional(rollbackFor = UniquOneServiceException.class)
     public Object addCorn(CornCreateDto cornCreateDto, HttpServletRequest request, MultipartFile multipartFile) throws IOException {
-        Long userPkId = JwtProvider.getUserPkId(request);
-        String userNickName = JwtProvider.getUserNickName(request);
-        if (!iCornRepository.existsByUserId(userPkId)) {
-            if (!multipartFile.isEmpty()) {
-                Corn corn = Corn.builder().userId(userPkId)
-                        .userNickName(userNickName)
-                        .title(cornCreateDto.getTitle())
-                        .dsc(cornCreateDto.getDsc())
-                        .imgUrl(awsS3UploaderService.upload(multipartFile, "uniquoneimg", "img"))
-                        .build();
-                iCornRepository.save(corn);
+        try {
+            Long userPkId = JwtProvider.getUserPkId(request);
+            String userNickName = JwtProvider.getUserNickName(request);
+            if (!iCornRepository.existsByUserId(userPkId)) {
+                if (!multipartFile.isEmpty()) {
+                    Corn corn = Corn.builder().userId(userPkId)
+                            .userNickName(userNickName)
+                            .title(cornCreateDto.getTitle())
+                            .dsc(cornCreateDto.getDsc())
+                            .imgUrl(awsS3UploaderService.upload(multipartFile, "uniquoneimg", "img"))
+                            .build();
+                    iCornRepository.save(corn);
+                } else {
+                    Corn corn = Corn.builder().userId(userPkId)
+                            .userNickName(userNickName)
+                            .title(cornCreateDto.getTitle())
+                            .dsc(cornCreateDto.getDsc())
+                            .build();
+                    iCornRepository.save(corn);
+                }
+                return "개설되었습니다";
             } else {
-                Corn corn = Corn.builder().userId(userPkId)
-                        .userNickName(userNickName)
-                        .title(cornCreateDto.getTitle())
-                        .dsc(cornCreateDto.getDsc())
-                        .build();
-                iCornRepository.save(corn);
+                return "이미 생성된 유저";
             }
-            return "개설되었습니다";
-        } else {
-            return "이미 생성된 유저";
+        }catch (Exception e){
+            throw new UniquOneServiceException(ExceptionCode.NOTADD_CORN,HttpStatus.ACCEPTED);
         }
     }
 

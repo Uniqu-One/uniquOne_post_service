@@ -34,7 +34,15 @@ public enum ExceptionCode {
 
     NOTFOUND_CORN("F014","콘이 존재 하지 않습니다."),
     NOTFOUND_POST("F015","포스트가 존재 하지 않습니다."),
-    ONLY_USER("F016","유저만 가능한 기능 입니다.")
+    ONLY_USER("F016","유저만 가능한 기능 입니다."),
+
+    NOTADD_POST("F017","포스트를 등록할 수 었습니다."),
+
+    NOTADD_CORN("F018", "콘을 등록 할 수 없습니다."),
+
+    NOTDELET_COOL("F019","좋아요 삭제에 실패 하였습니다."),
+
+    NOTDELET_FOLLOW("F019","FOLLOW 삭제에 실패 하였습니다.")
 
     ;
 
